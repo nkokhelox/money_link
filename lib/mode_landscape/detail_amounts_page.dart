@@ -32,23 +32,15 @@ class DetailAmountPage extends StatelessWidget {
         PeopleChart(people: Data.people),
       ];
     }
-    final List<Tile> paidAmounts = amounts
-        .where((amount) => amount.paidDate != null)
-        .map((amount) => EntityTile.amountTile(amount))
-        .toList();
+    final List<Tile> paidAmounts = amounts.where((amount) => amount.paidDate != null).map((amount) => EntityTile.amountTile(amount)).toList();
     final paidUpExpansionTile = GroupTile(
       title: "PAID AMOUNTS",
-      subtitle: "Paid amounts",
+      subtitle: "Money paid back",
       innerTiles: paidAmounts,
     );
 
-    final List<Tile> unpaidAmounts = amounts
-        .where((amount) => amount.paidDate == null)
-        .map((amount) => EntityTile.amountTile(amount))
-        .toList();
-    final Iterable<Tile> groups = [paidUpExpansionTile]
-        .where((group) => group.innerTiles.isNotEmpty)
-        .toList();
+    final List<Tile> unpaidAmounts = amounts.where((amount) => amount.paidDate == null).map((amount) => EntityTile.amountTile(amount)).toList();
+    final Iterable<Tile> groups = [paidUpExpansionTile].where((group) => group.innerTiles.isNotEmpty).toList();
 
     List<Tile> comboList = <Tile>[];
     comboList.addAll(unpaidAmounts);
@@ -57,11 +49,9 @@ class DetailAmountPage extends StatelessWidget {
     return comboList.map((t) => buildTile(context, t)).toList();
   }
 
-  Widget buildTile(BuildContext context, Tile tile,
-      {double subTileIndentation = 10.0}) {
+  Widget buildTile(BuildContext context, Tile tile, {double subTileIndentation = 10.0}) {
     if (tile is EntityTile<Amount>) {
-      return AmountWidget(
-          amount: tile.object, titleLeftPad: subTileIndentation);
+      return AmountWidget(amount: tile.object, titleLeftPad: subTileIndentation);
     }
 
     final group = tile as GroupTile;
@@ -70,13 +60,8 @@ class DetailAmountPage extends StatelessWidget {
         backgroundColor: Colors.blue[50] ?? Colors.lightBlue,
         tilePadding: EdgeInsets.only(left: subTileIndentation),
         title: Text(group.title),
-        subtitle: Text(group.subtitle,
-            maxLines: 1, style: const TextStyle(color: Colors.blueGrey)),
-        children: (group)
-            .innerTiles
-            .map((subTile) => buildTile(context, subTile,
-                subTileIndentation: max(25.0, 2 * subTileIndentation)))
-            .toList(),
+        subtitle: Text(group.subtitle, maxLines: 1, style: const TextStyle(color: Colors.blueGrey)),
+        children: (group).innerTiles.map((subTile) => buildTile(context, subTile, subTileIndentation: max(25.0, 2 * subTileIndentation))).toList(),
       ),
     );
   }

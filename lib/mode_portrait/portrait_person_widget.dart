@@ -100,7 +100,7 @@ class PortraitPersonAmountsWidget extends APerson {
           backgroundColor: Colors.amber[100] ?? Colors.amber,
           tilePadding: EdgeInsets.only(left: titleLeftPad),
           title: const Text("PAID AMOUNTS", style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2)),
-          subtitle: const Text("Money back to the owner", maxLines: 1, style: TextStyle(color: Colors.blueGrey)),
+          subtitle: const Text("Money paid back", maxLines: 1, style: TextStyle(color: Colors.blueGrey)),
           onExpansionChanged: (_) => onTappedPerson(person),
           children: tile.innerTiles.map((t) => buildAmountTile(t, titleLeftPad * 2)).toList(),
         ),
