@@ -16,28 +16,11 @@ class DetailAmountPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ScrollController scrollController = ScrollController();
-
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onPanDown: (_) {
-        FocusScope.of(context).requestFocus(FocusNode());
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          title: InkWell(
-            onTap: () => jumpToTop(scrollController),
-            child: Center(child: Text(person?.fullName ?? "AMOUNTS")),
-          ),
-        ),
-        body: SlidableAutoCloseBehavior(
-          child: ListView(
-            controller: scrollController,
-            physics: const BouncingScrollPhysics(),
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            children: getListItems(context),
-          ),
-        ),
+    return SlidableAutoCloseBehavior(
+      child: ListView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        physics: const BouncingScrollPhysics(),
+        children: getListItems(context),
       ),
     );
   }
@@ -50,8 +33,8 @@ class DetailAmountPage extends StatelessWidget {
       ];
     }
     final List<Tile> paidAmounts = amounts
-        .where((a) => a.paidDate != null)
-        .map((a) => EntityTile.amountTile(a))
+        .where((amount) => amount.paidDate != null)
+        .map((amount) => EntityTile.amountTile(amount))
         .toList();
     final paidUpExpansionTile = GroupTile(
       title: "PAID AMOUNTS",
@@ -60,8 +43,8 @@ class DetailAmountPage extends StatelessWidget {
     );
 
     final List<Tile> unpaidAmounts = amounts
-        .where((a) => a.paidDate == null)
-        .map((a) => EntityTile.amountTile(a))
+        .where((amount) => amount.paidDate == null)
+        .map((amount) => EntityTile.amountTile(amount))
         .toList();
     final Iterable<Tile> groups = [paidUpExpansionTile]
         .where((group) => group.innerTiles.isNotEmpty)
@@ -96,10 +79,5 @@ class DetailAmountPage extends StatelessWidget {
             .toList(),
       ),
     );
-  }
-
-  void jumpToTop(ScrollController scrollController) {
-    scrollController.animateTo(0,
-        duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
   }
 }

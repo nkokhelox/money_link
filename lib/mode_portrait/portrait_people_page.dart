@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
-import '../component/settings.dart';
 import '../model/data.dart';
 import '../model/person.dart';
 import '../model/tile.dart';
@@ -9,15 +8,16 @@ import 'portrait_person_widget.dart';
 
 class PortraitPeoplePage extends StatefulWidget {
   final Person? selectedPerson;
+  final ScrollController scrollController;
   final void Function(Person?) onTappedPerson;
   final void Function(Person) onPersonDeleted;
-
-  const PortraitPeoplePage(
-      {Key? key,
-      required this.onTappedPerson,
-      required this.onPersonDeleted,
-      this.selectedPerson})
-      : super(key: key);
+  const PortraitPeoplePage({
+    Key? key,
+    required this.onTappedPerson,
+    required this.onPersonDeleted,
+    required this.scrollController,
+    this.selectedPerson,
+  }) : super(key: key);
 
   @override
   State<PortraitPeoplePage> createState() => _State();
@@ -30,89 +30,54 @@ class _State extends State<PortraitPeoplePage> {
 
   @override
   Widget build(BuildContext context) {
-    final ScrollController scrollController = ScrollController();
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onPanDown: (_) {
-        FocusScope.of(context).requestFocus(FocusNode());
-      },
-      child: Scaffold(
-        drawer: const SettingsDrawer(),
-        body: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) =>
-              SlidableAutoCloseBehavior(
-            child: CustomScrollView(
-              controller: scrollController,
-              physics: const BouncingScrollPhysics(),
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              slivers: [
-                SliverAppBar(
-                  pinned: true,
-                  stretch: false,
-                  floating: false,
-                  leading: IconButton(
-                    icon: const Icon(Icons.settings),
-                    onPressed: () => Scaffold.of(context).openDrawer(),
-                  ),
-                  expandedHeight: constraints.maxWidth,
-                  flexibleSpace: FlexibleSpaceBar(
-                    centerTitle: true,
-                    title: InkWell(
-                      onTap: () => jumpToTop(scrollController),
-                      child: const Text(
-                        "PEOPLE",
-                        style: TextStyle(
-                          color: Colors.white,
-                          letterSpacing: 4,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                SliverToBoxAdapter(
-                  child: Card(
-                    child: TextField(
-                      keyboardType: TextInputType.name,
-                      textCapitalization: TextCapitalization.words,
-                      textInputAction: TextInputAction.search,
-                      controller: _editTextController,
-                      onChanged: onTextChanged,
-                      decoration: InputDecoration(
-                        border: const OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                        ),
-                        suffixIcon: searchQuery.isEmpty
-                            ? const Icon(Icons.search)
-                            : IconButton(
-                                onPressed: () {
-                                  _editTextController.clear();
-                                  onTextChanged("");
-                                },
-                                icon: const Icon(Icons.clear),
-                              ),
-                        hintStyle: const TextStyle(color: Colors.blueGrey),
-                        hintText: 'Find or Add a person',
-                      ),
-                    ),
-                  ),
-                ),
-                SliverToBoxAdapter(
-                  child: ListView(
-                    primary: false,
-                    shrinkWrap: true,
-                    padding: EdgeInsets.zero,
-                    children: getListItems(context),
-                  ),
-                ),
-              ],
-            ),
-          ),
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) =>
+          SlidableAutoCloseBehavior(
+        child: ListView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          physics: const BouncingScrollPhysics(),
+          controller: widget.scrollController,
+          children: getListItems(context),
         ),
       ),
     );
   }
 
   List<Widget> getListItems(BuildContext context) {
+    final content = <Widget>[];
+    content.add(
+      Card(
+        child: TextField(
+          keyboardType: TextInputType.name,
+          textCapitalization: TextCapitalization.words,
+          textInputAction: TextInputAction.search,
+          controller: _editTextController,
+          onChanged: onTextChanged,
+          decoration: InputDecoration(
+            border: const OutlineInputBorder(
+              borderSide: BorderSide.none,
+            ),
+            suffixIcon: searchQuery.isEmpty
+                ? const Icon(Icons.search)
+                : IconButton(
+                    onPressed: () {
+                      _editTextController.clear();
+                      onTextChanged("");
+                    },
+                    icon: const Icon(Icons.clear),
+                  ),
+            hintStyle: const TextStyle(color: Colors.blueGrey),
+            hintText: 'Find or Add a person',
+          ),
+        ),
+      ),
+    );
+
+    content.addAll(peopleCards(context));
+    return content;
+  }
+
+  List<Widget> peopleCards(BuildContext context) {
     if (searchResult.isEmpty && searchQuery.isNotEmpty) {
       return [
         Card(
@@ -163,7 +128,7 @@ class _State extends State<PortraitPeoplePage> {
     }
   }
 
-  Widget buildTile(Tile tile, {double subTileIndentation = 5.0}) {
+  Widget buildTile(Tile tile, {double subTileIndentation = 10.0}) {
     if (tile is EntityTile<Person>) {
       final isSelectedPerson = tile.object.id == widget.selectedPerson?.id;
       return PortraitPersonAmountsWidget(
@@ -198,12 +163,6 @@ class _State extends State<PortraitPeoplePage> {
     final tempQuery = searchQuery;
     onTextChanged("");
     onTextChanged(tempQuery);
-  }
-
-  void jumpToTop(ScrollController scrollController) {
-    widget.onTappedPerson(null);
-    scrollController.animateTo(0,
-        duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
   }
 
   void onTextChanged(String value) {

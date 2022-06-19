@@ -7,6 +7,8 @@ import 'package:money_link/mode_landscape/master_people_page.dart';
 import 'package:money_link/mode_portrait/portrait_people_page.dart';
 import 'package:money_link/model/person.dart';
 
+import 'component/settings.dart';
+
 void main() {
   runApp(const MainApp());
 }
@@ -32,27 +34,45 @@ class HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return OrientationBuilder(
-      builder: (context, orientation) {
-        if (orientation == Orientation.landscape || MediaQuery.of(context).size.width > 540) {
-          return TwoPane(
-            paneProportion: 0.45,
-            panePriority: TwoPanePriority.both,
-            startPane: MasterPeoplePage(
-              onTappedPerson: (Person? person) => onPersonTap(person),
-              onPersonDeleted: (Person person) => personDeleted(person),
-              selectedPerson: selectedPerson,
-            ),
-            endPane: DetailAmountPage(person: selectedPerson),
-          );
-        } else {
-          return PortraitPeoplePage(
-            onTappedPerson: (Person? person) => onPersonTap(person),
-            onPersonDeleted: (Person person) => personDeleted(person),
-            selectedPerson: selectedPerson,
-          );
-        }
-      },
+    final ScrollController scrollController = ScrollController();
+    return Scaffold(
+      drawer: const SettingsDrawer(),
+      appBar: AppBar(
+        title: InkWell(
+          onLongPress: () => jumpToTop(scrollController),
+          child: const Text("PEOPLE", style: TextStyle(letterSpacing: 4)),
+        ),
+      ),
+      body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onPanDown: (_) {
+          FocusScope.of(context).requestFocus(FocusNode());
+        },
+        child: OrientationBuilder(
+          builder: (context, orientation) {
+            if (orientation == Orientation.landscape || MediaQuery.of(context).size.width > 540) {
+              return TwoPane(
+                paneProportion: 0.45,
+                panePriority: TwoPanePriority.both,
+                startPane: MasterPeoplePage(
+                  onPersonDeleted: (Person person) => personDeleted(person),
+                  onTappedPerson: (Person? person) => onPersonTap(person),
+                  scrollController: scrollController,
+                  selectedPerson: selectedPerson,
+                ),
+                endPane: DetailAmountPage(person: selectedPerson),
+              );
+            } else {
+              return PortraitPeoplePage(
+                onPersonDeleted: (Person person) => personDeleted(person),
+                onTappedPerson: (Person? person) => onPersonTap(person),
+                scrollController: scrollController,
+                selectedPerson: selectedPerson,
+              );
+            }
+          },
+        ),
+      ),
     );
   }
 
@@ -68,5 +88,10 @@ class HomeState extends State<Home> {
         selectedPerson = null;
       });
     }
+  }
+
+  void jumpToTop(ScrollController scrollController) {
+    scrollController.animateTo(0, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+    onPersonTap(null);
   }
 }

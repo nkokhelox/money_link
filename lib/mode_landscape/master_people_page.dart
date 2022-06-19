@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../component/add_form.dart';
-import '../component/settings.dart';
 import '../model/data.dart';
 import '../model/person.dart';
 import '../model/tile.dart';
@@ -9,14 +7,11 @@ import 'master_person_widget.dart';
 
 class MasterPeoplePage extends StatefulWidget {
   final Person? selectedPerson;
+  final ScrollController scrollController;
   final void Function(Person?) onTappedPerson;
   final void Function(Person) onPersonDeleted;
 
-  const MasterPeoplePage(
-      {Key? key,
-      required this.onTappedPerson,
-      required this.onPersonDeleted,
-      this.selectedPerson})
+  const MasterPeoplePage({Key? key, required this.onTappedPerson, required this.onPersonDeleted, required this.scrollController, this.selectedPerson})
       : super(key: key);
 
   @override
@@ -30,27 +25,11 @@ class _State extends State<MasterPeoplePage> {
 
   @override
   Widget build(BuildContext context) {
-    final ScrollController scrollController = ScrollController();
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onPanDown: (_) {
-        FocusScope.of(context).requestFocus(FocusNode());
-      },
-      child: Scaffold(
-        drawer: const SettingsDrawer(),
-        appBar: AppBar(
-          centerTitle: true,
-          title: InkWell(
-            onTap: () => jumpToTop(scrollController),
-            child: const Text("PEOPLE", style: TextStyle(letterSpacing: 4)),
-          ),
-        ),
-        body: ListView(
-          padding: EdgeInsets.zero,
-          controller: scrollController,
-          children: getListItems(context),
-        ),
-      ),
+    return ListView(
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      physics: const BouncingScrollPhysics(),
+      controller: widget.scrollController,
+      children: getListItems(context),
     );
   }
 
@@ -71,10 +50,7 @@ class _State extends State<MasterPeoplePage> {
             suffixIcon: searchQuery.isEmpty
                 ? const Icon(Icons.search)
                 : IconButton(
-                    onPressed: () {
-                      _editTextController.clear();
-                      onTextChanged("");
-                    },
+                    onPressed: clearSearch,
                     icon: const Icon(Icons.clear),
                   ),
             hintStyle: const TextStyle(color: Colors.blueGrey),
@@ -95,27 +71,17 @@ class _State extends State<MasterPeoplePage> {
           child: ListTile(
             title: Text(searchQuery),
             contentPadding: const EdgeInsets.only(left: 16),
-            trailing: IconButton(
-                icon: const Icon(Icons.add_circle_outline),
-                onPressed: addPerson),
-            subtitle: const Text("Tap + to add this person",
-                style: TextStyle(color: Colors.blueGrey)),
+            trailing: IconButton(icon: const Icon(Icons.add_circle_outline), onPressed: addPerson),
+            subtitle: const Text("Tap + to add this person", style: TextStyle(color: Colors.blueGrey)),
           ),
         ),
       ];
     } else if (searchResult.isNotEmpty) {
-      return searchResult
-          .map((p) => buildTile(EntityTile.personTile(p)))
-          .toList();
+      return searchResult.map((p) => buildTile(EntityTile.personTile(p))).toList();
     }
-    final List<Tile> otherPeopleTiles = Data.people
-        .where((p) => p.total() != 0)
-        .map((p) => EntityTile.personTile(p))
-        .toList();
-    final List<Tile> paidUpPeopleTiles = Data.people
-        .where((p) => p.total() == 0)
-        .map((p) => EntityTile.personTile(p))
-        .toList();
+    final List<Tile> otherPeopleTiles = Data.people.where((p) => p.total() != 0).map((p) => EntityTile.personTile(p)).toList();
+
+    final List<Tile> paidUpPeopleTiles = Data.people.where((p) => p.total() == 0).map((p) => EntityTile.personTile(p)).toList();
 
     if (otherPeopleTiles.isEmpty) {
       return paidUpPeopleTiles.map(buildTile).toList();
@@ -124,13 +90,8 @@ class _State extends State<MasterPeoplePage> {
       return otherPeopleTiles.map(buildTile).toList();
     }
 
-    final paidUpExpansionTile = GroupTile(
-        title: "SETTLED",
-        subtitle: "Everything paid up",
-        innerTiles: paidUpPeopleTiles);
-    final List<Tile> groups = [paidUpExpansionTile]
-        .where((group) => group.innerTiles.isNotEmpty)
-        .toList();
+    final paidUpExpansionTile = GroupTile(title: "SETTLED", subtitle: "Everything paid up", innerTiles: paidUpPeopleTiles);
+    final List<Tile> groups = [paidUpExpansionTile].where((group) => group.innerTiles.isNotEmpty).toList();
 
     List<Tile> comboList = <Tile>[];
     comboList.addAll(otherPeopleTiles);
@@ -139,16 +100,15 @@ class _State extends State<MasterPeoplePage> {
     return comboList.map(buildTile).toList();
   }
 
-  Widget buildTile(Tile tile, {double subTileIndentation = 10.0}) {
+  Widget buildTile(Tile tile, {double subTileIndentation = 10}) {
     if (tile is EntityTile<Person>) {
       final isSelectedPerson = tile.object.id == widget.selectedPerson?.id;
       return MasterPersonWidget(
-        person: tile.object,
-        isSelected: isSelectedPerson,
-        onTappedPerson: widget.onTappedPerson,
-        onPersonDeleted: widget.onPersonDeleted,
-        titleLeftPad: subTileIndentation,
-      );
+          person: tile.object,
+          isSelected: isSelectedPerson,
+          onTappedPerson: widget.onTappedPerson,
+          onPersonDeleted: widget.onPersonDeleted,
+          titleLeftPad: subTileIndentation);
     }
 
     final group = tile as GroupTile;
@@ -172,7 +132,7 @@ class _State extends State<MasterPeoplePage> {
         children: group.innerTiles
             .map((subTile) => buildTile(
                   subTile,
-                  subTileIndentation: (2 * subTileIndentation),
+                  subTileIndentation: 2 * subTileIndentation,
                 ))
             .toList(),
       ),
@@ -182,8 +142,7 @@ class _State extends State<MasterPeoplePage> {
   void onTextChanged(String value) {
     setState(() {
       searchQuery = value;
-      searchResult =
-          Data.people.where((p) => p.matchQuery(LenientMatch(value))).toList();
+      searchResult = Data.people.where((p) => p.matchQuery(LenientMatch(value))).toList();
     });
   }
 
@@ -202,37 +161,8 @@ class _State extends State<MasterPeoplePage> {
     onTextChanged(temp);
   }
 
-  void jumpToTop(ScrollController scrollController) {
-    widget.onTappedPerson(null);
-    scrollController.animateTo(0,
-        duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
-  }
-
-  void addAmount(BuildContext context, Person person) async {
-    showBottomSheet(
-      elevation: 3,
-      context: context,
-      enableDrag: true,
-      builder: (context) => AddAmountForm(person: person),
-    );
-  }
-
-  String? valueValidator(String? value) {
-    try {
-      if (value != null && value.isNotEmpty) {
-        double.parse(value);
-        return null;
-      }
-      throw Exception("not a number");
-    } catch (_) {
-      return "Enter a valid number";
-    }
-  }
-
-  String? noteValidator(String? value) {
-    if (value == null || value.isEmpty) {
-      return "Enter some text as a note";
-    }
-    return null;
+  void clearSearch() {
+    _editTextController.clear();
+    onTextChanged("");
   }
 }
