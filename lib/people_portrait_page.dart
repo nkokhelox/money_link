@@ -12,7 +12,12 @@ class PeoplePortraitPage extends StatefulWidget {
   final void Function(Person?) onTappedPerson;
   final void Function(Person) onPersonDeleted;
 
-  const PeoplePortraitPage({Key? key, required this.onTappedPerson, required this.onPersonDeleted, this.selectedPerson}) : super(key: key);
+  const PeoplePortraitPage(
+      {Key? key,
+      required this.onTappedPerson,
+      required this.onPersonDeleted,
+      this.selectedPerson})
+      : super(key: key);
 
   @override
   State<PeoplePortraitPage> createState() => _State();
@@ -34,7 +39,8 @@ class _State extends State<PeoplePortraitPage> {
       child: Scaffold(
         drawer: const SettingsDrawer(),
         body: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) => SlidableAutoCloseBehavior(
+          builder: (BuildContext context, BoxConstraints constraints) =>
+              SlidableAutoCloseBehavior(
             child: CustomScrollView(
               controller: scrollController,
               physics: const BouncingScrollPhysics(),
@@ -113,24 +119,40 @@ class _State extends State<PeoplePortraitPage> {
           child: ListTile(
             title: Text(searchQuery),
             contentPadding: const EdgeInsets.only(left: 16),
-            trailing: IconButton(icon: const Icon(Icons.add_circle_outline), onPressed: addPerson),
-            subtitle: const Text("Tap + to add this person", style: TextStyle(color: Colors.blueGrey)),
+            trailing: IconButton(
+                icon: const Icon(Icons.add_circle_outline),
+                onPressed: addPerson),
+            subtitle: const Text("Tap + to add this person",
+                style: TextStyle(color: Colors.blueGrey)),
           ),
         ),
       ];
     } else if (searchResult.isNotEmpty) {
-      return searchResult.map((p) => buildTile(EntityTile.personTile(p))).toList();
+      return searchResult
+          .map((p) => buildTile(EntityTile.personTile(p)))
+          .toList();
     } else {
-      final List<Tile> otherPeopleTiles = Data.people.where((p) => p.total() != 0).map((p) => EntityTile.personTile(p)).toList();
-      final List<Tile> paidUpPeopleTiles = Data.people.where((p) => p.total() == 0).map((p) => EntityTile.personTile(p)).toList();
+      final List<Tile> otherPeopleTiles = Data.people
+          .where((p) => p.total() != 0)
+          .map((p) => EntityTile.personTile(p))
+          .toList();
+      final List<Tile> paidUpPeopleTiles = Data.people
+          .where((p) => p.total() == 0)
+          .map((p) => EntityTile.personTile(p))
+          .toList();
 
       if (otherPeopleTiles.isEmpty) {
         return paidUpPeopleTiles.map(buildTile).toList();
       } else if (paidUpPeopleTiles.isEmpty) {
         return otherPeopleTiles.map(buildTile).toList();
       } else {
-        final paidUpExpansionTile = GroupTile(title: "SETTLED", subtitle: "Everything paid up", innerTiles: paidUpPeopleTiles);
-        final List<Tile> groups = [paidUpExpansionTile].where((group) => group.innerTiles.isNotEmpty).toList();
+        final paidUpExpansionTile = GroupTile(
+            title: "SETTLED",
+            subtitle: "Everything paid up",
+            innerTiles: paidUpPeopleTiles);
+        final List<Tile> groups = [paidUpExpansionTile]
+            .where((group) => group.innerTiles.isNotEmpty)
+            .toList();
 
         List<Tile> comboList = <Tile>[];
         comboList.addAll(otherPeopleTiles);
@@ -158,26 +180,37 @@ class _State extends State<PeoplePortraitPage> {
       child: ExpansionTile(
         backgroundColor: Colors.grey[200],
         tilePadding: EdgeInsets.only(left: subTileIndentation),
-        title: Text(group.title, style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2)),
-        subtitle: Text(group.subtitle, style: const TextStyle(color: Colors.blueGrey)),
-        children: group.innerTiles.map((subTile) => buildTile(subTile, subTileIndentation: (2 * subTileIndentation))).toList(),
+        title: Text(group.title,
+            style:
+                const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2)),
+        subtitle: Text(group.subtitle,
+            style: const TextStyle(color: Colors.blueGrey)),
+        children: group.innerTiles
+            .map((subTile) => buildTile(subTile,
+                subTileIndentation: (2 * subTileIndentation)))
+            .toList(),
       ),
     );
   }
 
   void addPerson() {
     Data.people.add(Person(id: 0, fullName: searchQuery));
+    final tempQuery = searchQuery;
+    onTextChanged("");
+    onTextChanged(tempQuery);
   }
 
   void jumpToTop(ScrollController scrollController) {
     widget.onTappedPerson(null);
-    scrollController.animateTo(0, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+    scrollController.animateTo(0,
+        duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
   }
 
   void onTextChanged(String value) {
     setState(() {
       searchQuery = value;
-      searchResult = Data.people.where((p) => p.matchQuery(LenientMatch(value))).toList();
+      searchResult =
+          Data.people.where((p) => p.matchQuery(LenientMatch(value))).toList();
     });
   }
 }

@@ -190,9 +190,9 @@ class _State extends State<PeopleMasterPage> {
 
   void addPerson() {
     Data.people.add(Person(id: 0, fullName: searchQuery));
-    var temp = searchQuery;
+    final tempQuery = searchQuery;
     onTextChanged("");
-    onTextChanged(temp);
+    onTextChanged(tempQuery);
   }
 
   void deletePerson(BuildContext context, Person person) {
