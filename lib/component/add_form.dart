@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:money_link/model/amount.dart';
 import 'package:money_link/model/person.dart';
 
-import 'model/data.dart';
+import '../model/data.dart';
 
 class AddAmountForm extends StatefulWidget {
   const AddAmountForm({Key? key, required this.person}) : super(key: key);
@@ -49,7 +48,8 @@ class AddAmountFormState extends State<AddAmountForm> {
                     validator: valueValidator,
                     controller: _valueFieldController,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
-                    keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
+                    keyboardType: const TextInputType.numberWithOptions(
+                        signed: true, decimal: true),
                     textInputAction: TextInputAction.next,
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(
@@ -84,7 +84,8 @@ class AddAmountFormState extends State<AddAmountForm> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    TextButton(onPressed: onCancel, child: const Text("Cancel")),
+                    TextButton(
+                        onPressed: onCancel, child: const Text("Cancel")),
                     TextButton(onPressed: onPressed, child: const Text("Save")),
                   ],
                 )
@@ -121,10 +122,14 @@ class AddAmountFormState extends State<AddAmountForm> {
 
   void onPressed() {
     if (_formKey.currentState!.validate()) {
-      final amount = Amount(value: double.parse(_valueFieldController.text), note: _noteFieldController.text);
+      final amount = Amount(
+          value: double.parse(_valueFieldController.text),
+          note: _noteFieldController.text);
       Data.amounts.add(amount);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${amount.moneyValue()} saved for ${widget.person.firstName()}')),
+        SnackBar(
+            content: Text(
+                '${amount.moneyValue()} saved for ${widget.person.firstName()}')),
       );
       Navigator.pop(context);
     }

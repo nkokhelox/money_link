@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:money_link/component/person_widget.dart';
 
-import 'component/settings.dart';
-import 'model/data.dart';
-import 'model/person.dart';
-import 'model/tile.dart';
+import '../component/settings.dart';
+import '../model/data.dart';
+import '../model/person.dart';
+import '../model/tile.dart';
+import 'portrait_person_widget.dart';
 
-class PeoplePortraitPage extends StatefulWidget {
+class PortraitPeoplePage extends StatefulWidget {
   final Person? selectedPerson;
   final void Function(Person?) onTappedPerson;
   final void Function(Person) onPersonDeleted;
 
-  const PeoplePortraitPage(
+  const PortraitPeoplePage(
       {Key? key,
       required this.onTappedPerson,
       required this.onPersonDeleted,
@@ -20,10 +20,10 @@ class PeoplePortraitPage extends StatefulWidget {
       : super(key: key);
 
   @override
-  State<PeoplePortraitPage> createState() => _State();
+  State<PortraitPeoplePage> createState() => _State();
 }
 
-class _State extends State<PeoplePortraitPage> {
+class _State extends State<PortraitPeoplePage> {
   final TextEditingController _editTextController = TextEditingController();
   List<Person> searchResult = [];
   String searchQuery = "";
@@ -166,7 +166,7 @@ class _State extends State<PeoplePortraitPage> {
   Widget buildTile(Tile tile, {double subTileIndentation = 5.0}) {
     if (tile is EntityTile<Person>) {
       final isSelectedPerson = tile.object.id == widget.selectedPerson?.id;
-      return PersonExpandableWidget(
+      return PortraitPersonAmountsWidget(
         person: tile.object,
         isSelected: isSelectedPerson,
         onTappedPerson: widget.onTappedPerson,

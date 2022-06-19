@@ -2,17 +2,17 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:money_link/chart.dart';
+import 'package:money_link/component/chart.dart';
 import 'package:money_link/model/person.dart';
 
-import 'component/amount_widget.dart';
-import 'model/amount.dart';
-import 'model/data.dart';
-import 'model/tile.dart';
+import '../component/amount_widget.dart';
+import '../model/amount.dart';
+import '../model/data.dart';
+import '../model/tile.dart';
 
-class AmountDetailPage extends StatelessWidget {
+class DetailAmountPage extends StatelessWidget {
   final Person? person;
-  const AmountDetailPage({Key? key, required this.person}) : super(key: key);
+  const DetailAmountPage({Key? key, required this.person}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -49,15 +49,23 @@ class AmountDetailPage extends StatelessWidget {
         PeopleChart(people: Data.people),
       ];
     }
-    final List<Tile> paidAmounts = amounts.where((a) => a.paidDate != null).map((a) => EntityTile.amountTile(a)).toList();
+    final List<Tile> paidAmounts = amounts
+        .where((a) => a.paidDate != null)
+        .map((a) => EntityTile.amountTile(a))
+        .toList();
     final paidUpExpansionTile = GroupTile(
       title: "PAID AMOUNTS",
       subtitle: "Paid amounts",
       innerTiles: paidAmounts,
     );
 
-    final List<Tile> unpaidAmounts = amounts.where((a) => a.paidDate == null).map((a) => EntityTile.amountTile(a)).toList();
-    final Iterable<Tile> groups = [paidUpExpansionTile].where((group) => group.innerTiles.isNotEmpty).toList();
+    final List<Tile> unpaidAmounts = amounts
+        .where((a) => a.paidDate == null)
+        .map((a) => EntityTile.amountTile(a))
+        .toList();
+    final Iterable<Tile> groups = [paidUpExpansionTile]
+        .where((group) => group.innerTiles.isNotEmpty)
+        .toList();
 
     List<Tile> comboList = <Tile>[];
     comboList.addAll(unpaidAmounts);
@@ -66,9 +74,11 @@ class AmountDetailPage extends StatelessWidget {
     return comboList.map((t) => buildTile(context, t)).toList();
   }
 
-  Widget buildTile(BuildContext context, Tile tile, {double subTileIndentation = 10.0}) {
+  Widget buildTile(BuildContext context, Tile tile,
+      {double subTileIndentation = 10.0}) {
     if (tile is EntityTile<Amount>) {
-      return AmountWidget(amount: tile.object, titleLeftPad: subTileIndentation);
+      return AmountWidget(
+          amount: tile.object, titleLeftPad: subTileIndentation);
     }
 
     final group = tile as GroupTile;
@@ -77,13 +87,19 @@ class AmountDetailPage extends StatelessWidget {
         backgroundColor: Colors.blue[50] ?? Colors.lightBlue,
         tilePadding: EdgeInsets.only(left: subTileIndentation),
         title: Text(group.title),
-        subtitle: Text(group.subtitle, maxLines: 1, style: const TextStyle(color: Colors.blueGrey)),
-        children: (group).innerTiles.map((subTile) => buildTile(context, subTile, subTileIndentation: max(25.0, 2 * subTileIndentation))).toList(),
+        subtitle: Text(group.subtitle,
+            maxLines: 1, style: const TextStyle(color: Colors.blueGrey)),
+        children: (group)
+            .innerTiles
+            .map((subTile) => buildTile(context, subTile,
+                subTileIndentation: max(25.0, 2 * subTileIndentation)))
+            .toList(),
       ),
     );
   }
 
   void jumpToTop(ScrollController scrollController) {
-    scrollController.animateTo(0, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+    scrollController.animateTo(0,
+        duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
   }
 }

@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:money_link/component/person_widget.dart';
 
-import 'add_form.dart';
-import 'component/settings.dart';
-import 'model/data.dart';
-import 'model/person.dart';
-import 'model/tile.dart';
+import '../component/add_form.dart';
+import '../component/settings.dart';
+import '../model/data.dart';
+import '../model/person.dart';
+import '../model/tile.dart';
+import 'master_person_widget.dart';
 
-class PeopleMasterPage extends StatefulWidget {
+class MasterPeoplePage extends StatefulWidget {
   final Person? selectedPerson;
   final void Function(Person?) onTappedPerson;
   final void Function(Person) onPersonDeleted;
 
-  const PeopleMasterPage(
+  const MasterPeoplePage(
       {Key? key,
       required this.onTappedPerson,
       required this.onPersonDeleted,
@@ -20,10 +20,10 @@ class PeopleMasterPage extends StatefulWidget {
       : super(key: key);
 
   @override
-  State<PeopleMasterPage> createState() => _State();
+  State<MasterPeoplePage> createState() => _State();
 }
 
-class _State extends State<PeopleMasterPage> {
+class _State extends State<MasterPeoplePage> {
   final TextEditingController _editTextController = TextEditingController();
   List<Person> searchResult = [];
   String searchQuery = "";
@@ -37,7 +37,7 @@ class _State extends State<PeopleMasterPage> {
         FocusScope.of(context).requestFocus(FocusNode());
       },
       child: Scaffold(
-        drawer: SettingsDrawer(),
+        drawer: const SettingsDrawer(),
         appBar: AppBar(
           centerTitle: true,
           title: InkWell(
@@ -46,9 +46,8 @@ class _State extends State<PeopleMasterPage> {
           ),
         ),
         body: ListView(
-          primary: false,
-          shrinkWrap: true,
           padding: EdgeInsets.zero,
+          controller: scrollController,
           children: getListItems(context),
         ),
       ),
@@ -143,7 +142,7 @@ class _State extends State<PeopleMasterPage> {
   Widget buildTile(Tile tile, {double subTileIndentation = 10.0}) {
     if (tile is EntityTile<Person>) {
       final isSelectedPerson = tile.object.id == widget.selectedPerson?.id;
-      return PersonMasterWidget(
+      return MasterPersonWidget(
         person: tile.object,
         isSelected: isSelectedPerson,
         onTappedPerson: widget.onTappedPerson,

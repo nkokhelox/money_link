@@ -1,7 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-import 'model/person.dart';
+import '../model/person.dart';
 
 class PeopleChart extends StatelessWidget {
   static var chartColors = const [
@@ -23,7 +23,11 @@ class PeopleChart extends StatelessWidget {
   final List<Person> people;
 
   double getTotalSum() {
-    return people.isEmpty ? 0.0 : people.map((p) => p.total().abs()).reduce((sum, value) => sum + value);
+    return people.isEmpty
+        ? 0.0
+        : people
+            .map((p) => p.total().abs())
+            .reduce((sum, value) => sum + value);
   }
 
   @override
@@ -65,13 +69,15 @@ class PeopleChart extends StatelessWidget {
     );
   }
 
-  List<PieChartSectionData> getSections(BuildContext context, BoxConstraints constraints, double total) {
+  List<PieChartSectionData> getSections(
+      BuildContext context, BoxConstraints constraints, double total) {
     return people
         .asMap()
         .entries
         .map((entry) => PieChartSectionData(
               color: PeopleChart.getColor(entry.key),
-              title: "${entry.value.firstName()} (${percentage(total, entry.value.total())}%)",
+              title:
+                  "${entry.value.firstName()} (${percentage(total, entry.value.total())}%)",
               value: entry.value.total().abs(),
               radius: constraints.maxWidth / 5,
             ))
