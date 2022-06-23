@@ -1,21 +1,18 @@
 import 'package:money_link/model/amount.dart';
+import 'package:money_link/model/base_model.dart';
 import 'package:objectbox/objectbox.dart';
 
-import 'base_model.dart';
-
 @Entity()
-class Person extends Model {
+class Person extends BaseModel {
   @Id()
-  final int id;
-  final String fullName;
-  final DateTime created = DateTime.now();
-  late final List<String> names;
-  Person({this.id = 0, required this.fullName}) : super(objectId: id) {
-    names = fullName.split(" ").toList(growable: false);
-  }
+  int id;
+  String fullName;
+  DateTime created = DateTime.now();
 
-  @Backlink('amount')
+  @Backlink('person')
   final amounts = ToMany<Amount>();
+
+  Person({this.id = 0, this.fullName = ""}) : super(id);
 
   double total() {
     return amounts.fold(0, (sum, amount) => sum + amount.value);
@@ -25,8 +22,9 @@ class Person extends Model {
     return "R ${total()}";
   }
 
-  String firstName() => names.first;
-  String lastName() => names.last;
+  List<String> names() => fullName.split(" ");
+  String firstName() => names().first;
+  String lastName() => names().last;
 
   bool matchQuery(NameSearch search) {
     var query = search.query;
@@ -35,7 +33,7 @@ class Person extends Model {
     }
     if (search is LenientMatch) {
       var queryParts = query.split(" ");
-      var matches = queryParts.map((q) => names.where((n) => n.toLowerCase().startsWith(q.toLowerCase())).isNotEmpty);
+      var matches = queryParts.map((q) => names().where((n) => n.toLowerCase().startsWith(q.toLowerCase())).isNotEmpty);
       return matches.every((e) => e);
     }
 

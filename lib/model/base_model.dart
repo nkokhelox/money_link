@@ -1,5 +1,4 @@
-abstract class Model {
+class BaseModel {
   final int objectId;
-
-  Model({required this.objectId});
+  BaseModel(this.objectId);
 }

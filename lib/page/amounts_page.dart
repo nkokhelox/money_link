@@ -1,30 +1,23 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:money_link/component/chart.dart';
 import 'package:money_link/model/person.dart';
 
-import '../component/amount_widget.dart';
-import '../model/amount.dart';
-import '../model/data.dart';
-import '../model/tile.dart';
-
-class DetailAmountPage extends StatelessWidget {
+class AmountsPage extends StatelessWidget {
   final Person? person;
-  const DetailAmountPage({Key? key, required this.person}) : super(key: key);
+  const AmountsPage({Key? key, required this.person}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return SlidableAutoCloseBehavior(
-      child: ListView(
-        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        physics: const BouncingScrollPhysics(),
-        children: getListItems(context),
-      ),
-    );
+    return Container();
+    // return SlidableAutoCloseBehavior(
+    //   child: ListView(
+    //     keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+    //     physics: const BouncingScrollPhysics(),
+    //     children: getListItems(context),
+    //   ),
+    // );
   }
 
+  /*
   List<Widget> getListItems(BuildContext context) {
     List<Amount> amounts = Data.amounts;
     if (person == null) {
@@ -49,6 +42,7 @@ class DetailAmountPage extends StatelessWidget {
     return comboList.map((t) => buildTile(context, t)).toList();
   }
 
+
   Widget buildTile(BuildContext context, Tile tile, {double subTileIndentation = 10.0}) {
     if (tile is EntityTile<Amount>) {
       return AmountWidget(amount: tile.object, titleLeftPad: subTileIndentation);
@@ -65,4 +59,5 @@ class DetailAmountPage extends StatelessWidget {
       ),
     );
   }
+  */
 }

@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
 
-import '../model/data.dart';
+import '../component/person_widget.dart';
 import '../model/person.dart';
 import '../model/tile.dart';
-import 'master_person_widget.dart';
 
-class MasterPeoplePage extends StatefulWidget {
+class PeoplePage extends StatefulWidget {
   final Person? selectedPerson;
   final ScrollController scrollController;
   final void Function(Person?) onTappedPerson;
   final void Function(Person) onPersonDeleted;
 
-  const MasterPeoplePage({Key? key, required this.onTappedPerson, required this.onPersonDeleted, required this.scrollController, this.selectedPerson})
+  const PeoplePage({Key? key, required this.onTappedPerson, required this.onPersonDeleted, required this.scrollController, this.selectedPerson})
       : super(key: key);
 
   @override
-  State<MasterPeoplePage> createState() => _State();
+  State<PeoplePage> createState() => _State();
 }
 
-class _State extends State<MasterPeoplePage> {
+class _State extends State<PeoplePage> {
   final TextEditingController _editTextController = TextEditingController();
   List<Person> searchResult = [];
   String searchQuery = "";
@@ -79,9 +78,9 @@ class _State extends State<MasterPeoplePage> {
     } else if (searchResult.isNotEmpty) {
       return searchResult.map((p) => buildTile(EntityTile.personTile(p))).toList();
     }
-    final List<Tile> otherPeopleTiles = Data.people.where((p) => p.total() != 0).map((p) => EntityTile.personTile(p)).toList();
+    final List<Tile> otherPeopleTiles = [].where((p) => p.total() != 0).map((p) => EntityTile.personTile(p)).toList();
 
-    final List<Tile> paidUpPeopleTiles = Data.people.where((p) => p.total() == 0).map((p) => EntityTile.personTile(p)).toList();
+    final List<Tile> paidUpPeopleTiles = [].where((p) => p.total() == 0).map((p) => EntityTile.personTile(p)).toList();
 
     if (otherPeopleTiles.isEmpty) {
       return paidUpPeopleTiles.map(buildTile).toList();
@@ -103,7 +102,7 @@ class _State extends State<MasterPeoplePage> {
   Widget buildTile(Tile tile, {double subTileIndentation = 10}) {
     if (tile is EntityTile<Person>) {
       final isSelectedPerson = tile.object.id == widget.selectedPerson?.id;
-      return MasterPersonWidget(
+      return PersonWidget(
           person: tile.object,
           isSelected: isSelectedPerson,
           onTappedPerson: widget.onTappedPerson,
@@ -142,19 +141,19 @@ class _State extends State<MasterPeoplePage> {
   void onTextChanged(String value) {
     setState(() {
       searchQuery = value;
-      searchResult = Data.people.where((p) => p.matchQuery(LenientMatch(value))).toList();
+      // searchResult = Data.people.where((p) => p.matchQuery(LenientMatch(value))).toList();
     });
   }
 
   void addPerson() {
-    Data.people.add(Person(id: 0, fullName: searchQuery));
+//TODO add person
     final tempQuery = searchQuery;
     onTextChanged("");
     onTextChanged(tempQuery);
   }
 
   void deletePerson(BuildContext context, Person person) {
-    Data.people.removeWhere((p) => p.id == person.id);
+//TODO delete person
     widget.onPersonDeleted(person);
     var temp = searchQuery;
     onTextChanged("");

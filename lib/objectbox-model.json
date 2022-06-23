@@ -1,0 +1,111 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:8250017738086859506",
+      "lastPropertyId": "5:433691814245594655",
+      "name": "Amount",
+      "properties": [
+        {
+          "id": "1:3509812526544438449",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:3258251340532894277",
+          "name": "value",
+          "type": 8
+        },
+        {
+          "id": "3:7903424662232104815",
+          "name": "note",
+          "type": 9
+        },
+        {
+          "id": "4:3183936346691213254",
+          "name": "paidDate",
+          "type": 10
+        },
+        {
+          "id": "5:433691814245594655",
+          "name": "personId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "1:6644197024539929236",
+          "relationTarget": "Person"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "2:7207699740264139165",
+      "lastPropertyId": "4:7908747573947796326",
+      "name": "Payment",
+      "properties": [
+        {
+          "id": "1:2779498617785120771",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:780701401572441129",
+          "name": "value",
+          "type": 8
+        },
+        {
+          "id": "3:6881184430813838517",
+          "name": "note",
+          "type": 9
+        },
+        {
+          "id": "4:7908747573947796326",
+          "name": "amountId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "2:3069732693608901678",
+          "relationTarget": "Amount"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "3:5911522437330355728",
+      "lastPropertyId": "3:5149041757629894175",
+      "name": "Person",
+      "properties": [
+        {
+          "id": "1:355764905105597530",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:5542552605145096351",
+          "name": "fullName",
+          "type": 9
+        },
+        {
+          "id": "3:5149041757629894175",
+          "name": "created",
+          "type": 10
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "lastEntityId": "3:5911522437330355728",
+  "lastIndexId": "2:3069732693608901678",
+  "lastRelationId": "0:0",
+  "lastSequenceId": "0:0",
+  "modelVersion": 5,
+  "modelVersionParserMinimum": 5,
+  "retiredEntityUids": [],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [],
+  "retiredRelationUids": [],
+  "version": 1
+}

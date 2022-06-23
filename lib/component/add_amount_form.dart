@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../model/amount.dart';
-import '../model/data.dart';
 import '../model/person.dart';
 
 class AddAmountForm extends StatefulWidget {
@@ -105,7 +104,7 @@ class AddAmountFormState extends State<AddAmountForm> {
   void onSave() {
     if (_formKey.currentState!.validate()) {
       final amount = Amount(value: double.parse(_valueFieldController.text), note: _noteFieldController.text);
-      Data.amounts.add(amount);
+      // TODO: 2 - add amount to the DB
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('${amount.moneyValue()} saved for ${widget.person.firstName()}')),
       );

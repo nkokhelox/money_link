@@ -1,24 +1,19 @@
-import 'package:money_link/model/payment.dart';
-import 'package:money_link/model/person.dart';
 import 'package:objectbox/objectbox.dart';
 
+import 'amount.dart';
 import 'base_model.dart';
 
 @Entity()
-class Amount extends BaseModel {
+class Payment extends BaseModel {
   @Id()
   int id;
   double value;
   String note;
-  DateTime? paidDate;
   final DateTime created = DateTime.now();
 
-  Amount({this.id = 0, this.value = 0, this.note = ""}) : super(id);
+  Payment({this.id = 0, this.value = 0, this.note = ""}) : super(id);
 
-  final person = ToOne<Person>();
-
-  @Backlink('amount')
-  final payments = ToMany<Payment>();
+  final amount = ToOne<Amount>();
 
   bool matchQuery(String query) {
     return note.contains(query) || value.toString().contains(query);
@@ -34,7 +29,6 @@ class Amount extends BaseModel {
     return """
     Value: ${moneyValue()}
     Created: $created
-    ${paidDate == null ? "Not paid" : "Paid: $paidDate"}
     Note: $note
     """;
   }

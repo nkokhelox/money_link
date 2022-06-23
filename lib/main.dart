@@ -2,14 +2,17 @@
 /// Licensed under the MIT License.
 import 'package:dual_screen/dual_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:money_link/mode_landscape/detail_amounts_page.dart';
-import 'package:money_link/mode_landscape/master_people_page.dart';
-import 'package:money_link/mode_portrait/portrait_people_page.dart';
 import 'package:money_link/model/person.dart';
 
+import 'component/portrait_only_route.dart';
 import 'component/settings.dart';
+import 'objectbox.dart';
+import 'page/amounts_page.dart';
+import 'page/people_page.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await ObjectBox.create();
   runApp(const MainApp());
 }
 
@@ -39,47 +42,41 @@ class HomeState extends State<Home> {
       drawer: const SettingsDrawer(),
       appBar: AppBar(
         title: InkWell(
-          onLongPress: () => jumpToTop(scrollController),
+          onLongPress: () => jumpToTop(
+            scrollController,
+          ),
           child: const Text("PEOPLE", style: TextStyle(letterSpacing: 4)),
         ),
       ),
-      body: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onPanDown: (_) {
-          FocusScope.of(context).requestFocus(FocusNode());
+      body: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          final isDualPane = constraints.maxWidth > 550;
+          return TwoPane(
+            paneProportion: 0.45,
+            panePriority: isDualPane ? TwoPanePriority.both : TwoPanePriority.start,
+            startPane: PeoplePage(
+              onPersonDeleted: (Person person) => personDeleted(person),
+              onTappedPerson: (Person? person) => onPersonTap(person, isDualPane),
+              scrollController: scrollController,
+              selectedPerson: selectedPerson,
+            ),
+            endPane: AmountsPage(person: selectedPerson),
+          );
         },
-        child: OrientationBuilder(
-          builder: (context, orientation) {
-            if (orientation == Orientation.landscape || MediaQuery.of(context).size.width > 540) {
-              return TwoPane(
-                paneProportion: 0.45,
-                panePriority: TwoPanePriority.both,
-                startPane: MasterPeoplePage(
-                  onPersonDeleted: (Person person) => personDeleted(person),
-                  onTappedPerson: (Person? person) => onPersonTap(person),
-                  scrollController: scrollController,
-                  selectedPerson: selectedPerson,
-                ),
-                endPane: DetailAmountPage(person: selectedPerson),
-              );
-            } else {
-              return PortraitPeoplePage(
-                onPersonDeleted: (Person person) => personDeleted(person),
-                onTappedPerson: (Person? person) => onPersonTap(person),
-                scrollController: scrollController,
-                selectedPerson: selectedPerson,
-              );
-            }
-          },
-        ),
       ),
     );
   }
 
-  void onPersonTap(Person? person) {
+  void onPersonTap(Person? person, bool isDualPane) {
     setState(() {
       selectedPerson = person;
     });
+    if (!isDualPane && person != null) {
+      Navigator.push(
+        context,
+        PortraitOnlyRoute(builder: (context) => AmountsPage(person: person)),
+      );
+    }
   }
 
   void personDeleted(Person person) {
@@ -92,6 +89,8 @@ class HomeState extends State<Home> {
 
   void jumpToTop(ScrollController scrollController) {
     scrollController.animateTo(0, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
-    onPersonTap(null);
+    setState(() {
+      selectedPerson = null;
+    });
   }
 }

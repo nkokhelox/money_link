@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../model/amount.dart';
-import '../model/data.dart';
 
 class AmountWidget extends StatelessWidget {
   final Amount amount;
@@ -13,7 +12,7 @@ class AmountWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: Slidable(
-        key: ValueKey(amount.objectId),
+        key: ValueKey(amount.id),
         closeOnScroll: true,
         groupTag: 'amount',
         startActionPane: ActionPane(
@@ -59,12 +58,11 @@ class AmountWidget extends StatelessWidget {
   }
 
   void deleteAmount(Amount amount) {
-    Data.amounts.remove(amount);
+    // TODO: delete amount
   }
 
   void togglePaidStatus(Amount amount) {
-    Data.amounts.remove(amount);
     amount.paidDate = amount.paidDate == null ? DateTime.now() : null;
-    Data.amounts.add(amount);
+    // TODO: Save amount
   }
 }

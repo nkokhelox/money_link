@@ -1,10 +1,9 @@
 import 'package:money_link/model/amount.dart';
+import 'package:money_link/model/base_model.dart';
 import 'package:money_link/model/person.dart';
 
-import 'base_model.dart';
-
-class Group extends Model {
-  Group({required super.objectId});
+class Group extends BaseModel {
+  Group(super.objectId);
 }
 
 abstract class Tile {}
@@ -16,7 +15,7 @@ class GroupTile extends Tile {
   GroupTile({required this.title, required this.subtitle, required this.innerTiles});
 }
 
-class EntityTile<T extends Model> extends Tile {
+class EntityTile<T extends BaseModel> extends Tile {
   final T object;
 
   EntityTile({required this.object});
