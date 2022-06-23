@@ -7,7 +7,7 @@ class AmountsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Container(color: Colors.pink);
     // return SlidableAutoCloseBehavior(
     //   child: ListView(
     //     keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,

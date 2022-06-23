@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:money_link/objectbox.dart';
 
 import '../component/person_widget.dart';
 import '../model/person.dart';
 import '../model/tile.dart';
+import '../objectbox.g.dart';
 
 class PeoplePage extends StatefulWidget {
   final Person? selectedPerson;
@@ -19,20 +21,37 @@ class PeoplePage extends StatefulWidget {
 
 class _State extends State<PeoplePage> {
   final TextEditingController _editTextController = TextEditingController();
-  List<Person> searchResult = [];
-  String searchQuery = "";
+  String _searchTerm = "";
+
+  final _peopleBox = ObjectBox.store.box<Person>();
+  late Stream<List<Person>> _peopleStream;
+
+  @override
+  void initState() {
+    super.initState();
+    _clearSearch();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-      physics: const BouncingScrollPhysics(),
-      controller: widget.scrollController,
-      children: getListItems(context),
-    );
+    return StreamBuilder<List<Person>>(
+        initialData: [],
+        stream: _peopleStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return ListView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              physics: const BouncingScrollPhysics(),
+              controller: widget.scrollController,
+              children: getListItems(context, snapshot.data ?? <Person>[]),
+            );
+          }
+
+          return ErrorWidget(snapshot.error ?? "Something went wrong :(");
+        });
   }
 
-  List<Widget> getListItems(BuildContext context) {
+  List<Widget> getListItems(BuildContext context, List<Person> people) {
     final content = <Widget>[];
     content.add(
       Card(
@@ -41,15 +60,15 @@ class _State extends State<PeoplePage> {
           textCapitalization: TextCapitalization.words,
           textInputAction: TextInputAction.search,
           controller: _editTextController,
-          onChanged: onTextChanged,
+          onChanged: _onSearchChanged,
           decoration: InputDecoration(
             border: const OutlineInputBorder(
               borderSide: BorderSide.none,
             ),
-            suffixIcon: searchQuery.isEmpty
+            suffixIcon: _searchTerm.isEmpty
                 ? const Icon(Icons.search)
                 : IconButton(
-                    onPressed: clearSearch,
+                    onPressed: _clearSearch,
                     icon: const Icon(Icons.clear),
                   ),
             hintStyle: const TextStyle(color: Colors.blueGrey),
@@ -59,28 +78,28 @@ class _State extends State<PeoplePage> {
       ),
     );
 
-    content.addAll(peopleCards(context));
+    content.addAll(peopleCards(context, people));
     return content;
   }
 
-  List<Widget> peopleCards(BuildContext context) {
-    if (searchResult.isEmpty && searchQuery.isNotEmpty) {
+  List<Widget> peopleCards(BuildContext context, List<Person> people) {
+    if (people.isEmpty && _searchTerm.isNotEmpty) {
       return [
         Card(
           child: ListTile(
-            title: Text(searchQuery),
+            title: Text(_searchTerm),
             contentPadding: const EdgeInsets.only(left: 16),
-            trailing: IconButton(icon: const Icon(Icons.add_circle_outline), onPressed: addPerson),
+            trailing: IconButton(icon: const Icon(Icons.add_circle_outline), onPressed: _addPerson),
             subtitle: const Text("Tap + to add this person", style: TextStyle(color: Colors.blueGrey)),
           ),
         ),
       ];
-    } else if (searchResult.isNotEmpty) {
-      return searchResult.map((p) => buildTile(EntityTile.personTile(p))).toList();
+    } else if (people.isNotEmpty && _searchTerm.isNotEmpty) {
+      return people.map((p) => buildTile(EntityTile.personTile(p))).toList();
     }
-    final List<Tile> otherPeopleTiles = [].where((p) => p.total() != 0).map((p) => EntityTile.personTile(p)).toList();
+    final List<Tile> otherPeopleTiles = people.where((p) => p.total() != 0).map((p) => EntityTile.personTile(p)).toList();
 
-    final List<Tile> paidUpPeopleTiles = [].where((p) => p.total() == 0).map((p) => EntityTile.personTile(p)).toList();
+    final List<Tile> paidUpPeopleTiles = people.where((p) => p.total() == 0).map((p) => EntityTile.personTile(p)).toList();
 
     if (otherPeopleTiles.isEmpty) {
       return paidUpPeopleTiles.map(buildTile).toList();
@@ -138,30 +157,23 @@ class _State extends State<PeoplePage> {
     );
   }
 
-  void onTextChanged(String value) {
+  void _onSearchChanged(String value) {
     setState(() {
-      searchQuery = value;
-      // searchResult = Data.people.where((p) => p.matchQuery(LenientMatch(value))).toList();
+      _searchTerm = value;
+      if (_searchTerm.isEmpty) {
+        _peopleStream = _peopleBox.query().watch(triggerImmediately: true).map((q) => q.find());
+      } else {
+        _peopleStream = _peopleBox.query(Person_.fullName.startsWith(_searchTerm)).watch(triggerImmediately: true).map((q) => q.find());
+      }
     });
   }
 
-  void addPerson() {
-//TODO add person
-    final tempQuery = searchQuery;
-    onTextChanged("");
-    onTextChanged(tempQuery);
+  void _addPerson() {
+    _peopleBox.put(Person(fullName: _searchTerm));
   }
 
-  void deletePerson(BuildContext context, Person person) {
-//TODO delete person
-    widget.onPersonDeleted(person);
-    var temp = searchQuery;
-    onTextChanged("");
-    onTextChanged(temp);
-  }
-
-  void clearSearch() {
+  void _clearSearch() {
     _editTextController.clear();
-    onTextChanged("");
+    _onSearchChanged("");
   }
 }

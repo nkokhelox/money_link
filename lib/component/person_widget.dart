@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:money_link/objectbox.dart';
 
 import '../model/person.dart';
 import 'add_amount_form.dart';
@@ -57,6 +59,7 @@ class PersonWidget extends StatelessWidget {
           ],
         ),
         child: ListTile(
+          trailing: const Icon(CupertinoIcons.chevron_right),
           contentPadding: EdgeInsets.only(left: titleLeftPad),
           title: Text(person.fullName),
           subtitle: Text(person.moneyFormattedTotal(), maxLines: 1, style: const TextStyle(color: Colors.blueGrey)),
@@ -67,7 +70,7 @@ class PersonWidget extends StatelessWidget {
   }
 
   void deletePerson(Person person) {
-    //TODO: 1 - add a person into the DB.
+    ObjectBox.store.box<Person>().remove(person.id);
     onPersonDeleted(person);
   }
 

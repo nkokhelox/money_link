@@ -36,31 +36,41 @@ class HomeState extends State<Home> {
   Person? selectedPerson;
 
   @override
+  void dispose() {
+    super.dispose();
+    ObjectBox.store.close();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final ScrollController scrollController = ScrollController();
-    return Scaffold(
-      drawer: const SettingsDrawer(),
-      appBar: AppBar(
-        title: InkWell(
-          onLongPress: () => jumpToTop(
-            scrollController,
-          ),
-          child: const Text("PEOPLE", style: TextStyle(letterSpacing: 4)),
-        ),
-      ),
-      body: LayoutBuilder(
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
           final isDualPane = constraints.maxWidth > 550;
-          return TwoPane(
-            paneProportion: 0.45,
-            panePriority: isDualPane ? TwoPanePriority.both : TwoPanePriority.start,
-            startPane: PeoplePage(
-              onPersonDeleted: (Person person) => personDeleted(person),
-              onTappedPerson: (Person? person) => onPersonTap(person, isDualPane),
-              scrollController: scrollController,
-              selectedPerson: selectedPerson,
+          return Scaffold(
+            appBar: AppBar(
+              centerTitle: true,
+              title: InkWell(
+                onLongPress: () => jumpToTop(
+                  scrollController,
+                ),
+                child: Text(isDualPane ? "PEOPLE - AMOUNTS" : "PEOPLE", style: TextStyle(letterSpacing: 4)),
+              ),
             ),
-            endPane: AmountsPage(person: selectedPerson),
+            body: TwoPane(
+              paneProportion: 0.45,
+              panePriority: isDualPane ? TwoPanePriority.both : TwoPanePriority.start,
+              startPane: PeoplePage(
+                onPersonDeleted: (Person person) => personDeleted(person),
+                onTappedPerson: (Person? person) => onPersonTap(person, isDualPane),
+                scrollController: scrollController,
+                selectedPerson: selectedPerson,
+              ),
+              endPane: AmountsPage(person: selectedPerson),
+            ),
           );
         },
       ),
