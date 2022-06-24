@@ -30,20 +30,22 @@ class PersonWidget extends StatelessWidget {
         key: ValueKey(person.id),
         closeOnScroll: true,
         groupTag: 'person',
-        startActionPane: ActionPane(
-          motion: const StretchMotion(),
-          dragDismissible: false,
-          children: [
-            SlidableAction(
-              onPressed: (BuildContext context) => deletePerson(person),
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
-              icon: Icons.delete,
-              label: 'Delete',
-              autoClose: true,
-            ),
-          ],
-        ),
+        startActionPane: person.total() != 0.0
+            ? null
+            : ActionPane(
+                motion: const StretchMotion(),
+                dragDismissible: false,
+                children: [
+                  SlidableAction(
+                    onPressed: (BuildContext context) => deletePerson(person),
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    icon: Icons.delete,
+                    label: 'Delete',
+                    autoClose: true,
+                  ),
+                ],
+              ),
         endActionPane: ActionPane(
           motion: const StretchMotion(),
           dragDismissible: false,
