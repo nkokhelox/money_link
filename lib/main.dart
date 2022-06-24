@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:money_link/model/person.dart';
 
 import 'component/portrait_only_route.dart';
-import 'component/settings.dart';
 import 'objectbox.dart';
 import 'page/amounts_page.dart';
 import 'page/people_page.dart';
@@ -33,7 +32,8 @@ class Home extends StatefulWidget {
 }
 
 class HomeState extends State<Home> {
-  Person? selectedPerson;
+  Person? _selectedPerson;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void dispose() {
@@ -43,7 +43,6 @@ class HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    final ScrollController scrollController = ScrollController();
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () => FocusScope.of(context).unfocus(),
@@ -54,9 +53,7 @@ class HomeState extends State<Home> {
             appBar: AppBar(
               centerTitle: true,
               title: InkWell(
-                onLongPress: () => jumpToTop(
-                  scrollController,
-                ),
+                onLongPress: jumpToTop,
                 child: Text(isDualPane ? "PEOPLE - AMOUNTS" : "PEOPLE", style: TextStyle(letterSpacing: 4)),
               ),
             ),
@@ -66,10 +63,10 @@ class HomeState extends State<Home> {
               startPane: PeoplePage(
                 onPersonDeleted: (Person person) => personDeleted(person),
                 onTappedPerson: (Person? person) => onPersonTap(person, isDualPane),
-                scrollController: scrollController,
-                selectedPerson: selectedPerson,
+                scrollController: _scrollController,
+                selectedPerson: _selectedPerson,
               ),
-              endPane: AmountsPage(person: selectedPerson),
+              endPane: AmountsPage(selectedPerson: _selectedPerson, appBarHidden: true),
             ),
           );
         },
@@ -79,28 +76,30 @@ class HomeState extends State<Home> {
 
   void onPersonTap(Person? person, bool isDualPane) {
     setState(() {
-      selectedPerson = person;
+      _selectedPerson = person;
     });
     if (!isDualPane && person != null) {
       Navigator.push(
         context,
-        PortraitOnlyRoute(builder: (context) => AmountsPage(person: person)),
+        PortraitOnlyRoute(
+          builder: (context) => AmountsPage(selectedPerson: person, appBarHidden: false),
+        ),
       );
     }
   }
 
   void personDeleted(Person person) {
-    if (person.id == selectedPerson?.id) {
+    if (person.id == _selectedPerson?.id) {
       setState(() {
-        selectedPerson = null;
+        _selectedPerson = null;
       });
     }
   }
 
-  void jumpToTop(ScrollController scrollController) {
-    scrollController.animateTo(0, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+  void jumpToTop() {
+    _scrollController.animateTo(0, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
     setState(() {
-      selectedPerson = null;
+      _selectedPerson = null;
     });
   }
 }

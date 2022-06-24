@@ -26,30 +26,6 @@ class Person extends BaseModel {
   String firstName() => names().first;
   String lastName() => names().last;
 
-  bool matchQuery(NameSearch search) {
-    var query = search.query;
-    if (query.isEmpty) {
-      return false;
-    }
-    if (search is LenientMatch) {
-      var queryParts = query.split(" ");
-      var matches = queryParts.map((q) => names().where((n) => n.toLowerCase().startsWith(q.toLowerCase())).isNotEmpty);
-      return matches.every((e) => e);
-    }
-
-    return fullName.startsWith(query);
-  }
-}
-
-abstract class NameSearch {
-  String query;
-  NameSearch(this.query);
-}
-
-class StrictMatch extends NameSearch {
-  StrictMatch(query) : super(query);
-}
-
-class LenientMatch extends NameSearch {
-  LenientMatch(query) : super(query);
+  @override
+  String dialogTitle() => firstName();
 }

@@ -4,7 +4,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:money_link/objectbox.dart';
 
 import '../model/person.dart';
-import 'add_amount_form.dart';
+import 'value_form.dart';
 
 class PersonWidget extends StatelessWidget {
   final Person person;
@@ -62,7 +62,7 @@ class PersonWidget extends StatelessWidget {
           trailing: const Icon(CupertinoIcons.chevron_right),
           contentPadding: EdgeInsets.only(left: titleLeftPad),
           title: Text(person.fullName),
-          subtitle: Text(person.moneyFormattedTotal(), maxLines: 1, style: const TextStyle(color: Colors.blueGrey)),
+          subtitle: Text(person.moneyFormattedTotal(), maxLines: 1, style: const TextStyle(color: Colors.blueGrey, fontSize: 10)),
           onTap: () => onTappedPerson(person),
         ),
       ),
@@ -75,9 +75,6 @@ class PersonWidget extends StatelessWidget {
   }
 
   void addAmount(BuildContext context, Person person) async {
-    showDialog(
-      context: context,
-      builder: (context) => AddAmountForm(person: person),
-    );
+    showDialog(context: context, builder: (context) => ValueForm(model: person));
   }
 }

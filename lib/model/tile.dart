@@ -1,9 +1,13 @@
 import 'package:money_link/model/amount.dart';
 import 'package:money_link/model/base_model.dart';
+import 'package:money_link/model/payment.dart';
 import 'package:money_link/model/person.dart';
 
 class Group extends BaseModel {
   Group(super.objectId);
+
+  @override
+  String dialogTitle() => "Group($objectId)";
 }
 
 abstract class Tile {}
@@ -23,4 +27,6 @@ class EntityTile<T extends BaseModel> extends Tile {
   static EntityTile<Person> personTile(Person person) => EntityTile(object: person);
 
   static EntityTile<Amount> amountTile(Amount amount) => EntityTile(object: amount);
+
+  static EntityTile<Payment> paymentTile(Payment payment) => EntityTile(object: payment);
 }

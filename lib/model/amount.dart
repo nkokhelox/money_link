@@ -20,22 +20,29 @@ class Amount extends BaseModel {
   @Backlink('amount')
   final payments = ToMany<Payment>();
 
-  bool matchQuery(String query) {
-    return note.contains(query) || value.toString().contains(query);
-  }
-
   String moneyValue() => "R $value";
 
   highlight() {
-    return "$created - $note";
+    if (value == difference()) {
+      return "$created - $note";
+    }
+    return "Balance: ${moneyBalance()} - $note";
   }
 
   details() {
     return """
     Value: ${moneyValue()}
+    Balance: ${moneyBalance()}
     Created: $created
     ${paidDate == null ? "Not paid" : "Paid: $paidDate"}
     Note: $note
     """;
   }
+
+  @override
+  String dialogTitle() => "Amount ${moneyValue()}";
+
+  double difference() => value - payments.fold(0.0, (sum, payment) => sum + payment.value);
+
+  String moneyBalance() => "R ${difference()}";
 }

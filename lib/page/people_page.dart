@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:money_link/objectbox.dart';
 
 import '../component/person_widget.dart';
+import '../component/search_field.dart';
 import '../model/person.dart';
 import '../model/tile.dart';
 import '../objectbox.g.dart';
@@ -20,113 +22,100 @@ class PeoplePage extends StatefulWidget {
 }
 
 class _State extends State<PeoplePage> {
-  final TextEditingController _editTextController = TextEditingController();
-  String _searchTerm = "";
-
+  final TextEditingController _searchFieldController = TextEditingController();
   final _peopleBox = ObjectBox.store.box<Person>();
   late Stream<List<Person>> _peopleStream;
 
   @override
   void initState() {
     super.initState();
-    _clearSearch();
+    _onSearchChanged();
   }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<Person>>(
-        initialData: [],
-        stream: _peopleStream,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return ListView(
+      initialData: [],
+      stream: _peopleStream,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return SlidableAutoCloseBehavior(
+            child: ListView(
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               physics: const BouncingScrollPhysics(),
               controller: widget.scrollController,
-              children: getListItems(context, snapshot.data ?? <Person>[]),
-            );
-          }
+              children: _getPersonListItems(context, snapshot.data ?? <Person>[]),
+            ),
+          );
+        }
 
-          return ErrorWidget(snapshot.error ?? "Something went wrong :(");
-        });
+        return ErrorWidget(snapshot.error ?? "Something went wrong :(");
+      },
+    );
   }
 
-  List<Widget> getListItems(BuildContext context, List<Person> people) {
+  List<Widget> _getPersonListItems(BuildContext context, List<Person> people) {
     final content = <Widget>[];
     content.add(
-      Card(
-        child: TextField(
-          keyboardType: TextInputType.name,
-          textCapitalization: TextCapitalization.words,
-          textInputAction: TextInputAction.search,
-          controller: _editTextController,
-          onChanged: _onSearchChanged,
-          decoration: InputDecoration(
-            border: const OutlineInputBorder(
-              borderSide: BorderSide.none,
-            ),
-            suffixIcon: _searchTerm.isEmpty
-                ? const Icon(Icons.search)
-                : IconButton(
-                    onPressed: _clearSearch,
-                    icon: const Icon(Icons.clear),
-                  ),
-            hintStyle: const TextStyle(color: Colors.blueGrey),
-            hintText: 'Find or Add a person',
-          ),
-        ),
+      SearchField(
+        hint: 'Find or Add a person',
+        keyboardType: TextInputType.name,
+        onSearchChanged: _onSearchChanged,
+        editTextController: _searchFieldController,
+        textCapitalization: TextCapitalization.words,
       ),
     );
 
-    content.addAll(peopleCards(context, people));
+    content.addAll(_peopleCards(context, people));
     return content;
   }
 
-  List<Widget> peopleCards(BuildContext context, List<Person> people) {
-    if (people.isEmpty && _searchTerm.isNotEmpty) {
+  List<Widget> _peopleCards(BuildContext context, List<Person> people) {
+    final searchTerm = _searchFieldController.text;
+    if (people.isEmpty && searchTerm.isNotEmpty) {
       return [
         Card(
           child: ListTile(
-            title: Text(_searchTerm),
+            title: Text(searchTerm),
             contentPadding: const EdgeInsets.only(left: 16),
             trailing: IconButton(icon: const Icon(Icons.add_circle_outline), onPressed: _addPerson),
             subtitle: const Text("Tap + to add this person", style: TextStyle(color: Colors.blueGrey)),
           ),
         ),
       ];
-    } else if (people.isNotEmpty && _searchTerm.isNotEmpty) {
-      return people.map((p) => buildTile(EntityTile.personTile(p))).toList();
+    } else if (people.isNotEmpty && searchTerm.isNotEmpty) {
+      return people.map((p) => _buildTile(EntityTile.personTile(p))).toList();
     }
     final List<Tile> otherPeopleTiles = people.where((p) => p.total() != 0).map((p) => EntityTile.personTile(p)).toList();
 
     final List<Tile> paidUpPeopleTiles = people.where((p) => p.total() == 0).map((p) => EntityTile.personTile(p)).toList();
 
     if (otherPeopleTiles.isEmpty) {
-      return paidUpPeopleTiles.map(buildTile).toList();
+      return paidUpPeopleTiles.map(_buildTile).toList();
     }
     if (paidUpPeopleTiles.isEmpty) {
-      return otherPeopleTiles.map(buildTile).toList();
+      return otherPeopleTiles.map(_buildTile).toList();
     }
 
-    final paidUpExpansionTile = GroupTile(title: "SETTLED", subtitle: "Everything paid up", innerTiles: paidUpPeopleTiles);
-    final List<Tile> groups = [paidUpExpansionTile].where((group) => group.innerTiles.isNotEmpty).toList();
+    final paidUpExpansionTile = GroupTile(title: "SETTLED PEOPLE", subtitle: "Everything paid up", innerTiles: paidUpPeopleTiles);
 
     List<Tile> comboList = <Tile>[];
     comboList.addAll(otherPeopleTiles);
-    comboList.addAll(groups);
+    comboList.add(paidUpExpansionTile);
 
-    return comboList.map(buildTile).toList();
+    return comboList.map(_buildTile).toList();
   }
 
-  Widget buildTile(Tile tile, {double subTileIndentation = 10}) {
+  Widget _buildTile(Tile tile, {double subTileIndentation = 10}) {
     if (tile is EntityTile<Person>) {
       final isSelectedPerson = tile.object.id == widget.selectedPerson?.id;
       return PersonWidget(
-          person: tile.object,
-          isSelected: isSelectedPerson,
-          onTappedPerson: widget.onTappedPerson,
-          onPersonDeleted: widget.onPersonDeleted,
-          titleLeftPad: subTileIndentation);
+        person: tile.object,
+        isSelected: isSelectedPerson,
+        onTappedPerson: widget.onTappedPerson,
+        onPersonDeleted: widget.onPersonDeleted,
+        titleLeftPad: subTileIndentation,
+      );
     }
 
     final group = tile as GroupTile;
@@ -134,46 +123,25 @@ class _State extends State<PeoplePage> {
       child: ExpansionTile(
         backgroundColor: Colors.grey[200],
         tilePadding: EdgeInsets.only(left: subTileIndentation),
-        title: Text(
-          group.title,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            letterSpacing: 2,
-          ),
-        ),
-        subtitle: Text(
-          group.subtitle,
-          style: const TextStyle(
-            color: Colors.blueGrey,
-          ),
-        ),
-        children: group.innerTiles
-            .map((subTile) => buildTile(
-                  subTile,
-                  subTileIndentation: 2 * subTileIndentation,
-                ))
-            .toList(),
+        title: Text(group.title, style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2)),
+        subtitle: Text(group.subtitle, style: const TextStyle(color: Colors.blueGrey)),
+        children: group.innerTiles.map((subTile) => _buildTile(subTile, subTileIndentation: 2 * subTileIndentation)).toList(),
       ),
     );
   }
 
-  void _onSearchChanged(String value) {
+  void _onSearchChanged() {
     setState(() {
-      _searchTerm = value;
-      if (_searchTerm.isEmpty) {
+      String searchTerm = _searchFieldController.text;
+      if (searchTerm.isEmpty) {
         _peopleStream = _peopleBox.query().watch(triggerImmediately: true).map((q) => q.find());
       } else {
-        _peopleStream = _peopleBox.query(Person_.fullName.startsWith(_searchTerm)).watch(triggerImmediately: true).map((q) => q.find());
+        _peopleStream = _peopleBox.query(Person_.fullName.startsWith(searchTerm)).watch(triggerImmediately: true).map((q) => q.find());
       }
     });
   }
 
   void _addPerson() {
-    _peopleBox.put(Person(fullName: _searchTerm));
-  }
-
-  void _clearSearch() {
-    _editTextController.clear();
-    _onSearchChanged("");
+    _peopleBox.put(Person(fullName: _searchFieldController.text));
   }
 }

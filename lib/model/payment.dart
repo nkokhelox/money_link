@@ -27,9 +27,12 @@ class Payment extends BaseModel {
 
   details() {
     return """
+    Payment for: ${amount.target?.moneyValue()}
     Value: ${moneyValue()}
     Created: $created
     Note: $note
     """;
   }
+
+  String dialogTitle() => "Payment ${moneyValue()}";
 }

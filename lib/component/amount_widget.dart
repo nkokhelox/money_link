@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:money_link/objectbox.dart';
+import 'package:money_link/page/payments_page.dart';
 
 import '../model/amount.dart';
+import 'value_form.dart';
 
 class AmountWidget extends StatelessWidget {
   final Amount amount;
   final double titleLeftPad;
-  const AmountWidget({Key? key, required this.amount, this.titleLeftPad = 10}) : super(key: key);
+  const AmountWidget({super.key, required this.amount, this.titleLeftPad = 10});
 
   @override
   Widget build(BuildContext context) {
@@ -43,26 +46,35 @@ class AmountWidget extends StatelessWidget {
             ),
           ],
         ),
-        child: ExpansionTile(
+        child: ListTile(
           trailing: amount.paidDate != null ? const Icon(Icons.check, color: Colors.green) : const Icon(Icons.info_outline),
-          backgroundColor: amount.value > 0 ? Colors.red[50] ?? Colors.white70 : Colors.green[50] ?? Colors.white70,
-          tilePadding: EdgeInsets.only(left: titleLeftPad, right: 10),
+          contentPadding: EdgeInsets.only(left: titleLeftPad, right: 10),
           title: Text(amount.moneyValue()),
-          subtitle: Text(amount.highlight(), maxLines: 1, style: const TextStyle(color: Colors.blueGrey)),
-          children: [
-            Text(amount.details()),
-          ],
+          subtitle: Text(amount.highlight(), maxLines: 1, style: const TextStyle(color: Colors.blueGrey, fontSize: 10)),
+          onLongPress: () => addPayment(context),
+          onTap: () => showPayments(context),
         ),
       ),
     );
   }
 
   void deleteAmount(Amount amount) {
-    // TODO: delete amount
+    ObjectBox.store.box<Amount>().remove(amount.id);
   }
 
   void togglePaidStatus(Amount amount) {
-    amount.paidDate = amount.paidDate == null ? DateTime.now() : null;
-    // TODO: Save amount
+    amount.paidDate = (amount.paidDate == null) ? DateTime.now() : null;
+    ObjectBox.store.box<Amount>().put(amount);
+  }
+
+  void addPayment(BuildContext context) async {
+    showDialog(
+      context: context,
+      builder: (context) => ValueForm(model: amount),
+    );
+  }
+
+  showPayments(BuildContext context) {
+    showModalBottomSheet(context: context, builder: (_) => PaymentsPage(selectedAmount: amount));
   }
 }

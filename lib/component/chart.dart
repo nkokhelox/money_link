@@ -19,15 +19,10 @@ class PeopleChart extends StatelessWidget {
     return chartColors[index % chartColors.length];
   }
 
-  const PeopleChart({Key? key, required this.people}) : super(key: key);
-  final List<Person> people;
+  final List<Person> people = [];
 
   double getTotalSum() {
-    return people.isEmpty
-        ? 0.0
-        : people
-            .map((p) => p.total().abs())
-            .reduce((sum, value) => sum + value);
+    return people.isEmpty ? 0.0 : people.map((p) => p.total().abs()).reduce((sum, value) => sum + value);
   }
 
   @override
@@ -44,7 +39,7 @@ class PeopleChart extends StatelessWidget {
           style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 16,
-            letterSpacing: 4,
+            letterSpacing: 2,
           ),
         ),
       );
@@ -69,15 +64,13 @@ class PeopleChart extends StatelessWidget {
     );
   }
 
-  List<PieChartSectionData> getSections(
-      BuildContext context, BoxConstraints constraints, double total) {
+  List<PieChartSectionData> getSections(BuildContext context, BoxConstraints constraints, double total) {
     return people
         .asMap()
         .entries
         .map((entry) => PieChartSectionData(
               color: PeopleChart.getColor(entry.key),
-              title:
-                  "${entry.value.firstName()} (${percentage(total, entry.value.total())}%)",
+              title: "${entry.value.firstName()} (${percentage(total, entry.value.total())}%)",
               value: entry.value.total().abs(),
               radius: constraints.maxWidth / 5,
             ))

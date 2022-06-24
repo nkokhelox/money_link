@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:money_link/model/base_model.dart';
+import 'package:money_link/model/person.dart';
+import 'package:money_link/objectbox.dart';
 
 import '../model/amount.dart';
-import '../model/person.dart';
+import '../model/payment.dart';
 
-class AddAmountForm extends StatefulWidget {
-  const AddAmountForm({Key? key, required this.person}) : super(key: key);
-  final Person person;
+class ValueForm extends StatefulWidget {
+  const ValueForm({Key? key, required this.model}) : super(key: key);
+  final BaseModel model;
 
   @override
-  State<AddAmountForm> createState() => AddAmountFormState();
+  State<ValueForm> createState() => ValueFormState();
 }
 
-class AddAmountFormState extends State<AddAmountForm> {
+class ValueFormState extends State<ValueForm> {
   final _formKey = GlobalKey<FormState>();
   final _valueFieldController = TextEditingController();
   final _noteFieldController = TextEditingController();
@@ -22,7 +25,7 @@ class AddAmountFormState extends State<AddAmountForm> {
       reverse: true,
       physics: const BouncingScrollPhysics(),
       child: AlertDialog(
-        title: Text(widget.person.fullName, textAlign: TextAlign.center),
+        title: Text(widget.model.dialogTitle(), textAlign: TextAlign.center),
         content: Form(
           key: _formKey,
           child: Wrap(
@@ -103,11 +106,23 @@ class AddAmountFormState extends State<AddAmountForm> {
 
   void onSave() {
     if (_formKey.currentState!.validate()) {
-      final amount = Amount(value: double.parse(_valueFieldController.text), note: _noteFieldController.text);
-      // TODO: 2 - add amount to the DB
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${amount.moneyValue()} saved for ${widget.person.firstName()}')),
-      );
+      final model = widget.model;
+      final scaffold = ScaffoldMessenger.of(context);
+      final value = double.parse(_valueFieldController.text);
+      if (model is Person) {
+        final amount = Amount(value: value, note: _noteFieldController.text);
+        model.amounts.add(amount);
+        ObjectBox.store.box<Person>().put(model);
+        scaffold.showSnackBar(SnackBar(content: Text('Added ${amount.moneyValue()} for ${widget.model.dialogTitle()}')));
+      } else if (model is Amount) {
+        final payment = Payment(value: value, note: _noteFieldController.text);
+        model.payments.add(payment);
+        ObjectBox.store.box<Amount>().put(model);
+        scaffold.showSnackBar(SnackBar(content: Text('Added ${payment.moneyValue()} for ${widget.model.dialogTitle()}')));
+      } else {
+        scaffold.showSnackBar(SnackBar(content: Text('Failed to save: ${widget.model.dialogTitle()}')));
+      }
+
       Navigator.pop(context);
     }
   }
