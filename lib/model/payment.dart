@@ -15,10 +15,6 @@ class Payment extends BaseModel {
 
   final amount = ToOne<Amount>();
 
-  bool matchQuery(String query) {
-    return note.contains(query) || value.toString().contains(query);
-  }
-
   String moneyValue() => "R $value";
 
   highlight() {
@@ -34,5 +30,6 @@ class Payment extends BaseModel {
     """;
   }
 
+  @override
   String dialogTitle() => "Payment ${moneyValue()}";
 }

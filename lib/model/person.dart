@@ -15,7 +15,7 @@ class Person extends BaseModel {
   Person({this.id = 0, this.fullName = ""}) : super(id);
 
   double total() {
-    return amounts.fold(0, (sum, amount) => sum + amount.value);
+    return amounts.fold(0, (sum, amount) => sum + amount.difference());
   }
 
   String moneyFormattedTotal() {

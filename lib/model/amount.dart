@@ -42,7 +42,10 @@ class Amount extends BaseModel {
   @override
   String dialogTitle() => "Amount ${moneyValue()}";
 
-  double difference() => value - payments.fold(0.0, (sum, payment) => sum + payment.value);
+  double difference() {
+    final paymentsTotal = payments.fold<double>(0.0, (sum, payment) => sum + payment.value);
+    return value.abs() - paymentsTotal.abs();
+  }
 
   String moneyBalance() => "R ${difference()}";
 }

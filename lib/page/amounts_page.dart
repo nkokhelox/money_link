@@ -4,7 +4,7 @@ import 'package:money_link/model/person.dart';
 import 'package:money_link/objectbox.g.dart';
 
 import '../component/amount_widget.dart';
-import '../component/chart.dart';
+import '../component/people_chart.dart';
 import '../model/amount.dart';
 import '../model/tile.dart';
 import '../objectbox.dart';
@@ -55,7 +55,10 @@ class AmountsPage extends StatelessWidget {
   List<Widget> _getListItems(BuildContext context, List<Amount> amounts) {
     if (selectedPerson == null) {
       return [
-        PeopleChart(),
+        Padding(
+          padding: const EdgeInsets.all(5),
+          child: PeopleChart(),
+        ),
       ];
     }
 
@@ -68,8 +71,8 @@ class AmountsPage extends StatelessWidget {
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: 16,
               letterSpacing: 2,
+              fontSize: 16,
             ),
           ),
         ),

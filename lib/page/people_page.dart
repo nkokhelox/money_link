@@ -14,8 +14,13 @@ class PeoplePage extends StatefulWidget {
   final void Function(Person?) onTappedPerson;
   final void Function(Person) onPersonDeleted;
 
-  const PeoplePage({Key? key, required this.onTappedPerson, required this.onPersonDeleted, required this.scrollController, this.selectedPerson})
-      : super(key: key);
+  const PeoplePage({
+    Key? key,
+    required this.onTappedPerson,
+    required this.onPersonDeleted,
+    required this.scrollController,
+    this.selectedPerson,
+  }) : super(key: key);
 
   @override
   State<PeoplePage> createState() => _State();
