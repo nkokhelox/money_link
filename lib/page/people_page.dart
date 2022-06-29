@@ -23,10 +23,10 @@ class PeoplePage extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<PeoplePage> createState() => _State();
+  State<PeoplePage> createState() => PeoplePageState();
 }
 
-class _State extends State<PeoplePage> {
+class PeoplePageState extends State<PeoplePage> {
   final TextEditingController _searchFieldController = TextEditingController();
   final _peopleBox = ObjectBox.store.box<Person>();
   late Stream<List<Person>> _peopleStream;
@@ -120,6 +120,7 @@ class _State extends State<PeoplePage> {
         onTappedPerson: widget.onTappedPerson,
         onPersonDeleted: widget.onPersonDeleted,
         titleLeftPad: subTileIndentation,
+        refreshPeople: refreshPeopleStream,
       );
     }
 
@@ -146,7 +147,7 @@ class _State extends State<PeoplePage> {
     });
   }
 
-  void _addPerson() {
-    _peopleBox.put(Person(fullName: _searchFieldController.text));
-  }
+  void _addPerson() => _peopleBox.put(Person(fullName: _searchFieldController.text));
+
+  void refreshPeopleStream() => _onSearchChanged();
 }

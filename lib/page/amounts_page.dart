@@ -12,11 +12,12 @@ import '../objectbox.dart';
 class AmountsPage extends StatelessWidget {
   final bool appBarHidden;
   final Person? selectedPerson;
+  final VoidCallback refreshPeople;
   final ScrollController _scrollController = ScrollController();
 
   late Stream<List<Amount>> _amountStream;
 
-  AmountsPage({super.key, required this.selectedPerson, required this.appBarHidden}) {
+  AmountsPage({super.key, required this.selectedPerson, required this.appBarHidden, required this.refreshPeople}) {
     _amountStream = _personAmountsQuery();
   }
 
@@ -98,7 +99,12 @@ class AmountsPage extends StatelessWidget {
 
   Widget _buildTile(BuildContext context, Tile tile, {double subTileIndentation = 10.0}) {
     if (tile is EntityTile<Amount>) {
-      return AmountWidget(amount: tile.object, titleLeftPad: subTileIndentation);
+      return AmountWidget(
+        amount: tile.object,
+        refreshPeople: refreshPeople,
+        refreshAmounts: refreshAmountStream,
+        titleLeftPad: subTileIndentation,
+      );
     }
 
     final group = tile as GroupTile;
@@ -121,5 +127,10 @@ class AmountsPage extends StatelessWidget {
 
   void _jumpToTop() {
     _scrollController.animateTo(0, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+  }
+
+  void refreshAmountStream() {
+    _amountStream = _personAmountsQuery();
+    refreshPeople();
   }
 }

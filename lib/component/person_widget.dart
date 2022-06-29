@@ -10,6 +10,7 @@ class PersonWidget extends StatelessWidget {
   final Person person;
   final bool isSelected;
   final double titleLeftPad;
+  final VoidCallback refreshPeople;
   final void Function(Person) onTappedPerson;
   final void Function(Person) onPersonDeleted;
   const PersonWidget({
@@ -19,6 +20,7 @@ class PersonWidget extends StatelessWidget {
     required this.titleLeftPad,
     required this.onTappedPerson,
     required this.onPersonDeleted,
+    required this.refreshPeople,
   }) : super(key: key);
 
   @override
@@ -77,6 +79,6 @@ class PersonWidget extends StatelessWidget {
   }
 
   void addAmount(BuildContext context, Person person) async {
-    showDialog(context: context, builder: (context) => ValueForm(model: person));
+    showDialog(context: context, builder: (context) => ValueForm(model: person, refreshFunction: refreshPeople));
   }
 }

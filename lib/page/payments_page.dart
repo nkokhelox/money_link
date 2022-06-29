@@ -10,9 +10,10 @@ import '../objectbox.dart';
 
 class PaymentsPage extends StatelessWidget {
   final Amount selectedAmount;
+  final VoidCallback refreshAmounts;
   late Stream<List<Payment>> _paymentsStream;
 
-  PaymentsPage({super.key, required this.selectedAmount}) {
+  PaymentsPage({super.key, required this.selectedAmount, required this.refreshAmounts}) {
     _paymentsStream = _amountPaymentsQuery();
   }
 
@@ -67,7 +68,7 @@ class PaymentsPage extends StatelessWidget {
   }
 
   Widget _buildTile(BuildContext context, EntityTile<Payment> tile, {double subTileIndentation = 10.0}) {
-    return PaymentWidget(payment: tile.object);
+    return PaymentWidget(payment: tile.object, refreshAmounts: refreshAmounts);
   }
 
   Stream<List<Payment>> _amountPaymentsQuery() {

@@ -33,6 +33,7 @@ class Home extends StatefulWidget {
 
 class HomeState extends State<Home> {
   Person? _selectedPerson;
+  final GlobalKey<PeoplePageState> _peoplePageKey = GlobalKey();
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -54,19 +55,20 @@ class HomeState extends State<Home> {
               centerTitle: true,
               title: InkWell(
                 onLongPress: jumpToTop,
-                child: Text(isDualPane ? "PEOPLE - AMOUNTS" : "PEOPLE", style: TextStyle(letterSpacing: 4)),
+                child: Text(isDualPane ? "PEOPLE - AMOUNTS" : "PEOPLE", style: const TextStyle(letterSpacing: 4)),
               ),
             ),
             body: TwoPane(
               paneProportion: 0.45,
               panePriority: isDualPane ? TwoPanePriority.both : TwoPanePriority.start,
               startPane: PeoplePage(
+                key: _peoplePageKey,
                 onPersonDeleted: (Person person) => personDeleted(person),
                 onTappedPerson: (Person? person) => onPersonTap(person, isDualPane),
                 scrollController: _scrollController,
                 selectedPerson: _selectedPerson,
               ),
-              endPane: AmountsPage(selectedPerson: _selectedPerson, appBarHidden: true),
+              endPane: AmountsPage(selectedPerson: _selectedPerson, appBarHidden: true, refreshPeople: refreshPeople),
             ),
           );
         },
@@ -82,10 +84,14 @@ class HomeState extends State<Home> {
       Navigator.push(
         context,
         PortraitOnlyRoute(
-          builder: (context) => AmountsPage(selectedPerson: person, appBarHidden: false),
+          builder: (context) => AmountsPage(selectedPerson: person, appBarHidden: false, refreshPeople: refreshPeople),
         ),
       );
     }
+  }
+
+  void refreshPeople() {
+    _peoplePageKey.currentState?.refreshPeopleStream();
   }
 
   void personDeleted(Person person) {

@@ -9,7 +9,9 @@ import 'value_form.dart';
 class AmountWidget extends StatelessWidget {
   final Amount amount;
   final double titleLeftPad;
-  const AmountWidget({super.key, required this.amount, this.titleLeftPad = 10});
+  final VoidCallback refreshPeople;
+  final VoidCallback refreshAmounts;
+  const AmountWidget({super.key, required this.amount, required this.refreshPeople, required this.refreshAmounts, this.titleLeftPad = 10});
 
   @override
   Widget build(BuildContext context) {
@@ -60,21 +62,23 @@ class AmountWidget extends StatelessWidget {
 
   void deleteAmount(Amount amount) {
     ObjectBox.store.box<Amount>().remove(amount.id);
+    refreshPeople();
   }
 
   void togglePaidStatus(Amount amount) {
     amount.paidDate = (amount.paidDate == null) ? DateTime.now() : null;
     ObjectBox.store.box<Amount>().put(amount);
+    refreshPeople();
   }
 
   void addPayment(BuildContext context) async {
     showDialog(
       context: context,
-      builder: (context) => ValueForm(model: amount),
+      builder: (context) => ValueForm(model: amount, refreshFunction: refreshAmounts),
     );
   }
 
   showPayments(BuildContext context) {
-    showModalBottomSheet(context: context, builder: (_) => PaymentsPage(selectedAmount: amount));
+    showModalBottomSheet(context: context, builder: (_) => PaymentsPage(selectedAmount: amount, refreshAmounts: refreshAmounts));
   }
 }

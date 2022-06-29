@@ -7,8 +7,9 @@ import '../model/amount.dart';
 import '../model/payment.dart';
 
 class ValueForm extends StatefulWidget {
-  const ValueForm({Key? key, required this.model}) : super(key: key);
   final BaseModel model;
+  final VoidCallback refreshFunction;
+  const ValueForm({Key? key, required this.model, required this.refreshFunction}) : super(key: key);
 
   @override
   State<ValueForm> createState() => ValueFormState();
@@ -25,7 +26,7 @@ class ValueFormState extends State<ValueForm> {
       reverse: true,
       physics: const BouncingScrollPhysics(),
       child: AlertDialog(
-        title: Text(widget.model.dialogTitle(), textAlign: TextAlign.center),
+        title: Text(title(widget.model), textAlign: TextAlign.center),
         content: Form(
           key: _formKey,
           child: Wrap(
@@ -123,7 +124,18 @@ class ValueFormState extends State<ValueForm> {
         scaffold.showSnackBar(SnackBar(content: Text('Failed to save: ${widget.model.dialogTitle()}')));
       }
 
+      widget.refreshFunction();
       Navigator.pop(context);
+    }
+  }
+
+  String title(BaseModel model) {
+    if (model is Person) {
+      return "Amount for ${model.fullName}";
+    } else if (model is Amount) {
+      return "Payment for ${model.moneyValue()}";
+    } else {
+      return "Exit this dialog";
     }
   }
 }
