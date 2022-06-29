@@ -1,3 +1,4 @@
+import 'package:money_link/extensions.dart';
 import 'package:money_link/model/payment.dart';
 import 'package:money_link/model/person.dart';
 import 'package:objectbox/objectbox.dart';
@@ -10,8 +11,10 @@ class Amount extends BaseModel {
   int id;
   double value;
   String note;
+  @Property(type: PropertyType.date)
   DateTime? paidDate;
-  final DateTime created = DateTime.now();
+  @Property(type: PropertyType.date)
+  DateTime created = DateTime.now();
 
   Amount({this.id = 0, this.value = 0, this.note = ""}) : super(id);
 
@@ -24,7 +27,7 @@ class Amount extends BaseModel {
 
   highlight() {
     if (value == difference()) {
-      return "$created - $note";
+      return "${created.niceDescription()} - $note";
     }
     return "Balance: ${moneyBalance()} - $note";
   }
@@ -33,8 +36,8 @@ class Amount extends BaseModel {
     return """
     Value: ${moneyValue()}
     Balance: ${moneyBalance()}
-    Created: $created
-    ${paidDate == null ? "Not paid" : "Paid: $paidDate"}
+    Created: ${created.niceDescription()}
+    ${paidDate == null ? "Not paid" : "Paid: ${paidDate?.niceDescription(suffix: " ago")}"}
     Note: $note
     """;
   }

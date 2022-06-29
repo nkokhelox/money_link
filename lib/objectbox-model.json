@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:8250017738086859506",
-      "lastPropertyId": "5:433691814245594655",
+      "lastPropertyId": "6:8168755674119371960",
       "name": "Amount",
       "properties": [
         {
@@ -36,13 +36,18 @@
           "flags": 520,
           "indexId": "1:6644197024539929236",
           "relationTarget": "Person"
+        },
+        {
+          "id": "6:8168755674119371960",
+          "name": "created",
+          "type": 10
         }
       ],
       "relations": []
     },
     {
       "id": "2:7207699740264139165",
-      "lastPropertyId": "4:7908747573947796326",
+      "lastPropertyId": "5:1410216103979529364",
       "name": "Payment",
       "properties": [
         {
@@ -68,6 +73,11 @@
           "flags": 520,
           "indexId": "2:3069732693608901678",
           "relationTarget": "Amount"
+        },
+        {
+          "id": "5:1410216103979529364",
+          "name": "created",
+          "type": 10
         }
       ],
       "relations": []

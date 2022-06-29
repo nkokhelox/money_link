@@ -1,3 +1,4 @@
+import 'package:money_link/extensions.dart';
 import 'package:objectbox/objectbox.dart';
 
 import 'amount.dart';
@@ -9,7 +10,8 @@ class Payment extends BaseModel {
   int id;
   double value;
   String note;
-  final DateTime created = DateTime.now();
+  @Property(type: PropertyType.date)
+  DateTime created = DateTime.now();
 
   Payment({this.id = 0, this.value = 0, this.note = ""}) : super(id);
 
@@ -25,7 +27,7 @@ class Payment extends BaseModel {
     return """
     Payment for: ${amount.target?.moneyValue()}
     Value: ${moneyValue()}
-    Created: $created
+    Created: ${created.niceDescription(suffix: " ago")}
     Note: $note
     """;
   }

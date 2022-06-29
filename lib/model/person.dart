@@ -7,6 +7,7 @@ class Person extends BaseModel {
   @Id()
   int id;
   String fullName;
+  @Property(type: PropertyType.date)
   DateTime created = DateTime.now();
 
   @Backlink('person')

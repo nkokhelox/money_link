@@ -38,6 +38,7 @@ dependencies:
   dual_screen: ^1.0.3
   objectbox: any
   objectbox_flutter_libs: any
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:
