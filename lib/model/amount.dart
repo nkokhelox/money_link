@@ -48,7 +48,7 @@ class Amount extends BaseModel {
   double difference() {
     if (paidDate == null) {
       final paymentsTotal = payments.fold<double>(0.0, (sum, payment) => sum + payment.value);
-      return value.abs() - paymentsTotal.abs();
+      return ((value < 0 && paymentsTotal > 0) || (value > 0 && paymentsTotal < 0)) ? value + paymentsTotal : value - paymentsTotal;
     }
     return 0;
   }
