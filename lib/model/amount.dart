@@ -26,7 +26,7 @@ class Amount extends BaseModel {
   String moneyValue() => "R $value";
 
   highlight() {
-    if (value == difference()) {
+    if (value == balance()) {
       return "${created.niceDescription()} - $note";
     }
     return "Balance: ${moneyBalance()} - $note";
@@ -45,13 +45,16 @@ class Amount extends BaseModel {
   @override
   String dialogTitle() => "Amount ${moneyValue()}";
 
-  double difference() {
+  double balance() {
     if (paidDate == null) {
-      final paymentsTotal = payments.fold<double>(0.0, (sum, payment) => sum + payment.value);
-      return ((value < 0 && paymentsTotal > 0) || (value > 0 && paymentsTotal < 0)) ? value + paymentsTotal : value - paymentsTotal;
+      final paymentsTotal =
+          payments.fold<double>(0.0, (sum, payment) => sum + payment.value);
+      return (value < 0 || paymentsTotal < 0)
+          ? value + paymentsTotal
+          : value - paymentsTotal;
     }
     return 0;
   }
 
-  String moneyBalance() => "R ${difference()}";
+  String moneyBalance() => "R ${balance()}";
 }
