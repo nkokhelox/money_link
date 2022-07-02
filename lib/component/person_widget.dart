@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:money_link/objectbox.dart';
@@ -63,7 +62,7 @@ class PersonWidget extends StatelessWidget {
           ],
         ),
         child: ListTile(
-          trailing: const Icon(CupertinoIcons.chevron_right),
+          trailing: const Icon(Icons.chevron_right),
           contentPadding: EdgeInsets.only(left: titleLeftPad),
           title: Text(person.fullName),
           subtitle: Text(person.moneyFormattedTotal(), maxLines: 1, style: const TextStyle(color: Colors.blueGrey, fontSize: 10)),

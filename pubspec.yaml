@@ -42,13 +42,7 @@ dev_dependencies:
   build_runner: ^2.0.0
   objectbox_generator: any
   flutter_launcher_icons: ^0.9.3
-  flutter_rename_app_plus: ^1.1.0
   flutter_native_splash: ^2.2.3+1
-
-flutter_rename_app_plus:
-  application_name: MoneySums
-  bundle_id: com.pisd.MoneySums
-  application_id: com.pisd.MoneySums
 
 flutter_icons:
   ios: true
