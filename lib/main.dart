@@ -37,6 +37,11 @@ class HomeState extends State<Home> {
   final ScrollController _scrollController = ScrollController();
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   void dispose() {
     super.dispose();
     ObjectBox.store.close();

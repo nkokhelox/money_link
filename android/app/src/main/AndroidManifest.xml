@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.pisd.money_link">
    <application
-        android:label="money_link"
+        android:label="MoneySums"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
