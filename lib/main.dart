@@ -23,9 +23,10 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       home: Home(),
       theme: ThemeData(
-        brightness: Brightness.light,
-        disabledColor: Colors.green[50],
         hintColor: Colors.blue[100],
+        brightness: Brightness.light,
+        primarySwatch: Colors.blueGrey,
+        disabledColor: Colors.green[50],
         selectedRowColor: Colors.blue[100],
         textTheme: TextTheme(subtitle2: TextStyle(color: Colors.blueGrey)),
         visualDensity: VisualDensity.adaptivePlatformDensity,
