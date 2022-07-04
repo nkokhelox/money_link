@@ -30,7 +30,6 @@ class PaymentWidget extends StatelessWidget {
           ],
         ),
         child: ExpansionTile(
-          backgroundColor: Theme.of(context).highlightColor,
           expandedAlignment: Alignment.topLeft,
           title: Text(payment.moneyValue()),
           subtitle: Text(payment.highlight(), maxLines: 1, style: TextStyle(fontSize: 10)),

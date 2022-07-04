@@ -110,10 +110,11 @@ class AmountsPage extends StatelessWidget {
     final group = tile as GroupTile;
     return Card(
       child: ExpansionTile(
-        backgroundColor: Colors.blue[50] ?? Colors.lightBlue,
+        backgroundColor: Theme.of(context).disabledColor,
+        collapsedIconColor: Theme.of(context).iconTheme.color,
         tilePadding: EdgeInsets.only(left: subTileIndentation),
-        title: Text(group.title),
-        subtitle: Text(group.subtitle, maxLines: 1, style: const TextStyle(color: Colors.blueGrey)),
+        title: Text(group.title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text(group.subtitle, maxLines: 1),
         children: (group).innerTiles.map((subTile) => _buildTile(context, subTile, subTileIndentation: 2 * subTileIndentation)).toList(),
       ),
     );

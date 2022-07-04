@@ -25,16 +25,18 @@ class MainApp extends StatelessWidget {
       theme: ThemeData(
         brightness: Brightness.light,
         disabledColor: Colors.green[50],
+        hintColor: Colors.blue[100],
         selectedRowColor: Colors.blue[100],
         textTheme: TextTheme(subtitle2: TextStyle(color: Colors.blueGrey)),
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         disabledColor: Colors.black54,
         primarySwatch: Colors.blueGrey,
-        selectedRowColor: Colors.blueGrey,
+        selectedRowColor: Colors.grey[600],
         iconTheme: IconThemeData(color: Colors.black54),
-        appBarTheme: AppBarTheme(foregroundColor: Colors.blueGrey),
+        appBarTheme: AppBarTheme(foregroundColor: Colors.black),
         textTheme: TextTheme(
           headline6: TextStyle(color: Colors.black),
           subtitle1: TextStyle(color: Colors.black),
@@ -42,6 +44,7 @@ class MainApp extends StatelessWidget {
           bodyText1: TextStyle(color: Colors.black),
           bodyText2: TextStyle(color: Colors.black54),
         ),
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       themeMode: ThemeMode.system,
     );
