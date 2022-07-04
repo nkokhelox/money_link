@@ -24,9 +24,9 @@ class PersonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final maybeSelectionColor = isSelected ? Colors.blue[100] : null;
+    final maybeSelectionColor = isSelected ? Theme.of(context).selectedRowColor : null;
     return Card(
-      color: maybeSelectionColor, // Colors.lightBlueAccent;,
+      color: maybeSelectionColor,
       child: Slidable(
         key: ValueKey(person.id),
         closeOnScroll: true,
@@ -65,7 +65,14 @@ class PersonWidget extends StatelessWidget {
           trailing: const Icon(Icons.chevron_right),
           contentPadding: EdgeInsets.only(left: titleLeftPad),
           title: Text(person.fullName),
-          subtitle: Text(person.moneyFormattedTotal(), maxLines: 1, style: const TextStyle(color: Colors.blueGrey, fontSize: 10)),
+          subtitle: Text(
+            person.moneyFormattedTotal(),
+            maxLines: 1,
+            style: TextStyle(
+              fontSize: 10,
+              color: Theme.of(context).textTheme.subtitle2?.color,
+            ),
+          ),
           onTap: () => onTappedPerson(person),
         ),
       ),

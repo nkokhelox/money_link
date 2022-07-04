@@ -54,7 +54,7 @@ class PeopleChart extends StatelessWidget {
           return LayoutBuilder(
             builder: (context, constraints) => Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: peopleChart(sortedPeople, maxBarWidth: constraints.maxWidth, peopleTotalSum: total),
+              children: peopleChart(context, sortedPeople, maxBarWidth: constraints.maxWidth, peopleTotalSum: total),
             ),
           );
         }
@@ -72,13 +72,13 @@ class PeopleChart extends StatelessWidget {
     return maxBarWidth * (personTotal / peopleTotal);
   }
 
-  Widget personBar(Color barColor, Person person, {required double maxBarWidth, required double peopleTotalSum}) {
+  Widget personBar(Color barColor, Color borderColor, Person person, {required double maxBarWidth, required double peopleTotalSum}) {
     final barWidthValue = barWidth(personTotal: person.total().abs(), peopleTotal: peopleTotalSum, maxBarWidth: maxBarWidth);
     return Wrap(
       direction: Axis.vertical,
       children: [
         Container(
-          decoration: BoxDecoration(border: Border.all(color: Colors.black), color: person.total() == 0 ? null : barColor),
+          decoration: BoxDecoration(border: Border.all(color: borderColor), color: person.total() == 0 ? null : barColor),
           width: person.total() == 0 ? maxBarWidth : barWidthValue,
           height: 20,
         ),
@@ -98,7 +98,7 @@ class PeopleChart extends StatelessWidget {
     );
   }
 
-  List<Widget> peopleChart(List<Person> sortedPeople, {required double maxBarWidth, required double peopleTotalSum}) {
+  List<Widget> peopleChart(BuildContext context, List<Person> sortedPeople, {required double maxBarWidth, required double peopleTotalSum}) {
     final List<Widget> content = <Widget>[];
     content.add(
       Row(
@@ -111,18 +111,20 @@ class PeopleChart extends StatelessWidget {
       ),
     );
 
+    final borderColor = Theme.of(context).highlightColor;
+
     content.add(Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         border: Border(
-          left: BorderSide(width: 1.0, color: Colors.black),
-          right: BorderSide(width: 1.0, color: Colors.black),
-          bottom: BorderSide(width: 1.0, color: Colors.black),
+          left: BorderSide(width: 1.0, color: borderColor),
+          right: BorderSide(width: 1.0, color: borderColor),
+          bottom: BorderSide(width: 1.0, color: borderColor),
         ),
       ),
       width: maxBarWidth,
       height: 10,
       alignment: Alignment.center,
-      child: Container(width: 1, height: 10, color: Colors.black),
+      child: Container(width: 1, height: 10, color: borderColor),
     ));
 
     content.add(Container(height: 10));
@@ -130,7 +132,7 @@ class PeopleChart extends StatelessWidget {
     final bars = sortedPeople
         .asMap()
         .entries
-        .map((e) => personBar(PeopleChart.getBarColors(e.key), e.value, maxBarWidth: maxBarWidth, peopleTotalSum: peopleTotalSum))
+        .map((e) => personBar(PeopleChart.getBarColors(e.key), borderColor, e.value, maxBarWidth: maxBarWidth, peopleTotalSum: peopleTotalSum))
         .toList();
 
     content.addAll(bars);

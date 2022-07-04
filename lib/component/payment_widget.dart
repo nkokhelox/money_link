@@ -30,14 +30,10 @@ class PaymentWidget extends StatelessWidget {
           ],
         ),
         child: ExpansionTile(
-          backgroundColor: payment.value < 0 ? Colors.red[50] ?? Colors.white24 : Colors.green[50] ?? Colors.white70,
-          title: Text(payment.moneyValue()),
+          backgroundColor: Theme.of(context).highlightColor,
           expandedAlignment: Alignment.topLeft,
-          subtitle: Text(
-            payment.highlight(),
-            maxLines: 1,
-            style: const TextStyle(color: Colors.blueGrey, fontSize: 10),
-          ),
+          title: Text(payment.moneyValue()),
+          subtitle: Text(payment.highlight(), maxLines: 1, style: TextStyle(fontSize: 10)),
           children: [
             Padding(
               padding: const EdgeInsets.only(left: 20),

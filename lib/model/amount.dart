@@ -47,11 +47,7 @@ class Amount extends BaseModel {
 
   double balance() {
     if (paidDate == null) {
-      final paymentsTotal =
-          payments.fold<double>(0.0, (sum, payment) => sum + payment.value);
-      return (value < 0 || paymentsTotal < 0)
-          ? value + paymentsTotal
-          : value - paymentsTotal;
+      return value - payments.fold<double>(0.0, (sum, payment) => sum + payment.value);
     }
     return 0;
   }

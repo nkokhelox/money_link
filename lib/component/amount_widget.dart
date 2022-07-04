@@ -52,7 +52,14 @@ class AmountWidget extends StatelessWidget {
           trailing: amount.paidDate != null ? const Icon(Icons.check, color: Colors.green) : const Icon(Icons.info_outline),
           contentPadding: EdgeInsets.only(left: titleLeftPad, right: 10),
           title: Text(amount.moneyValue()),
-          subtitle: Text(amount.highlight(), maxLines: 1, style: const TextStyle(color: Colors.blueGrey, fontSize: 10)),
+          subtitle: Text(
+            amount.highlight(),
+            maxLines: 1,
+            style: TextStyle(
+              fontSize: 10,
+              color: Theme.of(context).textTheme.subtitle2?.color,
+            ),
+          ),
           onLongPress: () => addPayment(context),
           onTap: () => showPayments(context),
         ),

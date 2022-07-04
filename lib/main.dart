@@ -20,7 +20,31 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: Home());
+    return MaterialApp(
+      home: Home(),
+      theme: ThemeData(
+        brightness: Brightness.light,
+        disabledColor: Colors.green[50],
+        selectedRowColor: Colors.blue[100],
+        textTheme: TextTheme(subtitle2: TextStyle(color: Colors.blueGrey)),
+      ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        disabledColor: Colors.black54,
+        primarySwatch: Colors.blueGrey,
+        selectedRowColor: Colors.blueGrey,
+        iconTheme: IconThemeData(color: Colors.black54),
+        appBarTheme: AppBarTheme(foregroundColor: Colors.blueGrey),
+        textTheme: TextTheme(
+          headline6: TextStyle(color: Colors.black),
+          subtitle1: TextStyle(color: Colors.black),
+          subtitle2: TextStyle(color: Colors.black54),
+          bodyText1: TextStyle(color: Colors.black),
+          bodyText2: TextStyle(color: Colors.black54),
+        ),
+      ),
+      themeMode: ThemeMode.system,
+    );
   }
 }
 
@@ -58,10 +82,8 @@ class HomeState extends State<Home> {
           return Scaffold(
             appBar: AppBar(
               centerTitle: true,
-              title: InkWell(
-                onLongPress: jumpToTop,
-                child: Text(isDualPane ? "PEOPLE - AMOUNTS" : "PEOPLE", style: const TextStyle(letterSpacing: 4)),
-              ),
+              title: InkWell(child: Text(isDualPane ? "PEOPLE - AMOUNTS" : "PEOPLE", style: TextStyle(letterSpacing: 4)), onLongPress: jumpToTop),
+              actions: chartIcon(isDualPane),
             ),
             body: TwoPane(
               paneProportion: 0.45,
@@ -109,6 +131,14 @@ class HomeState extends State<Home> {
 
   void jumpToTop() {
     _scrollController.animateTo(0, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+    clearSelectedPerson();
+  }
+
+  List<Widget> chartIcon(bool isDualPane) {
+    return isDualPane ? [IconButton(onPressed: clearSelectedPerson, icon: Icon(Icons.stacked_bar_chart))] : [];
+  }
+
+  void clearSelectedPerson() {
     setState(() {
       _selectedPerson = null;
     });

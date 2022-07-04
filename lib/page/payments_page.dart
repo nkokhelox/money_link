@@ -42,11 +42,8 @@ class PaymentsPage extends StatelessWidget {
     comboList.add(
       Container(
         padding: const EdgeInsets.all(10),
-        color: Colors.amber[50],
-        child: Text(
-          selectedAmount.details(),
-          style: const TextStyle(fontSize: 12),
-        ),
+        color: Theme.of(context).selectedRowColor,
+        child: Text(selectedAmount.details(), style: const TextStyle(fontSize: 12)),
       ),
     );
 

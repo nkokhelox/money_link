@@ -127,10 +127,11 @@ class PeoplePageState extends State<PeoplePage> {
     final group = tile as GroupTile;
     return Card(
       child: ExpansionTile(
-        backgroundColor: Colors.grey[200],
+        // textColor: Colors.amber,
+        backgroundColor: Theme.of(context).disabledColor,
         tilePadding: EdgeInsets.only(left: subTileIndentation),
         title: Text(group.title, style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2)),
-        subtitle: Text(group.subtitle, style: const TextStyle(color: Colors.blueGrey)),
+        subtitle: Text(group.subtitle),
         children: group.innerTiles.map((subTile) => _buildTile(subTile, subTileIndentation: 2 * subTileIndentation)).toList(),
       ),
     );
