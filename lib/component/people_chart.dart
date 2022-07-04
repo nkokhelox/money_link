@@ -72,13 +72,13 @@ class PeopleChart extends StatelessWidget {
     return maxBarWidth * (personTotal / peopleTotal);
   }
 
-  Widget personBar(Color barColor, Color borderColor, Person person, {required double maxBarWidth, required double peopleTotalSum}) {
+  Widget personBar(Color barColor, Person person, {required double maxBarWidth, required double peopleTotalSum}) {
     final barWidthValue = barWidth(personTotal: person.total().abs(), peopleTotal: peopleTotalSum, maxBarWidth: maxBarWidth);
     return Wrap(
       direction: Axis.vertical,
       children: [
         Container(
-          decoration: BoxDecoration(border: Border.all(color: borderColor), color: person.total() == 0 ? null : barColor),
+          decoration: BoxDecoration(border: Border.all(color: Colors.black12), color: person.total() == 0 ? null : barColor),
           width: person.total() == 0 ? maxBarWidth : barWidthValue,
           height: 20,
         ),
@@ -89,7 +89,7 @@ class PeopleChart extends StatelessWidget {
             Icon(Icons.arrow_forward_sharp, color: barColor, size: 15),
             Text(
               " ${person.fullName} (${percentage(peopleTotalSum, person.total())}%)",
-              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.blueGrey),
             ),
           ],
         ),
@@ -104,14 +104,14 @@ class PeopleChart extends StatelessWidget {
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text("R 0"),
-          Text("R ${peopleTotalSum / 2}"),
-          Text("R $peopleTotalSum"),
+          const Text("R 0", style: TextStyle(color: Colors.blueGrey)),
+          Text("R ${peopleTotalSum / 2}", style: TextStyle(color: Colors.blueGrey)),
+          Text("R $peopleTotalSum", style: TextStyle(color: Colors.blueGrey)),
         ],
       ),
     );
 
-    final borderColor = Theme.of(context).highlightColor;
+    final borderColor = Colors.blueGrey;
 
     content.add(Container(
       decoration: BoxDecoration(
@@ -132,7 +132,7 @@ class PeopleChart extends StatelessWidget {
     final bars = sortedPeople
         .asMap()
         .entries
-        .map((e) => personBar(PeopleChart.getBarColors(e.key), borderColor, e.value, maxBarWidth: maxBarWidth, peopleTotalSum: peopleTotalSum))
+        .map((e) => personBar(PeopleChart.getBarColors(e.key), e.value, maxBarWidth: maxBarWidth, peopleTotalSum: peopleTotalSum))
         .toList();
 
     content.addAll(bars);
