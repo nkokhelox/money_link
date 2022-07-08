@@ -1,9 +1,8 @@
 import 'package:money_link/extensions.dart';
+import 'package:money_link/model/base_model.dart';
 import 'package:money_link/model/payment.dart';
 import 'package:money_link/model/person.dart';
 import 'package:objectbox/objectbox.dart';
-
-import 'base_model.dart';
 
 @Entity()
 class Amount extends BaseModel {

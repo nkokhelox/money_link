@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:money_link/component/payment_widget.dart';
+import 'package:money_link/model/amount.dart';
 import 'package:money_link/model/payment.dart';
+import 'package:money_link/model/tile.dart';
+import 'package:money_link/objectbox.dart';
 import 'package:money_link/objectbox.g.dart';
-
-import '../component/payment_widget.dart';
-import '../model/amount.dart';
-import '../model/tile.dart';
-import '../objectbox.dart';
 
 class PaymentsPage extends StatelessWidget {
   final Amount selectedAmount;

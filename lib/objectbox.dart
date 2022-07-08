@@ -1,4 +1,4 @@
-import 'objectbox.g.dart'; // created by `flutter pub run build_runner build`
+import 'package:money_link/objectbox.g.dart';
 
 class ObjectBox {
   static late final Store _store;

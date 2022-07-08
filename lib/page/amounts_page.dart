@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:money_link/component/amount_widget.dart';
+import 'package:money_link/component/people_chart.dart';
+import 'package:money_link/model/amount.dart';
 import 'package:money_link/model/person.dart';
+import 'package:money_link/model/tile.dart';
+import 'package:money_link/objectbox.dart';
 import 'package:money_link/objectbox.g.dart';
-
-import '../component/amount_widget.dart';
-import '../component/people_chart.dart';
-import '../model/amount.dart';
-import '../model/tile.dart';
-import '../objectbox.dart';
 
 class AmountsPage extends StatelessWidget {
   final bool appBarHidden;

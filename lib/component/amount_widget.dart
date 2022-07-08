@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:money_link/component/value_form.dart';
+import 'package:money_link/model/amount.dart';
 import 'package:money_link/objectbox.dart';
 import 'package:money_link/page/payments_page.dart';
-
-import '../model/amount.dart';
-import 'value_form.dart';
 
 class AmountWidget extends StatelessWidget {
   final Amount amount;

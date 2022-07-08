@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:money_link/component/person_widget.dart';
+import 'package:money_link/component/search_field.dart';
+import 'package:money_link/model/person.dart';
+import 'package:money_link/model/tile.dart';
 import 'package:money_link/objectbox.dart';
-
-import '../component/person_widget.dart';
-import '../component/search_field.dart';
-import '../model/person.dart';
-import '../model/tile.dart';
-import '../objectbox.g.dart';
+import 'package:money_link/objectbox.g.dart';
 
 class PeoplePage extends StatefulWidget {
   final Person? selectedPerson;

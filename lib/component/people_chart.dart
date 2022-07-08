@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-
-import '../model/person.dart';
-import '../objectbox.dart';
+import 'package:money_link/model/person.dart';
+import 'package:money_link/objectbox.dart';
 
 class PeopleChart extends StatelessWidget {
   static var chartColors = const [

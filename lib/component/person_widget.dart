@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:money_link/component/value_form.dart';
+import 'package:money_link/model/person.dart';
 import 'package:money_link/objectbox.dart';
-
-import '../model/person.dart';
-import 'value_form.dart';
 
 class PersonWidget extends StatelessWidget {
   final Person person;

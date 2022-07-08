@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:money_link/model/amount.dart';
 import 'package:money_link/model/base_model.dart';
+import 'package:money_link/model/payment.dart';
 import 'package:money_link/model/person.dart';
 import 'package:money_link/objectbox.dart';
-
-import '../model/amount.dart';
-import '../model/payment.dart';
 
 class ValueForm extends StatefulWidget {
   final BaseModel model;
