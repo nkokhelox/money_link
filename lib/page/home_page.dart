@@ -7,6 +7,7 @@ import 'package:money_link/model/person.dart';
 import 'package:money_link/page/amounts_page.dart';
 import 'package:money_link/page/lockscreen_page.dart';
 import 'package:money_link/page/people_page.dart';
+import 'package:page_transition/page_transition.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -100,6 +101,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   void lockApp() {
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LockScreenPage()));
+    Navigator.pushReplacement(context, PageTransition(curve: Curves.linear, type: PageTransitionType.topToBottom, child: LockScreenPage()));
   }
 }

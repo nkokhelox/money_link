@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:money_link/page/home_page.dart';
+import 'package:page_transition/page_transition.dart';
 
 class LockScreenPage extends StatefulWidget {
   const LockScreenPage({super.key});
@@ -25,6 +26,6 @@ class _LockScreenPageState extends State<LockScreenPage> {
   }
 
   void unlockApp() {
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomePage()));
+    Navigator.pushReplacement(context, PageTransition(curve: Curves.linear, type: PageTransitionType.bottomToTop, child: HomePage()));
   }
 }
