@@ -36,7 +36,7 @@ class Amount extends BaseModel {
     return """
     Value: ${moneyValue()}
     Balance: ${moneyBalance()}
-    Created: ${created.niceDescription()}
+    Created: ${created.niceDescription(suffix: " ago")}
     ${paidDate == null ? "Not paid" : "Paid: ${paidDate?.niceDescription(suffix: " ago")}"}
     Note: $note
     """;

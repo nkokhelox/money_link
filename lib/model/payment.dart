@@ -20,7 +20,7 @@ class Payment extends BaseModel {
   String moneyValue() => "R $value";
 
   highlight() {
-    return "$created - $note";
+    return "${created.niceDescription()} - $note";
   }
 
   details() {
