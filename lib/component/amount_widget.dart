@@ -54,10 +54,7 @@ class AmountWidget extends StatelessWidget {
           subtitle: Text(
             amount.highlight(),
             maxLines: 1,
-            style: TextStyle(
-              fontSize: 10,
-              color: Theme.of(context).textTheme.subtitle2?.color,
-            ),
+            style: TextStyle(fontSize: 10),
           ),
           onLongPress: () => addPayment(context),
           onTap: () => showPayments(context),

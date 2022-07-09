@@ -67,10 +67,7 @@ class PersonWidget extends StatelessWidget {
           subtitle: Text(
             person.moneyFormattedTotal(),
             maxLines: 1,
-            style: TextStyle(
-              fontSize: 10,
-              color: Theme.of(context).textTheme.subtitle2?.color,
-            ),
+            style: TextStyle(fontSize: 10),
           ),
           onTap: () => onTappedPerson(person),
         ),

@@ -109,8 +109,6 @@ class AmountsPage extends StatelessWidget {
     final group = tile as GroupTile;
     return Card(
       child: ExpansionTile(
-        backgroundColor: Theme.of(context).disabledColor,
-        collapsedIconColor: Theme.of(context).iconTheme.color,
         tilePadding: EdgeInsets.only(left: subTileIndentation),
         title: Text(group.title, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(group.subtitle, maxLines: 1),
