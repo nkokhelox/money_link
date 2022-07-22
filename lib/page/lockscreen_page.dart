@@ -10,7 +10,7 @@ class LockScreenPage extends StatefulWidget {
 }
 
 class _LockScreenPageState extends State<LockScreenPage> {
-  static String _hardCodedPattern = "123321";
+  static String _hardCodedPattern = "231";
   final List<int> pressSequence = <int>[];
 
   @override
@@ -29,16 +29,14 @@ class _LockScreenPageState extends State<LockScreenPage> {
             Stack(
               alignment: AlignmentDirectional.center,
               children: [
-                Icon(Icons.shield, size: 100),
-                Icon(Icons.lock_outline,
-                    size: 60, color: Theme.of(context).primaryColor),
+                Icon(Icons.shield, size: 300, color: Theme.of(context).primaryColor),
+                Icon(Icons.lock_outline, size: 180, color: Theme.of(context).canvasColor),
               ],
             ),
             Text(
               "UNLOCK APP",
               style: TextStyle(
-                color:
-                    pressSequence.length == 0 ? Colors.green : Colors.blueGrey,
+                color: pressSequence.length == 0 ? Colors.blueGrey : Colors.blueGrey[900],
               ),
             ),
           ],
@@ -69,13 +67,12 @@ class _LockScreenPageState extends State<LockScreenPage> {
   }
 
   void verify() {
-    if (pressSequence.length == 6 &&
-        pressSequence.join() == _hardCodedPattern) {
+    if (pressSequence.length == _hardCodedPattern.length && pressSequence.join() == _hardCodedPattern) {
       pressSequence.clear();
       unlockApp();
     }
 
-    if (pressSequence.length < 6) {
+    if (pressSequence.length < _hardCodedPattern.length) {
       return;
     }
 
@@ -86,11 +83,6 @@ class _LockScreenPageState extends State<LockScreenPage> {
   }
 
   void unlockApp() {
-    Navigator.pushReplacement(
-        context,
-        PageTransition(
-            curve: Curves.linear,
-            type: PageTransitionType.bottomToTop,
-            child: HomePage()));
+    Navigator.pushReplacement(context, PageTransition(curve: Curves.linear, type: PageTransitionType.bottomToTop, child: HomePage()));
   }
 }
