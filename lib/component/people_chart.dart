@@ -18,7 +18,8 @@ class PeopleChart extends StatelessWidget {
   late Stream<List<Person>> _peopleStream;
 
   PeopleChart({super.key}) {
-    _peopleStream = _peopleBox.query().watch(triggerImmediately: true).map((q) => q.find());
+    _peopleStream =
+        _peopleBox.query().watch(triggerImmediately: true).map((q) => q.find());
   }
 
   static Color getBarColors(int index) {
@@ -33,7 +34,11 @@ class PeopleChart extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final people = snapshot.data ?? <Person>[];
-          final double total = people.isEmpty ? 0.0 : people.map((p) => p.total().abs()).reduce((sum, value) => sum + value);
+          final double total = people.isEmpty
+              ? 0.0
+              : people
+                  .map((p) => p.total().abs())
+                  .reduce((sum, value) => sum + value);
           var hideChart = people.isEmpty || total == 0;
 
           if (hideChart) {
@@ -42,18 +47,23 @@ class PeopleChart extends StatelessWidget {
               child: Text(
                 people.isEmpty ? "Add people" : "Add amounts",
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, letterSpacing: 2),
+                style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    letterSpacing: 2),
               ),
             );
           }
 
           final sortedPeople = people;
-          sortedPeople.sort((p1, p2) => Comparable.compare(p2.total().abs(), p1.total().abs()));
+          sortedPeople.sort((p1, p2) =>
+              Comparable.compare(p2.total().abs(), p1.total().abs()));
 
           return LayoutBuilder(
             builder: (context, constraints) => Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: peopleChart(context, sortedPeople, maxBarWidth: constraints.maxWidth, peopleTotalSum: total),
+              children: peopleChart(context, sortedPeople,
+                  maxBarWidth: constraints.maxWidth, peopleTotalSum: total),
             ),
           );
         }
@@ -67,28 +77,44 @@ class PeopleChart extends StatelessWidget {
     return ((value / sum) * 100).toStringAsFixed(2);
   }
 
-  double barWidth({required double personTotal, required double peopleTotal, required double maxBarWidth}) {
+  double barWidth(
+      {required double personTotal,
+      required double peopleTotal,
+      required double maxBarWidth}) {
     return maxBarWidth * (personTotal / peopleTotal);
   }
 
-  Widget personBar(Color barColor, Person person, {required double maxBarWidth, required double peopleTotalSum}) {
-    final barWidthValue = barWidth(personTotal: person.total().abs(), peopleTotal: peopleTotalSum, maxBarWidth: maxBarWidth);
+  Widget personBar(Color barColor, Person person,
+      {required double maxBarWidth, required double peopleTotalSum}) {
+    final barWidthValue = barWidth(
+        personTotal: person.total().abs(),
+        peopleTotal: peopleTotalSum,
+        maxBarWidth: maxBarWidth);
     return Wrap(
       direction: Axis.vertical,
       children: [
         Container(
-          decoration: BoxDecoration(border: Border.all(color: Colors.black12), color: person.total() == 0 ? null : barColor),
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.black12),
+              color: person.total() == 0 ? null : barColor),
           width: person.total() == 0 ? maxBarWidth : barWidthValue,
           height: 20,
         ),
         const Divider(height: 3),
         Row(
           children: [
-            Icon(Icons.account_circle, color: barColor, size: 15),
-            Icon(Icons.arrow_forward_sharp, color: barColor, size: 15),
+            Icon(Icons.account_circle,
+                color: person.total() == 0 ? Colors.blueGrey : barColor,
+                size: 15),
+            Icon(Icons.arrow_forward_sharp,
+                color: person.total() == 0 ? Colors.blueGrey : barColor,
+                size: 15),
             Text(
               " ${person.fullName} (${percentage(peopleTotalSum, person.total())}%)",
-              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.blueGrey),
+              style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueGrey),
             ),
           ],
         ),
@@ -97,14 +123,16 @@ class PeopleChart extends StatelessWidget {
     );
   }
 
-  List<Widget> peopleChart(BuildContext context, List<Person> sortedPeople, {required double maxBarWidth, required double peopleTotalSum}) {
+  List<Widget> peopleChart(BuildContext context, List<Person> sortedPeople,
+      {required double maxBarWidth, required double peopleTotalSum}) {
     final List<Widget> content = <Widget>[];
     content.add(
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           const Text("R 0", style: TextStyle(color: Colors.blueGrey)),
-          Text("R ${peopleTotalSum / 2}", style: TextStyle(color: Colors.blueGrey)),
+          Text("R ${peopleTotalSum / 2}",
+              style: TextStyle(color: Colors.blueGrey)),
           Text("R $peopleTotalSum", style: TextStyle(color: Colors.blueGrey)),
         ],
       ),
@@ -131,7 +159,8 @@ class PeopleChart extends StatelessWidget {
     final bars = sortedPeople
         .asMap()
         .entries
-        .map((e) => personBar(PeopleChart.getBarColors(e.key), e.value, maxBarWidth: maxBarWidth, peopleTotalSum: peopleTotalSum))
+        .map((e) => personBar(PeopleChart.getBarColors(e.key), e.value,
+            maxBarWidth: maxBarWidth, peopleTotalSum: peopleTotalSum))
         .toList();
 
     content.addAll(bars);

@@ -8,7 +8,8 @@ extension NiceDateTime on DateTime {
   static const _week_value = 7 * _day_value;
 
   String niceDescription({String suffix = ""}) {
-    final int millisAgo = DateTime.now().millisecondsSinceEpoch - millisecondsSinceEpoch;
+    final int millisAgo =
+        DateTime.now().millisecondsSinceEpoch - millisecondsSinceEpoch;
     if (millisAgo < 0) {
       return "Future";
     } else if (millisAgo < _second_value) {
@@ -20,11 +21,11 @@ extension NiceDateTime on DateTime {
     } else if (millisAgo < _day_value) {
       return "${millisAgo ~/ _hour_value}h$suffix";
     } else if (millisAgo <= _week_value) {
-      return "${DateFormat("E '@' HH:mm").format(this)}$suffix";
+      return "${DateFormat("E '@' HH:mm").format(this)}";
     } else if (DateTime.now().year == year) {
-      return "${DateFormat("MMM d '@' HH:mm").format(this)}$suffix";
+      return "${DateFormat("MMM d '@' HH:mm").format(this)}";
     } else {
-      return "${DateFormat("yyyy MMM d '@' HH:mm").format(this)}$suffix";
+      return "${DateFormat("yyyy MMM d '@' HH:mm").format(this)}";
     }
   }
 }

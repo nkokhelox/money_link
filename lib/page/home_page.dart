@@ -28,33 +28,44 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          final isDualPane = constraints.maxWidth > 550;
-          return Scaffold(
-            appBar: AppBar(
-              centerTitle: true,
-              title: InkWell(child: Text(isDualPane ? "PEOPLE - AMOUNTS" : "PEOPLE", style: TextStyle(letterSpacing: 4)), onLongPress: jumpToTop),
-              leading: IconButton(icon: Icon(Icons.lock), onPressed: lockApp),
-              actions: chartIcon(isDualPane),
-            ),
-            body: TwoPane(
-              paneProportion: 0.45,
-              panePriority: isDualPane ? TwoPanePriority.both : TwoPanePriority.start,
-              startPane: PeoplePage(
-                key: _peoplePageKey,
-                onPersonDeleted: (Person person) => personDeleted(person),
-                onTappedPerson: (Person? person) => onPersonTap(person, isDualPane),
-                scrollController: _scrollController,
-                selectedPerson: _selectedPerson,
+    return WillPopScope(
+      onWillPop: showExitPopup, //call function on back button press
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+            final isDualPane = constraints.maxWidth > 550;
+            return Scaffold(
+              appBar: AppBar(
+                centerTitle: true,
+                title: InkWell(
+                    child: Text(isDualPane ? "PEOPLE - AMOUNTS" : "PEOPLE",
+                        style: TextStyle(letterSpacing: 4)),
+                    onLongPress: jumpToTop),
+                leading: IconButton(icon: Icon(Icons.lock), onPressed: lockApp),
+                actions: chartIcon(isDualPane),
               ),
-              endPane: AmountsPage(selectedPerson: _selectedPerson, appBarHidden: true, refreshPeople: refreshPeople),
-            ),
-          );
-        },
+              body: TwoPane(
+                paneProportion: 0.45,
+                panePriority:
+                    isDualPane ? TwoPanePriority.both : TwoPanePriority.start,
+                startPane: PeoplePage(
+                  key: _peoplePageKey,
+                  onPersonDeleted: (Person person) => personDeleted(person),
+                  onTappedPerson: (Person? person) =>
+                      onPersonTap(person, isDualPane),
+                  scrollController: _scrollController,
+                  selectedPerson: _selectedPerson,
+                ),
+                endPane: AmountsPage(
+                    selectedPerson: _selectedPerson,
+                    appBarHidden: true,
+                    refreshPeople: refreshPeople),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -67,7 +78,10 @@ class _HomePageState extends State<HomePage> {
       Navigator.push(
         context,
         PortraitOnlyRoute(
-          builder: (context) => AmountsPage(selectedPerson: person, appBarHidden: false, refreshPeople: refreshPeople),
+          builder: (context) => AmountsPage(
+              selectedPerson: person,
+              appBarHidden: false,
+              refreshPeople: refreshPeople),
         ),
       );
     }
@@ -86,12 +100,19 @@ class _HomePageState extends State<HomePage> {
   }
 
   void jumpToTop() {
-    _scrollController.animateTo(0, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+    _scrollController.animateTo(0,
+        duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
     clearSelectedPerson();
   }
 
   List<Widget> chartIcon(bool isDualPane) {
-    return isDualPane ? [IconButton(onPressed: clearSelectedPerson, icon: Icon(Icons.stacked_bar_chart))] : [];
+    return isDualPane
+        ? [
+            IconButton(
+                onPressed: clearSelectedPerson,
+                icon: Icon(Icons.stacked_bar_chart))
+          ]
+        : [];
   }
 
   void clearSelectedPerson() {
@@ -101,6 +122,36 @@ class _HomePageState extends State<HomePage> {
   }
 
   void lockApp() {
-    Navigator.pushReplacement(context, PageTransition(curve: Curves.linear, type: PageTransitionType.topToBottom, child: LockScreenPage()));
+    Navigator.pushReplacement(
+        context,
+        PageTransition(
+            curve: Curves.linear,
+            type: PageTransitionType.topToBottom,
+            child: LockScreenPage()));
+  }
+
+  Future<bool> showExitPopup() async {
+    return await showDialog(
+          //show confirm dialogue
+          //the return value will be from "Yes" or "No" options
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Exit App'),
+            content: Text('Do you want to exit an App?'),
+            actions: [
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                //return false when click on "NO"
+                child: Text('No'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                //return true when click on "Yes"
+                child: Text('Yes'),
+              ),
+            ],
+          ),
+        ) ??
+        false; //if showDialouge had returned null, then return false
   }
 }

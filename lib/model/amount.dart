@@ -28,15 +28,29 @@ class Amount extends BaseModel {
     if (value == balance()) {
       return "${created.niceDescription()} - $note";
     }
-    return "Balance: ${moneyBalance()} - $note";
+
+    if (paidDate == null) {
+      return "Balance: ${moneyBalance()} - $note";
+    }
+
+    return "Paid: ${moneyPaidTotal()} - $note";
   }
 
   details() {
+    if (paidDate == null) {
+      return """
+        Not paid yet
+        Value: ${moneyValue()}
+        Balance: ${moneyBalance()}
+        Created: ${created.niceDescription(suffix: " ago")}
+        Note: $note
+        """;
+    }
     return """
     Value: ${moneyValue()}
-    Balance: ${moneyBalance()}
+    PaidTotal: ${moneyPaidTotal()}
     Created: ${created.niceDescription(suffix: " ago")}
-    ${paidDate == null ? "Not paid" : "Paid: ${paidDate?.niceDescription(suffix: " ago")}"}
+    Paid: ${paidDate?.niceDescription(suffix: " ago")}
     Note: $note
     """;
   }
@@ -46,10 +60,25 @@ class Amount extends BaseModel {
 
   double balance() {
     if (paidDate == null) {
-      return value - payments.fold<double>(0.0, (sum, payment) => sum + payment.value);
+      return value -
+          payments.fold<double>(0.0, (sum, payment) => sum + payment.value);
+    }
+    return 0;
+  }
+
+  double paidTotal() {
+    if (paidDate != null) {
+      double repayments = payments
+          .where((payment) => payment.value > 0)
+          .fold<double>(0.0, (sum, payment) => sum + payment.value);
+      if (repayments == 0) {
+        return value;
+      }
+      return repayments;
     }
     return 0;
   }
 
   String moneyBalance() => "R ${balance()}";
+  String moneyPaidTotal() => "R ${paidTotal()}";
 }

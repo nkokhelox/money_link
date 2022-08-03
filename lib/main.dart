@@ -30,11 +30,11 @@ class _MainApplicationState extends State<MainApplication> {
     return MaterialApp(
       home: LockScreenPage(),
       theme: ThemeData(
-        hintColor: Colors.blue[100],
+        hintColor: Colors.blueGrey[100],
         brightness: Brightness.light,
         primarySwatch: Colors.blueGrey,
         disabledColor: Colors.green[50],
-        selectedRowColor: Colors.blue[100],
+        selectedRowColor: Colors.blueGrey[100],
         textTheme: TextTheme(subtitle2: TextStyle(color: Colors.blueGrey)),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
