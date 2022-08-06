@@ -37,7 +37,7 @@ class PeopleChart extends StatelessWidget {
           final double total = people.isEmpty
               ? 0.0
               : people
-                  .map((p) => p.total().abs())
+                  .map((p) => p.owingTotal().abs())
                   .reduce((sum, value) => sum + value);
           var hideChart = people.isEmpty || total == 0;
 
@@ -57,7 +57,7 @@ class PeopleChart extends StatelessWidget {
 
           final sortedPeople = people;
           sortedPeople.sort((p1, p2) =>
-              Comparable.compare(p2.total().abs(), p1.total().abs()));
+              Comparable.compare(p2.owingTotal().abs(), p1.owingTotal().abs()));
 
           return LayoutBuilder(
             builder: (context, constraints) => Column(
@@ -87,7 +87,7 @@ class PeopleChart extends StatelessWidget {
   Widget personBar(Color barColor, Person person,
       {required double maxBarWidth, required double peopleTotalSum}) {
     final barWidthValue = barWidth(
-        personTotal: person.total().abs(),
+        personTotal: person.owingTotal().abs(),
         peopleTotal: peopleTotalSum,
         maxBarWidth: maxBarWidth);
     return Wrap(
@@ -96,21 +96,21 @@ class PeopleChart extends StatelessWidget {
         Container(
           decoration: BoxDecoration(
               border: Border.all(color: Colors.black12),
-              color: person.total() == 0 ? null : barColor),
-          width: person.total() == 0 ? maxBarWidth : barWidthValue,
+              color: person.owingTotal() == 0 ? null : barColor),
+          width: person.owingTotal() == 0 ? maxBarWidth : barWidthValue,
           height: 20,
         ),
         const Divider(height: 3),
         Row(
           children: [
             Icon(Icons.account_circle,
-                color: person.total() == 0 ? Colors.blueGrey : barColor,
+                color: person.owingTotal() == 0 ? Colors.blueGrey : barColor,
                 size: 15),
             Icon(Icons.arrow_forward_sharp,
-                color: person.total() == 0 ? Colors.blueGrey : barColor,
+                color: person.owingTotal() == 0 ? Colors.blueGrey : barColor,
                 size: 15),
             Text(
-              " ${person.fullName} (${percentage(peopleTotalSum, person.total())}%)",
+              " ${person.fullName} (${percentage(peopleTotalSum, person.owingTotal())}%)",
               style: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,

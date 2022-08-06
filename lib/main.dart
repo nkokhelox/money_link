@@ -33,7 +33,7 @@ class _MainApplicationState extends State<MainApplication> {
         hintColor: Colors.blueGrey[100],
         brightness: Brightness.light,
         primarySwatch: Colors.blueGrey,
-        disabledColor: Colors.green[50],
+        disabledColor: Colors.blueGrey[50],
         selectedRowColor: Colors.blueGrey[100],
         textTheme: TextTheme(subtitle2: TextStyle(color: Colors.blueGrey)),
         visualDensity: VisualDensity.adaptivePlatformDensity,

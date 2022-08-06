@@ -23,14 +23,15 @@ class PersonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final maybeSelectionColor = isSelected ? Theme.of(context).selectedRowColor : null;
+    final maybeSelectionColor =
+        isSelected ? Theme.of(context).selectedRowColor : null;
     return Card(
       color: maybeSelectionColor,
       child: Slidable(
         key: ValueKey(person.id),
         closeOnScroll: true,
         groupTag: 'person',
-        startActionPane: person.total() != 0.0
+        startActionPane: person.owingTotal() != 0.0
             ? null
             : ActionPane(
                 motion: const StretchMotion(),
@@ -65,7 +66,9 @@ class PersonWidget extends StatelessWidget {
           contentPadding: EdgeInsets.only(left: titleLeftPad),
           title: Text(person.fullName),
           subtitle: Text(
-            person.moneyFormattedTotal(),
+            person.owingTotal() == 0
+                ? person.moneyFormattedPaidTotal()
+                : person.moneyFormattedOwingTotal(),
             maxLines: 1,
             style: TextStyle(fontSize: 10),
           ),
@@ -81,6 +84,9 @@ class PersonWidget extends StatelessWidget {
   }
 
   void addAmount(BuildContext context, Person person) async {
-    showDialog(context: context, builder: (context) => ValueForm(model: person, refreshFunction: refreshPeople));
+    showDialog(
+        context: context,
+        builder: (context) =>
+            ValueForm(model: person, refreshFunction: refreshPeople));
   }
 }

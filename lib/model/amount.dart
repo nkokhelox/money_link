@@ -68,13 +68,13 @@ class Amount extends BaseModel {
 
   double paidTotal() {
     if (paidDate != null) {
-      double repayments = payments
+      double repaymentsTotal = payments
           .where((payment) => payment.value > 0)
           .fold<double>(0.0, (sum, payment) => sum + payment.value);
-      if (repayments == 0) {
+      if (repaymentsTotal == 0) {
         return value;
       }
-      return repayments;
+      return repaymentsTotal;
     }
     return 0;
   }

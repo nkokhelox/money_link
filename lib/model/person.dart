@@ -15,12 +15,20 @@ class Person extends BaseModel {
 
   Person({this.id = 0, this.fullName = ""}) : super(id);
 
-  double total() {
+  double owingTotal() {
     return amounts.fold(0, (sum, amount) => sum + amount.balance());
   }
 
-  String moneyFormattedTotal() {
-    return "R ${total()}";
+  String moneyFormattedOwingTotal() {
+    return "R ${owingTotal()}";
+  }
+
+  double paidTotal() {
+    return amounts.fold(0, (sum, amount) => sum + amount.paidTotal());
+  }
+
+  String moneyFormattedPaidTotal() {
+    return "R ${paidTotal()}";
   }
 
   List<String> names() => fullName.split(" ");
