@@ -94,7 +94,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<Widget> chartIcon(bool isDualPane) {
-    return isDualPane ? [IconButton(onPressed: clearSelectedPerson, icon: Icon(Icons.stacked_bar_chart))] : [];
+    return (isDualPane && this._selectedPerson != null) ? [IconButton(onPressed: clearSelectedPerson, icon: Icon(Icons.stacked_bar_chart))] : [];
   }
 
   void clearSelectedPerson() {
