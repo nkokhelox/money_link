@@ -66,7 +66,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _selectedPerson = person;
     });
-    if (!isDualPane && person != null) {
+    if (!isDualPane) {
       Navigator.push(
         context,
         PortraitOnlyRoute(
@@ -94,7 +94,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<Widget> chartIcon(bool isDualPane) {
-    return isDualPane ? [IconButton(onPressed: clearSelectedPerson, icon: Icon(Icons.stacked_bar_chart))] : [];
+    if (isDualPane) {
+      return this._selectedPerson != null ? [IconButton(onPressed: clearSelectedPerson, icon: Icon(Icons.stacked_bar_chart))] : [];
+    }
+
+    return [IconButton(onPressed: () => onPersonTap(null, isDualPane), icon: Icon(Icons.stacked_bar_chart))];
   }
 
   void clearSelectedPerson() {
