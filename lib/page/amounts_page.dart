@@ -87,7 +87,7 @@ class AmountsPage extends StatelessWidget {
       ];
     }
 
-    final paidAmounts = amounts.where((amount) => amount.paidDate != null);
+    final paidAmounts = amounts.where((amount) => amount.paidDate != null).toList().reversed;
     final paidUpExpansionTile = GroupTile(
       title: "PAID AMOUNTS",
       subtitle: "R ${paidAmounts.fold<double>(0.0, (sum, amount) => sum + amount.paidTotal())}",
