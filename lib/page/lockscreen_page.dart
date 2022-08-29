@@ -29,18 +29,14 @@ class _LockScreenPageState extends State<LockScreenPage> {
             Stack(
               alignment: AlignmentDirectional.center,
               children: [
-                Icon(Icons.shield,
-                    size: 300, color: Theme.of(context).primaryColor),
-                Icon(Icons.lock_outline,
-                    size: 180, color: Theme.of(context).canvasColor),
+                Icon(Icons.shield, size: 300, color: Theme.of(context).primaryColor),
+                Icon(Icons.lock_outline, size: 180, color: Theme.of(context).canvasColor),
               ],
             ),
             Text(
               "UNLOCK APP",
               style: TextStyle(
-                color: pressSequence.length == 0
-                    ? Colors.blueGrey
-                    : Colors.blueGrey[900],
+                color: pressSequence.length == 0 ? Colors.blueGrey : Colors.blueGrey[900],
               ),
             ),
           ],
@@ -70,9 +66,8 @@ class _LockScreenPageState extends State<LockScreenPage> {
     verify();
   }
 
-  void verify() {
-    if (pressSequence.length == _hardCodedPattern.length &&
-        pressSequence.join() == _hardCodedPattern) {
+  Future<void> verify() async {
+    if (pressSequence.length == _hardCodedPattern.length && pressSequence.join() == _hardCodedPattern) {
       pressSequence.clear();
       unlockApp();
     }
@@ -82,17 +77,11 @@ class _LockScreenPageState extends State<LockScreenPage> {
     }
 
     setState(() {
-      // shake the UI with a vibration.
       pressSequence.clear();
     });
   }
 
   void unlockApp() {
-    Navigator.pushReplacement(
-        context,
-        PageTransition(
-            curve: Curves.linear,
-            type: PageTransitionType.bottomToTop,
-            child: HomePage()));
+    Navigator.pushReplacement(context, PageTransition(curve: Curves.linear, type: PageTransitionType.bottomToTop, child: HomePage()));
   }
 }
