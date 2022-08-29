@@ -46,10 +46,9 @@ class PeoplePageState extends State<PeoplePage> {
           return SlidableAutoCloseBehavior(
             child: ListView(
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              physics: const BouncingScrollPhysics(),
+              physics: const AlwaysScrollableScrollPhysics(parent: const BouncingScrollPhysics()),
               controller: widget.scrollController,
-              children:
-                  _getPersonListItems(context, snapshot.data ?? <Person>[]),
+              children: _getPersonListItems(context, snapshot.data ?? <Person>[]),
             ),
           );
         }
@@ -83,26 +82,17 @@ class PeoplePageState extends State<PeoplePage> {
           child: ListTile(
             title: Text(searchTerm),
             contentPadding: const EdgeInsets.only(left: 16),
-            trailing: IconButton(
-                icon: const Icon(Icons.add_circle_outline),
-                onPressed: _addPerson),
-            subtitle: const Text("Tap + to add this person",
-                style: TextStyle(color: Colors.blueGrey)),
+            trailing: IconButton(icon: const Icon(Icons.add_circle_outline), onPressed: _addPerson),
+            subtitle: const Text("Tap + to add this person", style: TextStyle(color: Colors.blueGrey)),
           ),
         ),
       ];
     } else if (people.isNotEmpty && searchTerm.isNotEmpty) {
       return people.map((p) => _buildTile(EntityTile.personTile(p))).toList();
     }
-    final List<EntityTile> otherPeopleTiles = people
-        .where((p) => p.owingTotal() != 0)
-        .map((p) => EntityTile.personTile(p))
-        .toList();
+    final List<EntityTile> otherPeopleTiles = people.where((p) => p.owingTotal() != 0).map((p) => EntityTile.personTile(p)).toList();
 
-    final List<EntityTile<Person>> paidUpPeopleTiles = people
-        .where((p) => p.owingTotal() == 0)
-        .map((p) => EntityTile.personTile(p))
-        .toList();
+    final List<EntityTile<Person>> paidUpPeopleTiles = people.where((p) => p.owingTotal() == 0).map((p) => EntityTile.personTile(p)).toList();
 
     if (otherPeopleTiles.isEmpty) {
       return paidUpPeopleTiles.map(_buildTile).toList();
@@ -111,13 +101,9 @@ class PeoplePageState extends State<PeoplePage> {
       return otherPeopleTiles.map(_buildTile).toList();
     }
 
-    final paidTotal = paidUpPeopleTiles.fold<double>(
-        0.0, (sum, pt) => sum + pt.object.paidTotal());
+    final paidTotal = paidUpPeopleTiles.fold<double>(0.0, (sum, pt) => sum + pt.object.paidTotal());
 
-    final paidUpExpansionTile = GroupTile(
-        title: "SETTLED PEOPLE",
-        subtitle: "R $paidTotal",
-        innerTiles: paidUpPeopleTiles);
+    final paidUpExpansionTile = GroupTile(title: "SETTLED PEOPLE", subtitle: "R $paidTotal", innerTiles: paidUpPeopleTiles);
 
     List<Tile> comboList = <Tile>[];
     comboList.addAll(otherPeopleTiles);
@@ -143,14 +129,9 @@ class PeoplePageState extends State<PeoplePage> {
     return Card(
       child: ExpansionTile(
         tilePadding: EdgeInsets.only(left: subTileIndentation),
-        title: Text(group.title,
-            style:
-                const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2)),
+        title: Text(group.title, style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2)),
         subtitle: Text(group.subtitle),
-        children: group.innerTiles
-            .map((subTile) =>
-                _buildTile(subTile, subTileIndentation: 2 * subTileIndentation))
-            .toList(),
+        children: group.innerTiles.map((subTile) => _buildTile(subTile, subTileIndentation: 2 * subTileIndentation)).toList(),
       ),
     );
   }
@@ -159,21 +140,14 @@ class PeoplePageState extends State<PeoplePage> {
     setState(() {
       String searchTerm = _searchFieldController.text;
       if (searchTerm.isEmpty) {
-        _peopleStream = _peopleBox
-            .query()
-            .watch(triggerImmediately: true)
-            .map((q) => q.find());
+        _peopleStream = _peopleBox.query().watch(triggerImmediately: true).map((q) => q.find());
       } else {
-        _peopleStream = _peopleBox
-            .query(Person_.fullName.startsWith(searchTerm))
-            .watch(triggerImmediately: true)
-            .map((q) => q.find());
+        _peopleStream = _peopleBox.query(Person_.fullName.startsWith(searchTerm)).watch(triggerImmediately: true).map((q) => q.find());
       }
     });
   }
 
-  void _addPerson() =>
-      _peopleBox.put(Person(fullName: _searchFieldController.text));
+  void _addPerson() => _peopleBox.put(Person(fullName: _searchFieldController.text));
 
   void refreshPeopleStream() => _onSearchChanged();
 }

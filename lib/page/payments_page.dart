@@ -7,6 +7,8 @@ import 'package:money_link/model/tile.dart';
 import 'package:money_link/objectbox.dart';
 import 'package:money_link/objectbox.g.dart';
 
+import '../component/value_form.dart';
+
 class PaymentsPage extends StatelessWidget {
   final Amount selectedAmount;
   final VoidCallback refreshAmounts;
@@ -18,21 +20,27 @@ class PaymentsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<Payment>>(
-      initialData: const <Payment>[],
-      stream: _paymentsStream,
-      builder: (buildContext, streamSnapshot) {
-        if (streamSnapshot.hasData) {
-          return SlidableAutoCloseBehavior(
-            child: ListView(
-              physics: const BouncingScrollPhysics(),
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              children: _getPaymentListItems(buildContext, streamSnapshot.data ?? []),
-            ),
-          );
-        }
-        return ErrorWidget(streamSnapshot.error ?? "Something went wrong :(");
-      },
+    return Scaffold(
+      body: StreamBuilder<List<Payment>>(
+        initialData: const <Payment>[],
+        stream: _paymentsStream,
+        builder: (buildContext, streamSnapshot) {
+          if (streamSnapshot.hasData) {
+            return SlidableAutoCloseBehavior(
+              child: ListView(
+                physics: const AlwaysScrollableScrollPhysics(parent: const BouncingScrollPhysics()),
+                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                children: _getPaymentListItems(buildContext, streamSnapshot.data ?? []),
+              ),
+            );
+          }
+          return ErrorWidget(streamSnapshot.error ?? "Something went wrong :(");
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () => addPayment(context),
+      ),
     );
   }
 
@@ -70,5 +78,12 @@ class PaymentsPage extends StatelessWidget {
     var queryBuilder = ObjectBox.store.box<Payment>().query();
     queryBuilder.link(Payment_.amount, Amount_.id.equals(selectedAmount.id));
     return queryBuilder.watch(triggerImmediately: true).map((q) => q.find());
+  }
+
+  void addPayment(BuildContext context) async {
+    showDialog(
+      context: context,
+      builder: (context) => ValueForm(model: this.selectedAmount, refreshFunction: refreshAmounts),
+    );
   }
 }

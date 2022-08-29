@@ -35,7 +35,6 @@ dependencies:
   objectbox_flutter_libs: any
   intl: ^0.17.0
   page_transition: ^2.0.9
-  secure_application: ^3.8.0
 
 dev_dependencies:
   flutter_test:

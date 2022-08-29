@@ -30,6 +30,7 @@ class _MainApplicationState extends State<MainApplication> {
     return MaterialApp(
       home: LockScreenPage(),
       theme: ThemeData(
+        splashFactory: NoSplash.splashFactory,
         hintColor: Colors.blueGrey[100],
         brightness: Brightness.light,
         primarySwatch: Colors.blueGrey,
@@ -39,6 +40,7 @@ class _MainApplicationState extends State<MainApplication> {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       darkTheme: ThemeData(
+        splashFactory: NoSplash.splashFactory,
         brightness: Brightness.dark,
         disabledColor: Colors.white10,
         primarySwatch: Colors.blueGrey,
