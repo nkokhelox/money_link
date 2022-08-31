@@ -30,7 +30,7 @@ class PaymentsPage extends StatelessWidget {
               child: ListView(
                 physics: const AlwaysScrollableScrollPhysics(parent: const BouncingScrollPhysics()),
                 keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-                children: _getPaymentListItems(buildContext, streamSnapshot.data ?? []),
+                children: _getPaymentListItems(buildContext, (streamSnapshot.data ?? []).reversed.toList(growable: false)),
               ),
             );
           }
