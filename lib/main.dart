@@ -47,6 +47,10 @@ class _MainApplicationState extends State<MainApplication> {
         selectedRowColor: Colors.black12,
         iconTheme: IconThemeData(color: Colors.blueGrey[400]),
         appBarTheme: AppBarTheme(foregroundColor: Colors.blueGrey[400]),
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          backgroundColor: Colors.black38,
+          foregroundColor: Colors.blueGrey,
+        ),
         textTheme: TextTheme(
           headline6: TextStyle(color: Colors.blueGrey[400]),
           subtitle1: TextStyle(color: Colors.blueGrey[400]),

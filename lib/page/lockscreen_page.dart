@@ -36,7 +36,9 @@ class _LockScreenPageState extends State<LockScreenPage> {
             Text(
               "UNLOCK APP",
               style: TextStyle(
-                color: pressSequence.length == 0 ? Colors.blueGrey : Colors.blueGrey[Theme.of(context).brightness == Brightness.light ? 800 : 300],
+                color: Theme.of(context).brightness == Brightness.light
+                    ? (pressSequence.length == 0 ? Colors.blueGrey : Colors.blueGrey[700])
+                    : (pressSequence.length == 0 ? Colors.black : Colors.black45),
               ),
             ),
           ],
