@@ -36,6 +36,7 @@ class _MainApplicationState extends State<MainApplication> {
         primarySwatch: Colors.blueGrey,
         disabledColor: Colors.blueGrey[50],
         selectedRowColor: Colors.blueGrey[100],
+        unselectedWidgetColor: Colors.blueGrey,
         textTheme: TextTheme(subtitle2: TextStyle(color: Colors.blueGrey)),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
@@ -45,6 +46,7 @@ class _MainApplicationState extends State<MainApplication> {
         disabledColor: Colors.white10,
         primarySwatch: Colors.blueGrey,
         selectedRowColor: Colors.black12,
+        unselectedWidgetColor: Colors.blueGrey,
         iconTheme: IconThemeData(color: Colors.blueGrey[400]),
         appBarTheme: AppBarTheme(foregroundColor: Colors.blueGrey[400]),
         floatingActionButtonTheme: FloatingActionButtonThemeData(
