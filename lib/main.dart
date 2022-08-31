@@ -48,8 +48,8 @@ class _MainApplicationState extends State<MainApplication> {
         iconTheme: IconThemeData(color: Colors.blueGrey[400]),
         appBarTheme: AppBarTheme(foregroundColor: Colors.blueGrey[400]),
         floatingActionButtonTheme: FloatingActionButtonThemeData(
-          backgroundColor: Colors.blueGrey,
-          foregroundColor: Colors.black,
+          backgroundColor: Colors.black38,
+          foregroundColor: Colors.blueGrey,
         ),
         textTheme: TextTheme(
           headline6: TextStyle(color: Colors.blueGrey[400]),
