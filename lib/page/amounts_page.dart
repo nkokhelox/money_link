@@ -18,10 +18,11 @@ class AmountsPage extends StatelessWidget {
 
   late Stream<List<Amount>> _amountStream;
 
-  AmountsPage({super.key,
-    required this.selectedPerson,
-    required this.appBarHidden,
-    required this.refreshPeople}) {
+  AmountsPage(
+      {super.key,
+      required this.selectedPerson,
+      required this.appBarHidden,
+      required this.refreshPeople}) {
     _amountStream = _personAmountsQuery();
   }
 
@@ -36,34 +37,37 @@ class AmountsPage extends StatelessWidget {
             appBar: appBarHidden
                 ? null
                 : AppBar(
-              title: InkWell(
-                onLongPress: _jumpToTop,
-                child: Text(selectedPerson?.fullName ?? "AMOUNTS",
-                    style: const TextStyle(letterSpacing: 4)),
-              ),
-            ),
-            body: (selectedPerson == null) ?
-            Padding(
-              padding: const EdgeInsets.all(5),
-              child:
-              PeopleChart(scrollController: _scrollController),
-            ) :
-            SlidableAutoCloseBehavior(
-              child: ListView(
-                keyboardDismissBehavior:
-                ScrollViewKeyboardDismissBehavior.onDrag,
-                controller: _scrollController,
-                physics: const AlwaysScrollableScrollPhysics(
-                    parent: const BouncingScrollPhysics()),
-                children: _getListItems(context, snapshot.data ?? <Amount>[]),
-              ),
-            ),
-            floatingActionButton: (this.selectedPerson == null) ?
-            null :
-            FloatingActionButton(
-              child: Icon(Icons.add),
-              onPressed: () => addAmount(context),
-            ),
+                    title: InkWell(
+                      onLongPress: _jumpToTop,
+                      child: Text(
+                        selectedPerson?.fullName ?? "AMOUNTS",
+                        style: const TextStyle(letterSpacing: 4),
+                      ),
+                    ),
+                  ),
+            body: (selectedPerson == null)
+                ? Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: PeopleChart(scrollController: _scrollController),
+                  )
+                : SlidableAutoCloseBehavior(
+                    child: ListView(
+                      keyboardDismissBehavior:
+                          ScrollViewKeyboardDismissBehavior.onDrag,
+                      controller: _scrollController,
+                      physics: const AlwaysScrollableScrollPhysics(
+                        parent: const BouncingScrollPhysics(),
+                      ),
+                      children:
+                          _getListItems(context, snapshot.data ?? <Amount>[]),
+                    ),
+                  ),
+            floatingActionButton: (this.selectedPerson == null)
+                ? null
+                : FloatingActionButton(
+                    child: Icon(Icons.add),
+                    onPressed: () => addAmount(context),
+                  ),
           );
         }
 
@@ -91,7 +95,7 @@ class AmountsPage extends StatelessWidget {
     }
 
     final paidAmounts =
-    amounts.where((amount) => amount.paidDate != null).toList();
+        amounts.where((amount) => amount.paidDate != null).toList();
 
     paidAmounts.sort((a, b) {
       int dateA = a.paidDate?.microsecondsSinceEpoch ?? 0;
@@ -102,10 +106,9 @@ class AmountsPage extends StatelessWidget {
     final paidUpExpansionTile = GroupTile(
       title: "PAID AMOUNTS",
       subtitle:
-      "R ${paidAmounts.fold<double>(
-          0.0, (sum, amount) => sum + amount.paidTotal())}",
+          "R ${paidAmounts.fold<double>(0.0, (sum, amount) => sum + amount.paidTotal())}",
       innerTiles:
-      paidAmounts.map((amount) => EntityTile.amountTile(amount)).toList(),
+          paidAmounts.map((amount) => EntityTile.amountTile(amount)).toList(),
     );
 
     final List<Tile> unpaidAmounts = amounts
@@ -145,8 +148,7 @@ class AmountsPage extends StatelessWidget {
         subtitle: Text(group.subtitle, maxLines: 1),
         children: (group)
             .innerTiles
-            .map((subTile) =>
-            _buildTile(context, subTile,
+            .map((subTile) => _buildTile(context, subTile,
                 subTileIndentation: 2 * subTileIndentation))
             .toList(),
       ),

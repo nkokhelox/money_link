@@ -102,7 +102,7 @@ class PeopleChart extends StatelessWidget {
         Container(
           decoration: BoxDecoration(
               border: Border.all(color: Colors.black12),
-              color: person.owingTotal() == 0 ? null : barColor),
+              color: person.owingTotal() == 0 ? null : barColor,),
           width: person.owingTotal() == 0 ? maxBarWidth : barWidthValue,
           height: 20,
         ),

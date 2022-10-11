@@ -28,16 +28,35 @@ class PaymentsPage extends StatelessWidget {
         builder: (buildContext, streamSnapshot) {
           if (streamSnapshot.hasData) {
             return SlidableAutoCloseBehavior(
-              child: ListView(
-                physics: const AlwaysScrollableScrollPhysics(
-                    parent: const BouncingScrollPhysics()),
-                keyboardDismissBehavior:
-                    ScrollViewKeyboardDismissBehavior.onDrag,
-                children: _getPaymentListItems(
-                    buildContext,
-                    (streamSnapshot.data ?? [])
-                        .reversed
-                        .toList(growable: false)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    child: Text(
+                      selectedAmount.details(),
+                      textAlign: TextAlign.start,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: ListView(
+                      physics: const AlwaysScrollableScrollPhysics(
+                        parent: const BouncingScrollPhysics(),
+                      ),
+                      keyboardDismissBehavior:
+                          ScrollViewKeyboardDismissBehavior.onDrag,
+                      children: _getPaymentListItems(
+                          buildContext,
+                          (streamSnapshot.data ?? [])
+                              .reversed
+                              .toList(growable: false)),
+                    ),
+                  ),
+                ],
               ),
             );
           }
@@ -54,13 +73,6 @@ class PaymentsPage extends StatelessWidget {
   List<Widget> _getPaymentListItems(
       BuildContext context, List<Payment> payments) {
     List<Widget> comboList = <Widget>[];
-    comboList.add(
-      Container(
-        padding: const EdgeInsets.all(10),
-        child: Text(selectedAmount.details(),
-            style: const TextStyle(fontSize: 12)),
-      ),
-    );
 
     if (payments.isEmpty) {
       comboList.add(
