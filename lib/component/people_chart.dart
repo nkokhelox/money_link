@@ -62,7 +62,7 @@ class PeopleChart extends StatelessWidget {
               Comparable.compare(p2.owingTotal().abs(), p1.owingTotal().abs()));
 
           return Column(
-              // crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 peopleChartHeadingAmounts(context, sortedPeople, total),
                 peopleChartHeadingLine(context, sortedPeople, total),
@@ -173,6 +173,9 @@ class PeopleChart extends StatelessWidget {
       BuildContext context, List<Person> sortedPeople, double peopleTotalSum) {
     return LayoutBuilder(
       builder: (context, constraints) => ListView(
+        physics: const AlwaysScrollableScrollPhysics(
+          parent: const BouncingScrollPhysics(),
+        ),
         controller: scrollController,
         shrinkWrap: true,
         children: sortedPeople

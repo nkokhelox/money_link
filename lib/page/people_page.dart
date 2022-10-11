@@ -59,7 +59,8 @@ class PeoplePageState extends State<PeoplePage> {
                       keyboardDismissBehavior:
                           ScrollViewKeyboardDismissBehavior.onDrag,
                       physics: const AlwaysScrollableScrollPhysics(
-                          parent: const BouncingScrollPhysics()),
+                        parent: const BouncingScrollPhysics(),
+                      ),
                       controller: widget.scrollController,
                       children:
                           _peopleCards(context, snapshot.data ?? <Person>[]),
