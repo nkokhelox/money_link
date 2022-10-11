@@ -18,7 +18,11 @@ class AmountsPage extends StatelessWidget {
 
   late Stream<List<Amount>> _amountStream;
 
-  AmountsPage({super.key, required this.selectedPerson, required this.appBarHidden, required this.refreshPeople}) {
+  AmountsPage(
+      {super.key,
+      required this.selectedPerson,
+      required this.appBarHidden,
+      required this.refreshPeople}) {
     _amountStream = _personAmountsQuery();
   }
 
@@ -34,19 +38,31 @@ class AmountsPage extends StatelessWidget {
                 ? null
                 : AppBar(
                     title: InkWell(
-                      onTap: _jumpToTop,
-                      child: Text(selectedPerson?.fullName ?? "AMOUNTS", style: const TextStyle(letterSpacing: 4)),
+                      onLongPress: _jumpToTop,
+                      child: Text(
+                        selectedPerson?.fullName ?? "AMOUNTS",
+                        style: const TextStyle(letterSpacing: 4),
+                      ),
                     ),
                   ),
-            body: SlidableAutoCloseBehavior(
-              child: ListView(
-                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-                controller: _scrollController,
-                physics: const AlwaysScrollableScrollPhysics(parent: const BouncingScrollPhysics()),
-                children: _getListItems(context, snapshot.data ?? <Amount>[]),
-              ),
-            ),
-            floatingActionButton: this.selectedPerson == null
+            body: (selectedPerson == null)
+                ? Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: PeopleChart(scrollController: _scrollController),
+                  )
+                : SlidableAutoCloseBehavior(
+                    child: ListView(
+                      keyboardDismissBehavior:
+                          ScrollViewKeyboardDismissBehavior.onDrag,
+                      controller: _scrollController,
+                      physics: const AlwaysScrollableScrollPhysics(
+                        parent: const BouncingScrollPhysics(),
+                      ),
+                      children:
+                          _getListItems(context, snapshot.data ?? <Amount>[]),
+                    ),
+                  ),
+            floatingActionButton: (this.selectedPerson == null)
                 ? null
                 : FloatingActionButton(
                     child: Icon(Icons.add),
@@ -61,15 +77,6 @@ class AmountsPage extends StatelessWidget {
   }
 
   List<Widget> _getListItems(BuildContext context, List<Amount> amounts) {
-    if (selectedPerson == null) {
-      return [
-        Padding(
-          padding: const EdgeInsets.all(5),
-          child: PeopleChart(),
-        ),
-      ];
-    }
-
     if (amounts.isEmpty) {
       return [
         Container(
@@ -87,7 +94,8 @@ class AmountsPage extends StatelessWidget {
       ];
     }
 
-    final paidAmounts = amounts.where((amount) => amount.paidDate != null).toList();
+    final paidAmounts =
+        amounts.where((amount) => amount.paidDate != null).toList();
 
     paidAmounts.sort((a, b) {
       int dateA = a.paidDate?.microsecondsSinceEpoch ?? 0;
@@ -97,21 +105,31 @@ class AmountsPage extends StatelessWidget {
 
     final paidUpExpansionTile = GroupTile(
       title: "PAID AMOUNTS",
-      subtitle: "R ${paidAmounts.fold<double>(0.0, (sum, amount) => sum + amount.paidTotal())}",
-      innerTiles: paidAmounts.map((amount) => EntityTile.amountTile(amount)).toList(),
+      subtitle:
+          "R ${paidAmounts.fold<double>(0.0, (sum, amount) => sum + amount.paidTotal())}",
+      innerTiles:
+          paidAmounts.map((amount) => EntityTile.amountTile(amount)).toList(),
     );
 
-    final List<Tile> unpaidAmounts = amounts.where((amount) => amount.paidDate == null).map((amount) => EntityTile.amountTile(amount)).toList();
-    final Iterable<Tile> groups = [paidUpExpansionTile].where((group) => group.innerTiles.isNotEmpty).toList();
+    final List<Tile> unpaidAmounts = amounts
+        .where((amount) => amount.paidDate == null)
+        .map((amount) => EntityTile.amountTile(amount))
+        .toList();
+
+    final Iterable<Tile> groups = [paidUpExpansionTile]
+        .where((group) => group.innerTiles.isNotEmpty)
+        .toList();
 
     List<Widget> comboList = <Widget>[];
-    comboList.addAll(unpaidAmounts.map((et) => _buildTile(context, et)).toList());
+    comboList
+        .addAll(unpaidAmounts.map((et) => _buildTile(context, et)).toList());
     comboList.addAll(groups.map((gt) => _buildTile(context, gt)).toList());
 
     return comboList;
   }
 
-  Widget _buildTile(BuildContext context, Tile tile, {double subTileIndentation = 10.0}) {
+  Widget _buildTile(BuildContext context, Tile tile,
+      {double subTileIndentation = 10.0}) {
     if (tile is EntityTile<Amount>) {
       return AmountWidget(
         amount: tile.object,
@@ -125,21 +143,28 @@ class AmountsPage extends StatelessWidget {
     return Card(
       child: ExpansionTile(
         tilePadding: EdgeInsets.only(left: subTileIndentation),
-        title: Text(group.title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(group.title,
+            style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(group.subtitle, maxLines: 1),
-        children: (group).innerTiles.map((subTile) => _buildTile(context, subTile, subTileIndentation: 2 * subTileIndentation)).toList(),
+        children: (group)
+            .innerTiles
+            .map((subTile) => _buildTile(context, subTile,
+                subTileIndentation: 2 * subTileIndentation))
+            .toList(),
       ),
     );
   }
 
   Stream<List<Amount>> _personAmountsQuery() {
     var queryBuilder = ObjectBox.store.box<Amount>().query();
-    queryBuilder.link(Amount_.person, Person_.id.equals(selectedPerson?.id ?? 0));
+    queryBuilder.link(
+        Amount_.person, Person_.id.equals(selectedPerson?.id ?? 0));
     return queryBuilder.watch(triggerImmediately: true).map((q) => q.find());
   }
 
   void _jumpToTop() {
-    _scrollController.animateTo(0, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+    _scrollController.animateTo(0,
+        duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
   }
 
   void refreshAmountStream() {
@@ -152,7 +177,8 @@ class AmountsPage extends StatelessWidget {
     if (person != null) {
       showDialog(
         context: context,
-        builder: (context) => ValueForm(model: person, refreshFunction: refreshAmountStream),
+        builder: (context) =>
+            ValueForm(model: person, refreshFunction: refreshAmountStream),
       );
     }
   }

@@ -38,21 +38,17 @@ class Amount extends BaseModel {
 
   details() {
     if (paidDate == null) {
-      return """
-        Not paid yet
-        Value: ${moneyValue()}
-        Balance: ${moneyBalance()}
-        Created: ${created.niceDescription(suffix: " ago")}
-        Note: $note
-        """;
+      return """Not paid yet
+Value: ${moneyValue()}
+Balance: ${moneyBalance()}
+Created: ${created.niceDescription(suffix: " ago")}
+Note: $note""";
     }
-    return """
-    Value: ${moneyValue()}
-    PaidTotal: ${moneyPaidTotal()}
-    Created: ${created.niceDescription(suffix: " ago")}
-    Paid: ${paidDate?.niceDescription(suffix: " ago")}
-    Note: $note
-    """;
+    return """Value: ${moneyValue()}
+PaidTotal: ${moneyPaidTotal()}
+Created: ${created.niceDescription(suffix: " ago")}
+Paid: ${paidDate?.niceDescription(suffix: " ago")}
+Note: $note""";
   }
 
   @override

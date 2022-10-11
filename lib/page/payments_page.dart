@@ -14,7 +14,8 @@ class PaymentsPage extends StatelessWidget {
   final VoidCallback refreshAmounts;
   late Stream<List<Payment>> _paymentsStream;
 
-  PaymentsPage({super.key, required this.selectedAmount, required this.refreshAmounts}) {
+  PaymentsPage(
+      {super.key, required this.selectedAmount, required this.refreshAmounts}) {
     _paymentsStream = _amountPaymentsQuery();
   }
 
@@ -27,10 +28,35 @@ class PaymentsPage extends StatelessWidget {
         builder: (buildContext, streamSnapshot) {
           if (streamSnapshot.hasData) {
             return SlidableAutoCloseBehavior(
-              child: ListView(
-                physics: const AlwaysScrollableScrollPhysics(parent: const BouncingScrollPhysics()),
-                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-                children: _getPaymentListItems(buildContext, (streamSnapshot.data ?? []).reversed.toList(growable: false)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    child: Text(
+                      selectedAmount.details(),
+                      textAlign: TextAlign.start,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: ListView(
+                      physics: const AlwaysScrollableScrollPhysics(
+                        parent: const BouncingScrollPhysics(),
+                      ),
+                      keyboardDismissBehavior:
+                          ScrollViewKeyboardDismissBehavior.onDrag,
+                      children: _getPaymentListItems(
+                          buildContext,
+                          (streamSnapshot.data ?? [])
+                              .reversed
+                              .toList(growable: false)),
+                    ),
+                  ),
+                ],
               ),
             );
           }
@@ -44,14 +70,9 @@ class PaymentsPage extends StatelessWidget {
     );
   }
 
-  List<Widget> _getPaymentListItems(BuildContext context, List<Payment> payments) {
+  List<Widget> _getPaymentListItems(
+      BuildContext context, List<Payment> payments) {
     List<Widget> comboList = <Widget>[];
-    comboList.add(
-      Container(
-        padding: const EdgeInsets.all(10),
-        child: Text(selectedAmount.details(), style: const TextStyle(fontSize: 12)),
-      ),
-    );
 
     if (payments.isEmpty) {
       comboList.add(
@@ -60,17 +81,21 @@ class PaymentsPage extends StatelessWidget {
           child: Text(
             "${selectedAmount.moneyValue()} has a no payments",
             textAlign: TextAlign.center,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, letterSpacing: 2),
+            style: const TextStyle(
+                fontWeight: FontWeight.bold, fontSize: 16, letterSpacing: 2),
           ),
         ),
       );
     } else {
-      comboList.addAll(payments.map((p) => _buildTile(context, EntityTile.paymentTile(p))).toList());
+      comboList.addAll(payments
+          .map((p) => _buildTile(context, EntityTile.paymentTile(p)))
+          .toList());
     }
     return comboList;
   }
 
-  Widget _buildTile(BuildContext context, EntityTile<Payment> tile, {double subTileIndentation = 10.0}) {
+  Widget _buildTile(BuildContext context, EntityTile<Payment> tile,
+      {double subTileIndentation = 10.0}) {
     return PaymentWidget(payment: tile.object, refreshAmounts: refreshAmounts);
   }
 
@@ -83,7 +108,8 @@ class PaymentsPage extends StatelessWidget {
   void addPayment(BuildContext context) async {
     showDialog(
       context: context,
-      builder: (context) => ValueForm(model: this.selectedAmount, refreshFunction: refreshAmounts),
+      builder: (context) => ValueForm(
+          model: this.selectedAmount, refreshFunction: refreshAmounts),
     );
   }
 }
