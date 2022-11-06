@@ -16,33 +16,38 @@ class _LockScreenPageState extends State<LockScreenPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: InkWell(
-        onTap: singlePress,
-        onLongPress: longPress,
-        onDoubleTap: doublePress,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: dotsList(),
-            ),
-            Stack(
-              alignment: AlignmentDirectional.center,
-              children: [
-                Icon(Icons.shield,
-                    size: 300, color: Theme.of(context).primaryColor),
-                Icon(Icons.lock_outline,
-                    size: 180, color: Theme.of(context).canvasColor),
-              ],
-            ),
-            Text(
-              "UNLOCK APP",
-              style: TextStyle(
-                color: Theme.of(context).primaryColor,
+      backgroundColor: Theme.of(context).brightness == Brightness.light
+          ? Colors.grey[300]
+          : null,
+      body: SafeArea(
+        child: InkWell(
+          onTap: singlePress,
+          onLongPress: longPress,
+          onDoubleTap: doublePress,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: dotsList(),
               ),
-            ),
-          ],
+              Stack(
+                alignment: AlignmentDirectional.center,
+                children: [
+                  Icon(Icons.shield,
+                      size: 300, color: Theme.of(context).primaryColor),
+                  Icon(Icons.lock_outline,
+                      size: 180, color: Theme.of(context).canvasColor),
+                ],
+              ),
+              Text(
+                "UNLOCK APP",
+                style: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
