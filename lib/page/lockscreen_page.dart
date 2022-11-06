@@ -21,24 +21,25 @@ class _LockScreenPageState extends State<LockScreenPage> {
         onLongPress: longPress,
         onDoubleTap: doublePress,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Row(
-              children: [],
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: dotsList(),
             ),
             Stack(
               alignment: AlignmentDirectional.center,
               children: [
-                Icon(Icons.shield, size: 300, color: Theme.of(context).primaryColor),
-                Icon(Icons.lock_outline, size: 180, color: Theme.of(context).canvasColor),
+                Icon(Icons.shield,
+                    size: 300, color: Theme.of(context).primaryColor),
+                Icon(Icons.lock_outline,
+                    size: 180, color: Theme.of(context).canvasColor),
               ],
             ),
             Text(
               "UNLOCK APP",
               style: TextStyle(
-                color: Theme.of(context).brightness == Brightness.light
-                    ? (pressSequence.length == 0 ? Colors.blueGrey : Colors.blueGrey[700])
-                    : (pressSequence.length == 0 ? Colors.black : Colors.black45),
+                color: Theme.of(context).primaryColor,
               ),
             ),
           ],
@@ -69,21 +70,48 @@ class _LockScreenPageState extends State<LockScreenPage> {
   }
 
   Future<void> verify() async {
-    if (pressSequence.length == _hardCodedPattern.length && pressSequence.join() == _hardCodedPattern) {
-      pressSequence.clear();
-      unlockApp();
-    }
-
     if (pressSequence.length < _hardCodedPattern.length) {
       return;
     }
-
-    setState(() {
-      pressSequence.clear();
+    if (pressSequence.length == _hardCodedPattern.length &&
+        pressSequence.join() == _hardCodedPattern) {
+      await Future.delayed(const Duration(milliseconds: 500), () {
+        setState(() {
+          pressSequence.clear();
+        });
+        unlockApp();
+      });
+      return;
+    }
+    await Future.delayed(const Duration(milliseconds: 500), () {
+      setState(() {
+        pressSequence.clear();
+      });
     });
   }
 
+  List<Widget> dotsList() {
+    List<Widget> list = [];
+    for (var i = 0; i < _hardCodedPattern.length; i++) {
+      list.add(
+        Icon(
+          pressSequence.length > i ? Icons.circle : Icons.circle_outlined,
+          color: Theme.of(context).primaryColor,
+          size: 30,
+        ),
+      );
+    }
+    return list;
+  }
+
   void unlockApp() {
-    Navigator.pushReplacement(context, PageTransition(curve: Curves.linear, type: PageTransitionType.bottomToTop, child: HomePage()));
+    Navigator.pushReplacement(
+      context,
+      PageTransition(
+        curve: Curves.linear,
+        type: PageTransitionType.bottomToTop,
+        child: HomePage(),
+      ),
+    );
   }
 }
