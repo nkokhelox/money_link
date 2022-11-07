@@ -41,8 +41,7 @@ class _MainApplicationState extends State<MainApplication> {
         textTheme: TextTheme(subtitle2: TextStyle(color: Colors.blueGrey)),
         visualDensity: VisualDensity.adaptivePlatformDensity,
         appBarTheme: AppBarTheme(
-          systemOverlayStyle: SystemUiOverlayStyle.dark,
-          foregroundColor: Colors.black,
+          systemOverlayStyle: SystemUiOverlayStyle.light,
         ),
       ),
       darkTheme: ThemeData(
