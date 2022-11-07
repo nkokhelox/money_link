@@ -16,9 +16,6 @@ class _LockScreenPageState extends State<LockScreenPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).brightness == Brightness.light
-          ? Colors.grey[300]
-          : null,
       body: SafeArea(
         child: InkWell(
           onTap: singlePress,
