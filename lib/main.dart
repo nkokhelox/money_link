@@ -1,6 +1,7 @@
 /// Copyright (c) Microsoft Corporation.
 /// Licensed under the MIT License.
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:money_link/page/lockscreen_page.dart';
 
 import 'objectbox.dart';
@@ -39,6 +40,10 @@ class _MainApplicationState extends State<MainApplication> {
         unselectedWidgetColor: Colors.blueGrey,
         textTheme: TextTheme(subtitle2: TextStyle(color: Colors.blueGrey)),
         visualDensity: VisualDensity.adaptivePlatformDensity,
+        appBarTheme: AppBarTheme(
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
+          foregroundColor: Colors.black,
+        ),
       ),
       darkTheme: ThemeData(
         splashFactory: NoSplash.splashFactory,
@@ -48,7 +53,10 @@ class _MainApplicationState extends State<MainApplication> {
         selectedRowColor: Colors.black12,
         unselectedWidgetColor: Colors.blueGrey,
         iconTheme: IconThemeData(color: Colors.blueGrey[400]),
-        appBarTheme: AppBarTheme(foregroundColor: Colors.blueGrey[400]),
+        appBarTheme: AppBarTheme(
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
+          foregroundColor: Colors.blueGrey,
+        ),
         floatingActionButtonTheme: FloatingActionButtonThemeData(
           backgroundColor: Colors.black38,
           foregroundColor: Colors.blueGrey,
