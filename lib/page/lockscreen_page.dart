@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:money_link/page/home_page.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -15,6 +16,7 @@ class _LockScreenPageState extends State<LockScreenPage> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
     return Scaffold(
       body: SafeArea(
         child: InkWell(
