@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:money_link/page/home_page.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -16,34 +17,37 @@ class _LockScreenPageState extends State<LockScreenPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: InkWell(
-          onTap: singlePress,
-          onLongPress: longPress,
-          onDoubleTap: doublePress,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: dotsList(),
-              ),
-              Stack(
-                alignment: AlignmentDirectional.center,
-                children: [
-                  Icon(Icons.shield,
-                      size: 300, color: Theme.of(context).primaryColor),
-                  Icon(Icons.lock_outline,
-                      size: 180, color: Theme.of(context).canvasColor),
-                ],
-              ),
-              Text(
-                "UNLOCK APP",
-                style: TextStyle(
-                  color: Theme.of(context).primaryColor,
+      body: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.dark,
+        child: SafeArea(
+          child: InkWell(
+            onTap: singlePress,
+            onLongPress: longPress,
+            onDoubleTap: doublePress,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: dotsList(),
                 ),
-              ),
-            ],
+                Stack(
+                  alignment: AlignmentDirectional.center,
+                  children: [
+                    Icon(Icons.shield,
+                        size: 300, color: Theme.of(context).primaryColor),
+                    Icon(Icons.lock_outline,
+                        size: 180, color: Theme.of(context).canvasColor),
+                  ],
+                ),
+                Text(
+                  "UNLOCK APP",
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
