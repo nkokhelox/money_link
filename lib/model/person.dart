@@ -15,20 +15,38 @@ class Person extends BaseModel {
 
   Person({this.id = 0, this.fullName = ""}) : super(id);
 
-  double owingTotal() {
+  double balance() {
     return amounts.fold(0, (sum, amount) => sum + amount.balance());
   }
 
-  String moneyFormattedOwingTotal() {
-    return "R ${owingTotal()}";
+  double grandOwingTotal() {
+    return amounts.fold(0, (sum, amount) => sum + amount.owingTotal());
   }
 
-  double paidTotal() {
+  double owingTotal() {
+    return amounts
+        .where((amount) => amount.paidDate == null)
+        .fold(0, (sum, amount) => sum + amount.owingTotal());
+  }
+
+  double grandPaidTotal() {
     return amounts.fold(0, (sum, amount) => sum + amount.paidTotal());
   }
 
-  String moneyFormattedPaidTotal() {
-    return "R ${paidTotal()}";
+  double paidTotal() {
+    return amounts
+        .where((amount) => amount.paidDate == null)
+        .fold(0, (sum, amount) => sum + amount.paidTotal());
+  }
+
+  double grandGivenTotal() {
+    return amounts.fold(0, (sum, amount) => sum + amount.value);
+  }
+
+  double givenTotal() {
+    return amounts
+        .where((amount) => amount.paidDate == null)
+        .fold(0, (sum, amount) => sum + amount.value);
   }
 
   List<String> names() => fullName.split(" ");

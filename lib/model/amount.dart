@@ -4,6 +4,8 @@ import 'package:money_link/model/payment.dart';
 import 'package:money_link/model/person.dart';
 import 'package:objectbox/objectbox.dart';
 
+import '../util.dart';
+
 @Entity()
 class Amount extends BaseModel {
   @Id()
@@ -22,59 +24,56 @@ class Amount extends BaseModel {
   @Backlink('amount')
   final payments = ToMany<Payment>();
 
-  String moneyValue() => "R $value";
-
   highlight() {
     if (value == balance()) {
       return "${created.niceDescription()} - $note";
     }
 
     if (paidDate == null) {
-      return "Balance: ${moneyBalance()} - $note";
+      return "Balance: ${Util.moneyFormat(balance())} - $note";
     }
 
-    return "Paid: ${moneyPaidTotal()} - $note";
+    return "Paid: ${Util.moneyFormat(paidTotal())} - $note";
   }
 
   details() {
     if (paidDate == null) {
       return """Not paid yet
-Value: ${moneyValue()}
-Balance: ${moneyBalance()}
+Value: ${Util.moneyFormat(value)}
+Balance: ${Util.moneyFormat(balance())}
 Created: ${created.niceDescription(suffix: " ago")}
 Note: $note""";
     }
-    return """Value: ${moneyValue()}
-PaidTotal: ${moneyPaidTotal()}
+    return """Value: ${Util.moneyFormat(value)}
+PaidTotal: ${Util.moneyFormat(paidTotal())}
 Created: ${created.niceDescription(suffix: " ago")}
 Paid: ${paidDate?.niceDescription(suffix: " ago")}
 Note: $note""";
   }
 
   @override
-  String dialogTitle() => "Amount ${moneyValue()}";
+  String dialogTitle() => "Amount ${Util.moneyFormat(value)}";
 
   double balance() {
-    if (paidDate == null) {
-      return value -
-          payments.fold<double>(0.0, (sum, payment) => sum + payment.value);
-    }
-    return 0;
+    return paidDate != null
+        ? 0
+        : value -
+            payments.fold<double>(0.0, (sum, payment) => sum + payment.value);
+  }
+
+  double owingTotal() {
+    return value +
+        payments
+            .where((payment) => payment.value < 0)
+            .fold<double>(0.0, (sum, payment) => sum + payment.value)
+            .abs();
   }
 
   double paidTotal() {
-    if (paidDate != null) {
-      double repaymentsTotal = payments
-          .where((payment) => payment.value > 0)
-          .fold<double>(0.0, (sum, payment) => sum + payment.value);
-      if (repaymentsTotal == 0) {
-        return value;
-      }
-      return repaymentsTotal;
-    }
-    return 0;
+    return paidDate != null && payments.isEmpty
+        ? value
+        : payments
+            .where((payment) => payment.value > 0)
+            .fold<double>(0.0, (sum, payment) => sum + payment.value);
   }
-
-  String moneyBalance() => "R ${balance()}";
-  String moneyPaidTotal() => "R ${paidTotal()}";
 }

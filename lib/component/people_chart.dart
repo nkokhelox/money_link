@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:money_link/model/person.dart';
 import 'package:money_link/objectbox.dart';
 
+import '../util.dart';
+
 class PeopleChart extends StatelessWidget {
   static var chartColors = const [
     Colors.red,
@@ -62,14 +64,15 @@ class PeopleChart extends StatelessWidget {
               Comparable.compare(p2.owingTotal().abs(), p1.owingTotal().abs()));
 
           return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                peopleChartHeadingAmounts(context, sortedPeople, total),
-                peopleChartHeadingLine(context, sortedPeople, total),
-                Container(height: 10),
-                Expanded(child: peopleChartBars(context, sortedPeople, total),
-        ),
-              ],
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              peopleChartHeadingAmounts(context, sortedPeople, total),
+              peopleChartHeadingLine(context, sortedPeople, total),
+              Container(height: 10),
+              Expanded(
+                child: peopleChartBars(context, sortedPeople, total),
+              ),
+            ],
           );
         }
 
@@ -101,8 +104,9 @@ class PeopleChart extends StatelessWidget {
         // InkWell(
         Container(
           decoration: BoxDecoration(
-              border: Border.all(color: Colors.black12),
-              color: person.owingTotal() == 0 ? null : barColor,),
+            border: Border.all(color: Colors.black12),
+            color: person.owingTotal() == 0 ? null : barColor,
+          ),
           width: person.owingTotal() == 0 ? maxBarWidth : barWidthValue,
           height: 20,
         ),
@@ -139,10 +143,18 @@ class PeopleChart extends StatelessWidget {
       builder: (context, constraints) => Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text("R 0", style: TextStyle(color: Colors.blueGrey)),
-          Text("R ${peopleTotalSum / 2}",
-              style: TextStyle(color: Colors.blueGrey)),
-          Text("R $peopleTotalSum", style: TextStyle(color: Colors.blueGrey)),
+          Text(
+            Util.moneyFormat(0.0),
+            style: TextStyle(color: Colors.blueGrey),
+          ),
+          Text(
+            Util.moneyFormat(peopleTotalSum / 2),
+            style: TextStyle(color: Colors.blueGrey),
+          ),
+          Text(
+            Util.moneyFormat(peopleTotalSum),
+            style: TextStyle(color: Colors.blueGrey),
+          ),
         ],
       ),
     );

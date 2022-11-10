@@ -9,6 +9,7 @@ import 'package:money_link/objectbox.dart';
 import 'package:money_link/objectbox.g.dart';
 
 import '../component/value_form.dart';
+import '../util.dart';
 
 class AmountsPage extends StatelessWidget {
   final bool appBarHidden;
@@ -33,46 +34,176 @@ class AmountsPage extends StatelessWidget {
       stream: _amountStream,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return Scaffold(
-            appBar: appBarHidden
-                ? null
-                : AppBar(
-                    title: InkWell(
-                      onLongPress: _jumpToTop,
-                      child: Text(
-                        selectedPerson?.fullName ?? "AMOUNTS",
+          if (selectedPerson == null) {
+            return Scaffold(
+              appBar: appBarHidden
+                  ? null
+                  : AppBar(
+                      title: Text(
+                        "AMOUNTS CHART",
                         style: const TextStyle(letterSpacing: 4),
                       ),
                     ),
-                  ),
-            body: (selectedPerson == null)
-                ? Padding(
-                    padding: const EdgeInsets.all(5),
-                    child: PeopleChart(scrollController: _scrollController),
-                  )
-                : SlidableAutoCloseBehavior(
-                    child: ListView(
-                      keyboardDismissBehavior:
-                          ScrollViewKeyboardDismissBehavior.onDrag,
-                      controller: _scrollController,
-                      physics: const AlwaysScrollableScrollPhysics(
-                        parent: const BouncingScrollPhysics(),
-                      ),
-                      children:
-                          _getListItems(context, snapshot.data ?? <Amount>[]),
-                    ),
-                  ),
-            floatingActionButton: (this.selectedPerson == null)
-                ? null
-                : FloatingActionButton(
-                    child: Icon(Icons.add),
-                    onPressed: () => addAmount(context),
-                  ),
-          );
+              body: _chart(),
+            );
+          }
+          if (appBarHidden) {
+            return Scaffold(
+              body: _body(context, snapshot.data ?? <Amount>[]),
+            );
+          }
+          return Scaffold(
+              body: CustomScrollView(
+                controller: _scrollController,
+                slivers: [
+                  _sliverAppBar(context, snapshot.data ?? <Amount>[]),
+                  _body(context, snapshot.data ?? <Amount>[]),
+                ],
+              ),
+              floatingActionButton: _fab(context));
         }
 
         return ErrorWidget(snapshot.error ?? "Something went wrong :(");
       },
+    );
+  }
+
+  FloatingActionButton? _fab(BuildContext context) {
+    if (this.selectedPerson == null) {
+      return null;
+    }
+    return FloatingActionButton(
+      child: Icon(Icons.add),
+      onPressed: () => addAmount(context),
+    );
+  }
+
+  Widget _chart() {
+    return Padding(
+      padding: const EdgeInsets.all(5),
+      child: PeopleChart(scrollController: _scrollController),
+    );
+  }
+
+  Widget _body(BuildContext context, List<Amount> amounts) {
+    if (appBarHidden) {
+      return SlidableAutoCloseBehavior(
+        child: ListView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          controller: _scrollController,
+          physics: const AlwaysScrollableScrollPhysics(
+            parent: const BouncingScrollPhysics(),
+          ),
+          children: _getListItems(context, amounts),
+        ),
+      );
+    }
+
+    return SlidableAutoCloseBehavior(
+      child: SliverList(
+        delegate: SliverChildListDelegate(_getListItems(context, amounts)),
+      ),
+    );
+  }
+
+  Widget _sliverAppBar(BuildContext context, List<Amount> amounts) {
+    Color? expandedTextColor =
+        Theme.of(context).brightness == Brightness.dark ? null : Colors.white;
+    return SliverAppBar(
+      expandedHeight: 245,
+      title: InkWell(
+        onLongPress: _jumpToTop,
+        child: Text(
+          selectedPerson?.fullName ?? "AMOUNTS CHART",
+          style: const TextStyle(letterSpacing: 4),
+        ),
+      ),
+      stretch: true,
+      pinned: true,
+      flexibleSpace: FlexibleSpaceBar(
+        background: Padding(
+          padding: EdgeInsets.symmetric(vertical: 15.0),
+          child: selectedPerson == null
+              ? Text("Chart")
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Divider(),
+                    Text(
+                      "Grand Total Given: ${grandGivenTotal(amounts)}",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: expandedTextColor,
+                        letterSpacing: 2,
+                        fontSize: 10,
+                      ),
+                    ),
+                    Text(
+                      "Grand Total Paid: ${grandPaidTotal(amounts)}",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: expandedTextColor,
+                        letterSpacing: 2,
+                        fontSize: 10,
+                      ),
+                    ),
+                    Divider(),
+                    Text(
+                      "Total Given",
+                      style: TextStyle(
+                        color: expandedTextColor,
+                        letterSpacing: 2,
+                        fontSize: 12,
+                      ),
+                    ),
+                    Text(
+                      unpaidGivenTotal(amounts),
+                      style: TextStyle(
+                        color: expandedTextColor,
+                        letterSpacing: 2,
+                        fontSize: 12,
+                      ),
+                    ),
+                    Divider(),
+                    Text(
+                      "Total Repaid",
+                      style: TextStyle(
+                        color: expandedTextColor,
+                        letterSpacing: 2,
+                        fontSize: 12,
+                      ),
+                    ),
+                    Text(
+                      repaidTotal(amounts),
+                      style: TextStyle(
+                        color: expandedTextColor,
+                        letterSpacing: 2,
+                        fontSize: 12,
+                      ),
+                    ),
+                    Divider(),
+                    Text(
+                      "Total Owing",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: expandedTextColor,
+                        letterSpacing: 2,
+                        fontSize: 14,
+                      ),
+                    ),
+                    Text(
+                      totalBalance(amounts),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: expandedTextColor,
+                        letterSpacing: 2,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+        ),
+      ),
     );
   }
 
@@ -105,8 +236,8 @@ class AmountsPage extends StatelessWidget {
 
     final paidUpExpansionTile = GroupTile(
       title: "PAID AMOUNTS",
-      subtitle:
-          "R ${paidAmounts.fold<double>(0.0, (sum, amount) => sum + amount.paidTotal())}",
+      subtitle: Util.moneyFormat(paidAmounts.fold<double>(
+          0.0, (sum, amount) => sum + amount.paidTotal())),
       innerTiles:
           paidAmounts.map((amount) => EntityTile.amountTile(amount)).toList(),
     );
@@ -181,5 +312,48 @@ class AmountsPage extends StatelessWidget {
             ValueForm(model: person, refreshFunction: refreshAmountStream),
       );
     }
+  }
+
+  String unpaidGivenTotal(List<Amount> amounts) {
+    return Util.moneyFormat(
+      amounts
+          .where((amt) => amt.paidDate == null)
+          .fold<double>(0.0, (sum, amt) => sum + amt.value),
+    );
+  }
+
+  String repaidTotal(List<Amount> amounts) {
+    return Util.moneyFormat(
+      amounts
+          .where((amt) => amt.paidDate == null)
+          .fold<double>(0.0, (sum, amt) => sum + amt.paidTotal()),
+    );
+  }
+
+  String totalBalance(List<Amount> amounts) {
+    return Util.moneyFormat(
+      amounts.fold<double>(0.0, (sum, amt) => sum + amt.balance()),
+    );
+  }
+
+  String grandGivenTotal(List<Amount> amounts) {
+    return Util.moneyFormat(
+      amounts.fold<double>(0.0, (sum, amt) => sum + amt.value),
+    );
+  }
+
+  String grandPaidTotal(List<Amount> amounts) {
+    return Util.moneyFormat(
+      amounts.fold<double>(0.0, (sum, amt) => sum + amt.paidTotal()),
+    );
+  }
+
+  String balancePercentage(List<Amount> amounts) {
+    double balance =
+        amounts.fold<double>(0.0, (sum, amt) => sum + amt.balance());
+    double givenTotal = amounts
+        .where((amt) => amt.paidDate != null)
+        .fold<double>(0.0, (sum, amt) => sum + amt.value);
+    return Util.percentage(balance, givenTotal);
   }
 }

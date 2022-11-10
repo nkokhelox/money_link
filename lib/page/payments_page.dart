@@ -8,6 +8,7 @@ import 'package:money_link/objectbox.dart';
 import 'package:money_link/objectbox.g.dart';
 
 import '../component/value_form.dart';
+import '../util.dart';
 
 class PaymentsPage extends StatelessWidget {
   final Amount selectedAmount;
@@ -79,7 +80,7 @@ class PaymentsPage extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(10),
           child: Text(
-            "${selectedAmount.moneyValue()} has a no payments",
+            "${Util.moneyFormat(selectedAmount.value)} has a no payments",
             textAlign: TextAlign.center,
             style: const TextStyle(
                 fontWeight: FontWeight.bold, fontSize: 16, letterSpacing: 2),
