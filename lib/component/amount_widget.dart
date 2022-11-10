@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:money_link/component/value_form.dart';
 import 'package:money_link/model/amount.dart';
 import 'package:money_link/objectbox.dart';
 import 'package:money_link/page/payments_page.dart';
@@ -66,7 +65,6 @@ class AmountWidget extends StatelessWidget {
             maxLines: 1,
             style: TextStyle(fontSize: 10),
           ),
-          onLongPress: () => addPayment(context),
           onTap: () => showPayments(context),
         ),
       ),
@@ -82,14 +80,6 @@ class AmountWidget extends StatelessWidget {
     amount.paidDate = (amount.paidDate == null) ? DateTime.now() : null;
     ObjectBox.store.box<Amount>().put(amount);
     refreshPeople();
-  }
-
-  void addPayment(BuildContext context) async {
-    showDialog(
-      context: context,
-      builder: (context) =>
-          ValueForm(model: amount, refreshFunction: refreshAmounts),
-    );
   }
 
   showPayments(BuildContext context) {
