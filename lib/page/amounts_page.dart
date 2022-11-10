@@ -55,6 +55,11 @@ class AmountsPage extends StatelessWidget {
           return Scaffold(
               body: CustomScrollView(
                 controller: _scrollController,
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                physics: const AlwaysScrollableScrollPhysics(
+                  parent: const BouncingScrollPhysics(),
+                ),
                 slivers: [
                   _sliverAppBar(context, snapshot.data ?? <Amount>[]),
                   _body(context, snapshot.data ?? <Amount>[]),
