@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:money_link/model/payment.dart';
 import 'package:money_link/objectbox.dart';
+import 'package:money_link/util.dart';
 
 class PaymentWidget extends StatelessWidget {
   final Payment payment;
   final VoidCallback refreshAmounts;
-  const PaymentWidget({Key? key, required this.payment, required this.refreshAmounts}) : super(key: key);
+  const PaymentWidget(
+      {Key? key, required this.payment, required this.refreshAmounts})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -32,12 +35,14 @@ class PaymentWidget extends StatelessWidget {
         child: ExpansionTile(
           collapsedIconColor: Theme.of(context).iconTheme.color,
           expandedAlignment: Alignment.topLeft,
-          title: Text(payment.moneyValue()),
-          subtitle: Text(payment.highlight(), maxLines: 1, style: TextStyle(fontSize: 10)),
+          title: Text(Util.moneyFormat(payment.value)),
+          subtitle: Text(payment.highlight(),
+              maxLines: 1, style: TextStyle(fontSize: 10)),
           children: [
             Padding(
               padding: const EdgeInsets.only(left: 20),
-              child: Text(payment.details(), style: const TextStyle(fontSize: 10)),
+              child:
+                  Text(payment.details(), style: const TextStyle(fontSize: 10)),
             ),
           ],
         ),

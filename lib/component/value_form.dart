@@ -5,10 +5,14 @@ import 'package:money_link/model/payment.dart';
 import 'package:money_link/model/person.dart';
 import 'package:money_link/objectbox.dart';
 
+import '../util.dart';
+
 class ValueForm extends StatefulWidget {
   final BaseModel model;
   final VoidCallback refreshFunction;
-  const ValueForm({Key? key, required this.model, required this.refreshFunction}) : super(key: key);
+  const ValueForm(
+      {Key? key, required this.model, required this.refreshFunction})
+      : super(key: key);
 
   @override
   State<ValueForm> createState() => ValueFormState();
@@ -38,7 +42,8 @@ class ValueFormState extends State<ValueForm> {
                   validator: valueValidator,
                   controller: _valueFieldController,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
+                  keyboardType: const TextInputType.numberWithOptions(
+                      signed: true, decimal: true),
                   textInputAction: TextInputAction.next,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(
@@ -113,14 +118,19 @@ class ValueFormState extends State<ValueForm> {
         final amount = Amount(value: value, note: _noteFieldController.text);
         model.amounts.add(amount);
         ObjectBox.store.box<Person>().put(model);
-        scaffold.showSnackBar(SnackBar(content: Text('Added ${amount.moneyValue()} for ${widget.model.dialogTitle()}')));
+        scaffold.showSnackBar(SnackBar(
+            content: Text(
+                'Added ${Util.moneyFormat(amount.value)} for ${widget.model.dialogTitle()}')));
       } else if (model is Amount) {
         final payment = Payment(value: value, note: _noteFieldController.text);
         model.payments.add(payment);
         ObjectBox.store.box<Amount>().put(model);
-        scaffold.showSnackBar(SnackBar(content: Text('Added ${payment.moneyValue()} for ${widget.model.dialogTitle()}')));
+        scaffold.showSnackBar(SnackBar(
+            content: Text(
+                'Added ${Util.moneyFormat(payment.value)} for ${widget.model.dialogTitle()}')));
       } else {
-        scaffold.showSnackBar(SnackBar(content: Text('Failed to save: ${widget.model.dialogTitle()}')));
+        scaffold.showSnackBar(SnackBar(
+            content: Text('Failed to save: ${widget.model.dialogTitle()}')));
       }
 
       widget.refreshFunction();
@@ -132,7 +142,7 @@ class ValueFormState extends State<ValueForm> {
     if (model is Person) {
       return "Amount for ${model.fullName}";
     } else if (model is Amount) {
-      return "Payment for ${model.moneyValue()}";
+      return "Payment for ${Util.moneyFormat(model.value)}";
     } else {
       return "Exit this dialog";
     }

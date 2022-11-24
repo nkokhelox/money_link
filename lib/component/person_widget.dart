@@ -4,6 +4,8 @@ import 'package:money_link/component/value_form.dart';
 import 'package:money_link/model/person.dart';
 import 'package:money_link/objectbox.dart';
 
+import '../util.dart';
+
 class PersonWidget extends StatelessWidget {
   final Person person;
   final bool isSelected;
@@ -66,9 +68,11 @@ class PersonWidget extends StatelessWidget {
           contentPadding: EdgeInsets.only(left: titleLeftPad),
           title: Text(person.fullName),
           subtitle: Text(
-            person.owingTotal() == 0
-                ? person.moneyFormattedPaidTotal()
-                : person.moneyFormattedOwingTotal(),
+            Util.moneyFormat(
+              person.balance() == 0
+                  ? person.grandPaidTotal()
+                  : person.balance(),
+            ),
             maxLines: 1,
             style: TextStyle(fontSize: 10),
           ),

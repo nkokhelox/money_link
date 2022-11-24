@@ -3,6 +3,8 @@ import 'package:money_link/model/amount.dart';
 import 'package:money_link/model/base_model.dart';
 import 'package:objectbox/objectbox.dart';
 
+import '../util.dart';
+
 @Entity()
 class Payment extends BaseModel {
   @Id()
@@ -16,21 +18,19 @@ class Payment extends BaseModel {
 
   final amount = ToOne<Amount>();
 
-  String moneyValue() => "R $value";
-
   highlight() {
     return "${created.niceDescription()} - $note";
   }
 
   details() {
     return """
-    Payment for: ${amount.target?.moneyValue()}
-    Value: ${moneyValue()}
+    Payment for: ${Util.moneyFormat(amount.target?.value)}
+    Value: ${Util.moneyFormat(value)}
     Created: ${created.niceDescription(suffix: " ago")}
     Note: $note
     """;
   }
 
   @override
-  String dialogTitle() => "Payment ${moneyValue()}";
+  String dialogTitle() => "Payment ${Util.moneyFormat(value)}";
 }

@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:money_link/component/value_form.dart';
 import 'package:money_link/model/amount.dart';
 import 'package:money_link/objectbox.dart';
 import 'package:money_link/page/payments_page.dart';
+
+import '../util.dart';
 
 class AmountWidget extends StatelessWidget {
   final Amount amount;
   final double titleLeftPad;
   final VoidCallback refreshPeople;
   final VoidCallback refreshAmounts;
-  const AmountWidget({super.key, required this.amount, required this.refreshPeople, required this.refreshAmounts, this.titleLeftPad = 10});
+  const AmountWidget(
+      {super.key,
+      required this.amount,
+      required this.refreshPeople,
+      required this.refreshAmounts,
+      this.titleLeftPad = 10});
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +45,8 @@ class AmountWidget extends StatelessWidget {
           children: [
             SlidableAction(
               onPressed: (BuildContext context) => togglePaidStatus(amount),
-              backgroundColor: amount.paidDate == null ? Colors.teal : Colors.orange,
+              backgroundColor:
+                  amount.paidDate == null ? Colors.teal : Colors.orange,
               foregroundColor: Colors.white,
               icon: Icons.check_circle,
               label: amount.paidDate == null ? 'Paid' : 'Unpaid',
@@ -48,15 +55,16 @@ class AmountWidget extends StatelessWidget {
           ],
         ),
         child: ListTile(
-          trailing: amount.paidDate != null ? const Icon(Icons.check, color: Colors.green) : const Icon(Icons.info_outline),
+          trailing: amount.paidDate != null
+              ? const Icon(Icons.check, color: Colors.green)
+              : const Icon(Icons.info_outline),
           contentPadding: EdgeInsets.only(left: titleLeftPad, right: 10),
-          title: Text(amount.moneyValue()),
+          title: Text(Util.moneyFormat(amount.value)),
           subtitle: Text(
             amount.highlight(),
             maxLines: 1,
             style: TextStyle(fontSize: 10),
           ),
-          onLongPress: () => addPayment(context),
           onTap: () => showPayments(context),
         ),
       ),
@@ -74,14 +82,10 @@ class AmountWidget extends StatelessWidget {
     refreshPeople();
   }
 
-  void addPayment(BuildContext context) async {
-    showDialog(
-      context: context,
-      builder: (context) => ValueForm(model: amount, refreshFunction: refreshAmounts),
-    );
-  }
-
   showPayments(BuildContext context) {
-    showModalBottomSheet(context: context, builder: (_) => PaymentsPage(selectedAmount: amount, refreshAmounts: refreshAmounts));
+    showModalBottomSheet(
+        context: context,
+        builder: (_) => PaymentsPage(
+            selectedAmount: amount, refreshAmounts: refreshAmounts));
   }
 }

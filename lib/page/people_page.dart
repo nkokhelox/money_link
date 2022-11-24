@@ -114,7 +114,7 @@ class PeoplePageState extends State<PeoplePage> {
     }
 
     final paidTotal = paidUpPeopleTiles.fold<double>(
-        0.0, (sum, pt) => sum + pt.object.paidTotal());
+        0.0, (sum, pt) => sum + pt.object.grandPaidTotal());
 
     final paidUpExpansionTile = GroupTile(
         title: "SETTLED PEOPLE",
