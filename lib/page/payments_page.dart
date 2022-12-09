@@ -95,8 +95,7 @@ class PaymentsPage extends StatelessWidget {
     return comboList;
   }
 
-  Widget _buildTile(BuildContext context, EntityTile<Payment> tile,
-      {double subTileIndentation = 10.0}) {
+  Widget _buildTile(BuildContext context, EntityTile<Payment> tile) {
     return PaymentWidget(payment: tile.object, refreshAmounts: refreshAmounts);
   }
 
