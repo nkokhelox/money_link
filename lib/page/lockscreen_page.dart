@@ -34,16 +34,22 @@ class _LockScreenPageState extends State<LockScreenPage> {
                 Stack(
                   alignment: AlignmentDirectional.center,
                   children: [
-                    Icon(Icons.shield,
-                        size: 300, color: Theme.of(context).primaryColor),
-                    Icon(Icons.lock_outline,
-                        size: 180, color: Theme.of(context).canvasColor),
+                    Icon(
+                      Icons.shield,
+                      size: 300,
+                      color: Theme.of(context).unselectedWidgetColor,
+                    ),
+                    Icon(
+                      Icons.lock_outline,
+                      size: 180,
+                      color: Theme.of(context).primaryColor,
+                    ),
                   ],
                 ),
                 Text(
                   "UNLOCK APP",
                   style: TextStyle(
-                    color: Theme.of(context).primaryColor,
+                    color: Theme.of(context).unselectedWidgetColor,
                   ),
                 ),
               ],
@@ -102,7 +108,7 @@ class _LockScreenPageState extends State<LockScreenPage> {
       list.add(
         Icon(
           pressSequence.length > i ? Icons.circle : Icons.circle_outlined,
-          color: Theme.of(context).primaryColor,
+          color: Theme.of(context).unselectedWidgetColor,
           size: 30,
         ),
       );
