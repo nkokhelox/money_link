@@ -6,6 +6,7 @@ import 'package:money_link/model/person.dart';
 import 'package:money_link/model/tile.dart';
 import 'package:money_link/objectbox.dart';
 import 'package:money_link/objectbox.g.dart';
+import 'package:money_link/util.dart';
 
 class PeoplePage extends StatefulWidget {
   final Person? selectedPerson;
@@ -118,7 +119,7 @@ class PeoplePageState extends State<PeoplePage> {
 
     final paidUpExpansionTile = GroupTile(
         title: "SETTLED PEOPLE",
-        subtitle: "R $paidTotal",
+        subtitle: Util.moneyFormat(paidTotal),
         innerTiles: paidUpPeopleTiles);
 
     List<Tile> comboList = <Tile>[];

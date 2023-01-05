@@ -4,12 +4,14 @@ class Util {
   }
 
   static String moneyFormat(double? value) {
-    double workingValue = value ?? 0.0;
-    //######.** or -######.**
+    double workingValue = value?.abs() ?? 0.0;
+    String sign = (value ?? 0.0) < 0 ? "-" : "";
+
+    //######.**
     String formattedValue = (workingValue).toStringAsFixed(2);
     if (workingValue < 1000) {
-      // R ######.** or R -######.**
-      return "R ${formattedValue}";
+      // R ######.**
+      return "R $sign${formattedValue}";
     }
     //[######, **]
     List<String> parts = formattedValue.split('.');
@@ -21,6 +23,7 @@ class Util {
         result.add("'");
       }
     }
-    return "R ${result.reversed.join()}.${parts.last}";
+    //R ##'###.**
+    return "R $sign${result.reversed.join()}.${parts.last}";
   }
 }

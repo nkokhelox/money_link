@@ -84,8 +84,11 @@ class AmountWidget extends StatelessWidget {
 
   showPayments(BuildContext context) {
     showModalBottomSheet(
-        context: context,
-        builder: (_) => PaymentsPage(
-            selectedAmount: amount, refreshAmounts: refreshAmounts));
+      context: context,
+      builder: (_) => PaymentsPage(
+        selectedAmount: amount,
+        refreshAmounts: refreshAmounts,
+      ),
+    );
   }
 }

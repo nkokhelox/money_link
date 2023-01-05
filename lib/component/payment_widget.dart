@@ -6,9 +6,9 @@ import 'package:money_link/util.dart';
 
 class PaymentWidget extends StatelessWidget {
   final Payment payment;
-  final VoidCallback refreshAmounts;
+  final VoidCallback refreshFunction;
   const PaymentWidget(
-      {Key? key, required this.payment, required this.refreshAmounts})
+      {Key? key, required this.payment, required this.refreshFunction})
       : super(key: key);
 
   @override
@@ -52,6 +52,6 @@ class PaymentWidget extends StatelessWidget {
 
   void deletePayment(Payment payment) {
     ObjectBox.store.box<Payment>().remove(payment.id);
-    refreshAmounts();
+    refreshFunction();
   }
 }
