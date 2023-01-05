@@ -6,17 +6,30 @@ import 'package:money_link/model/payment.dart';
 import 'package:money_link/model/tile.dart';
 import 'package:money_link/objectbox.dart';
 import 'package:money_link/objectbox.g.dart';
+import 'package:money_link/extensions.dart';
 
 import '../component/value_form.dart';
 import '../util.dart';
 
-class PaymentsPage extends StatelessWidget {
+class PaymentsPage extends StatefulWidget {
   final Amount selectedAmount;
   final VoidCallback refreshAmounts;
-  late Stream<List<Payment>> _paymentsStream;
 
-  PaymentsPage(
-      {super.key, required this.selectedAmount, required this.refreshAmounts}) {
+  PaymentsPage({
+    super.key,
+    required this.selectedAmount,
+    required this.refreshAmounts,
+  });
+
+  @override
+  _PaymentsPageState createState() => _PaymentsPageState();
+}
+
+class _PaymentsPageState extends State<PaymentsPage> {
+  late Stream<List<Payment>> _paymentsStream;
+  @override
+  void initState() {
+    super.initState();
     _paymentsStream = _amountPaymentsQuery();
   }
 
@@ -35,7 +48,10 @@ class PaymentsPage extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(10),
                     child: Text(
-                      selectedAmount.details(),
+                      paymentsHeading(
+                        widget.selectedAmount,
+                        streamSnapshot.data ?? [],
+                      ),
                       textAlign: TextAlign.start,
                       style: const TextStyle(
                         fontSize: 12,
@@ -80,7 +96,7 @@ class PaymentsPage extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(10),
           child: Text(
-            "${Util.moneyFormat(selectedAmount.value)} has a no payments",
+            "${Util.moneyFormat(widget.selectedAmount.value)} has a no payments",
             textAlign: TextAlign.center,
             style: const TextStyle(
                 fontWeight: FontWeight.bold, fontSize: 16, letterSpacing: 2),
@@ -96,12 +112,18 @@ class PaymentsPage extends StatelessWidget {
   }
 
   Widget _buildTile(BuildContext context, EntityTile<Payment> tile) {
-    return PaymentWidget(payment: tile.object, refreshAmounts: refreshAmounts);
+    return PaymentWidget(
+      payment: tile.object,
+      refreshFunction: refreshPaymentStream,
+    );
   }
 
   Stream<List<Payment>> _amountPaymentsQuery() {
     var queryBuilder = ObjectBox.store.box<Payment>().query();
-    queryBuilder.link(Payment_.amount, Amount_.id.equals(selectedAmount.id));
+    queryBuilder.link(
+      Payment_.amount,
+      Amount_.id.equals(widget.selectedAmount.id),
+    );
     return queryBuilder.watch(triggerImmediately: true).map((q) => q.find());
   }
 
@@ -109,7 +131,46 @@ class PaymentsPage extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => ValueForm(
-          model: this.selectedAmount, refreshFunction: refreshAmounts),
+        model: widget.selectedAmount,
+        refreshFunction: refreshPaymentStream,
+      ),
     );
+  }
+
+  void refreshPaymentStream() {
+    setState(() {
+      _paymentsStream = _amountPaymentsQuery();
+    });
+    widget.refreshAmounts();
+  }
+
+  String paymentsHeading(Amount amount, List<Payment> payments) {
+    if (amount.paidDate == null) {
+      return """Not paid yet
+Value: ${Util.moneyFormat(amount.value)}
+Balance: ${Util.moneyFormat(balance(amount, payments))}
+Created: ${amount.created.niceDescription(suffix: " ago")}
+Note: ${amount.note}""";
+    }
+    return """Value: ${Util.moneyFormat(amount.value)}
+PaidTotal: ${Util.moneyFormat(paidTotal(amount, payments))}
+Created: ${amount.created.niceDescription(suffix: " ago")}
+Paid: ${amount.paidDate?.niceDescription(suffix: " ago")}
+Note: ${amount.note}""";
+  }
+
+  double balance(Amount amount, List<Payment> payments) {
+    return amount.paidDate != null
+        ? 0
+        : amount.value -
+            payments.fold<double>(0.0, (sum, payment) => sum + payment.value);
+  }
+
+  double paidTotal(Amount amount, List<Payment> payments) {
+    return amount.paidDate != null && payments.isEmpty
+        ? amount.value
+        : payments
+            .where((payment) => payment.value > 0)
+            .fold<double>(0.0, (sum, payment) => sum + payment.value);
   }
 }
