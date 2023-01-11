@@ -253,7 +253,7 @@ class _AmountsPageState extends State<AmountsPage> {
     });
 
     final paidUpExpansionTile = GroupTile(
-      title: "PAID AMOUNTS",
+      title: "PAID AMOUNTS  (${paidAmounts.length})",
       subtitle: Util.moneyFormat(paidAmounts.fold<double>(
           0.0, (sum, amount) => sum + amount.paidTotal())),
       innerTiles:

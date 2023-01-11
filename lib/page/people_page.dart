@@ -120,7 +120,7 @@ class PeoplePageState extends State<PeoplePage> {
         0.0, (sum, pt) => sum + pt.object.grandPaidTotal());
 
     final paidUpExpansionTile = GroupTile(
-        title: "SETTLED PEOPLE",
+        title: "SETTLED PEOPLE (${paidUpPeopleTiles.length})",
         subtitle: Util.moneyFormat(paidTotal),
         innerTiles: paidUpPeopleTiles);
 
