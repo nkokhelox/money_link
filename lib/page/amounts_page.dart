@@ -11,29 +11,19 @@ import 'package:money_link/objectbox.g.dart';
 import '../component/value_form.dart';
 import '../util.dart';
 
-class AmountsPage extends StatefulWidget {
+class AmountsPage extends StatelessWidget {
   final bool appBarHidden;
   final Person? selectedPerson;
   final VoidCallback refreshPeople;
   final ScrollController _scrollController = ScrollController();
+  late Stream<List<Amount>> _amountStream;
 
   AmountsPage({
     super.key,
     required this.selectedPerson,
     required this.appBarHidden,
     required this.refreshPeople,
-  });
-
-  @override
-  _AmountsPageState createState() => _AmountsPageState();
-}
-
-class _AmountsPageState extends State<AmountsPage> {
-  late Stream<List<Amount>> _amountStream;
-
-  @override
-  void initState() {
-    super.initState();
+  }) {
     _amountStream = _personAmountsQuery();
   }
 
@@ -44,9 +34,9 @@ class _AmountsPageState extends State<AmountsPage> {
       stream: _amountStream,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          if (widget.selectedPerson == null) {
+          if (selectedPerson == null) {
             return Scaffold(
-              appBar: widget.appBarHidden
+              appBar: appBarHidden
                   ? null
                   : AppBar(
                       title: Text(
@@ -57,14 +47,14 @@ class _AmountsPageState extends State<AmountsPage> {
               body: _chart(),
             );
           }
-          if (widget.appBarHidden) {
+          if (appBarHidden) {
             return Scaffold(
               body: _body(context, snapshot.data ?? <Amount>[]),
             );
           }
           return Scaffold(
               body: CustomScrollView(
-                controller: widget._scrollController,
+                controller: _scrollController,
                 keyboardDismissBehavior:
                     ScrollViewKeyboardDismissBehavior.onDrag,
                 physics: const AlwaysScrollableScrollPhysics(
@@ -87,7 +77,7 @@ class _AmountsPageState extends State<AmountsPage> {
   }
 
   FloatingActionButton? _fab(BuildContext context) {
-    if (widget.selectedPerson == null) {
+    if (selectedPerson == null) {
       return null;
     }
     return FloatingActionButton(
@@ -99,16 +89,16 @@ class _AmountsPageState extends State<AmountsPage> {
   Widget _chart() {
     return Padding(
       padding: const EdgeInsets.all(5),
-      child: PeopleChart(scrollController: widget._scrollController),
+      child: PeopleChart(scrollController: _scrollController),
     );
   }
 
   Widget _body(BuildContext context, List<Amount> amounts) {
-    if (widget.appBarHidden) {
+    if (appBarHidden) {
       return SlidableAutoCloseBehavior(
         child: ListView(
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          controller: widget._scrollController,
+          controller: _scrollController,
           physics: const AlwaysScrollableScrollPhysics(
             parent: const BouncingScrollPhysics(),
           ),
@@ -132,7 +122,7 @@ class _AmountsPageState extends State<AmountsPage> {
       title: InkWell(
         onLongPress: _jumpToTop,
         child: Text(
-          widget.selectedPerson?.fullName ?? "AMOUNTS CHART",
+          selectedPerson?.fullName ?? "AMOUNTS CHART",
           style: const TextStyle(letterSpacing: 4),
         ),
       ),
@@ -141,7 +131,7 @@ class _AmountsPageState extends State<AmountsPage> {
       flexibleSpace: FlexibleSpaceBar(
         background: Padding(
           padding: EdgeInsets.symmetric(vertical: 15.0),
-          child: widget.selectedPerson == null
+          child: selectedPerson == null
               ? Text("Chart")
               : Column(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -231,7 +221,7 @@ class _AmountsPageState extends State<AmountsPage> {
         Container(
           padding: const EdgeInsets.all(10),
           child: Text(
-            "${widget.selectedPerson!.firstName()} has a clean slate",
+            "${selectedPerson!.firstName()} has a clean slate",
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontWeight: FontWeight.bold,
@@ -282,7 +272,7 @@ class _AmountsPageState extends State<AmountsPage> {
     if (tile is EntityTile<Amount>) {
       return AmountWidget(
         amount: tile.object,
-        refreshPeople: widget.refreshPeople,
+        refreshPeople: refreshPeople,
         refreshAmounts: refreshAmountStream,
         titleLeftPad: subTileIndentation,
       );
@@ -311,13 +301,13 @@ class _AmountsPageState extends State<AmountsPage> {
     var queryBuilder = ObjectBox.store.box<Amount>().query();
     queryBuilder.link(
       Amount_.person,
-      Person_.id.equals(widget.selectedPerson?.id ?? 0),
+      Person_.id.equals(selectedPerson?.id ?? 0),
     );
     return queryBuilder.watch(triggerImmediately: true).map((q) => q.find());
   }
 
   void _jumpToTop() {
-    widget._scrollController.animateTo(
+    _scrollController.animateTo(
       0,
       duration: const Duration(milliseconds: 500),
       curve: Curves.easeInOut,
@@ -325,14 +315,12 @@ class _AmountsPageState extends State<AmountsPage> {
   }
 
   void refreshAmountStream() {
-    setState(() {
-      _amountStream = _personAmountsQuery();
-    });
-    widget.refreshPeople();
+    _amountStream = _personAmountsQuery();
+    refreshPeople();
   }
 
   void addAmount(BuildContext context) async {
-    var person = widget.selectedPerson;
+    var person = selectedPerson;
     if (person != null) {
       showDialog(
         context: context,

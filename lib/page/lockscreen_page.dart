@@ -24,6 +24,10 @@ class _LockScreenPageState extends State<LockScreenPage> {
             onTap: singlePress,
             onLongPress: longPress,
             onDoubleTap: doublePress,
+            splashFactory: NoSplash.splashFactory,
+            highlightColor: Colors.transparent,
+            splashColor: Colors.transparent,
+            hoverColor: Colors.transparent,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
