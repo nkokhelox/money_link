@@ -17,7 +17,8 @@ class GroupTile extends Tile {
   final String subtitle;
   final List<Tile> innerTiles;
 
-  GroupTile({required this.title, required this.subtitle, required this.innerTiles});
+  GroupTile(
+      {required this.title, required this.subtitle, required this.innerTiles});
 }
 
 class EntityTile<T extends BaseModel> extends Tile {
