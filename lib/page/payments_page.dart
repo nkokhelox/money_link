@@ -15,6 +15,7 @@ class PaymentsPage extends StatelessWidget {
   final Amount selectedAmount;
   final VoidCallback refreshAmounts;
   late Stream<List<Payment>> _paymentsStream;
+  final ScrollController _scrollController = ScrollController();
 
   PaymentsPage({
     super.key,
@@ -27,6 +28,7 @@ class PaymentsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: StreamBuilder<List<Payment>>(
         initialData: const <Payment>[],
         stream: _paymentsStream,
@@ -36,7 +38,10 @@ class PaymentsPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
+                  InkWell(
+                    onLongPress: _jumpToTop,
+                    child: 
+                    Container(
                     padding: const EdgeInsets.all(10),
                     child: Text(
                       paymentsHeading(
@@ -50,8 +55,10 @@ class PaymentsPage extends StatelessWidget {
                       ),
                     ),
                   ),
+                  ),
                   Expanded(
                     child: ListView(
+                      controller: _scrollController,
                       physics: const AlwaysScrollableScrollPhysics(
                         parent: const BouncingScrollPhysics(),
                       ),
@@ -146,6 +153,14 @@ PaidTotal: ${Util.moneyFormat(paidTotal(amount, payments))}
 Created: ${amount.created.niceDescription(suffix: " ago")}
 Paid: ${amount.paidDate?.niceDescription(suffix: " ago")}
 Note: ${amount.note}""";
+  }
+
+  void _jumpToTop() {
+    _scrollController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
   }
 
   double balance(Amount amount, List<Payment> payments) {
