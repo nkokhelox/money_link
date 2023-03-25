@@ -13,6 +13,7 @@ class PersonWidget extends StatelessWidget {
   final VoidCallback refreshPeople;
   final void Function(Person) onTappedPerson;
   final void Function(Person) onPersonDeleted;
+
   const PersonWidget({
     Key? key,
     required this.person,

@@ -40,21 +40,29 @@ class _HomePageState extends State<HomePage> {
               resizeToAvoidBottomInset: false,
               appBar: AppBar(
                 centerTitle: true,
-                title: InkWell(child: Text(isDualPane ? "PEOPLE - AMOUNTS" : "PEOPLE", style: TextStyle(letterSpacing: 4)), onLongPress: jumpToTop),
+                title: InkWell(
+                    child: Text(isDualPane ? "PEOPLE - AMOUNTS" : "PEOPLE",
+                        style: TextStyle(letterSpacing: 4)),
+                    onLongPress: jumpToTop),
                 leading: IconButton(icon: Icon(Icons.lock), onPressed: lockApp),
                 actions: chartIcon(isDualPane),
               ),
               body: TwoPane(
                 paneProportion: 0.45,
-                panePriority: isDualPane ? TwoPanePriority.both : TwoPanePriority.start,
+                panePriority:
+                    isDualPane ? TwoPanePriority.both : TwoPanePriority.start,
                 startPane: PeoplePage(
                   key: _peoplePageKey,
                   onPersonDeleted: (Person person) => personDeleted(person),
-                  onTappedPerson: (Person? person) => onPersonTap(person, isDualPane),
+                  onTappedPerson: (Person? person) =>
+                      onPersonTap(person, isDualPane),
                   scrollController: _scrollController,
                   selectedPerson: _selectedPerson,
                 ),
-                endPane: AmountsPage(selectedPerson: _selectedPerson, appBarHidden: true, refreshPeople: refreshPeople),
+                endPane: AmountsPage(
+                    selectedPerson: _selectedPerson,
+                    appBarHidden: true,
+                    refreshPeople: refreshPeople),
               ),
             );
           },
@@ -71,7 +79,10 @@ class _HomePageState extends State<HomePage> {
       Navigator.push(
         context,
         PortraitOnlyRoute(
-          builder: (context) => AmountsPage(selectedPerson: person, appBarHidden: false, refreshPeople: refreshPeople),
+          builder: (context) => AmountsPage(
+              selectedPerson: person,
+              appBarHidden: false,
+              refreshPeople: refreshPeople),
         ),
       );
     }
@@ -90,16 +101,27 @@ class _HomePageState extends State<HomePage> {
   }
 
   void jumpToTop() {
-    _scrollController.animateTo(0, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+    _scrollController.animateTo(0,
+        duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
     clearSelectedPerson();
   }
 
   List<Widget> chartIcon(bool isDualPane) {
     if (isDualPane) {
-      return this._selectedPerson != null ? [IconButton(onPressed: clearSelectedPerson, icon: Icon(Icons.stacked_bar_chart))] : [];
+      return this._selectedPerson != null
+          ? [
+              IconButton(
+                  onPressed: clearSelectedPerson,
+                  icon: Icon(Icons.stacked_bar_chart))
+            ]
+          : [];
     }
 
-    return [IconButton(onPressed: () => onPersonTap(null, isDualPane), icon: Icon(Icons.stacked_bar_chart))];
+    return [
+      IconButton(
+          onPressed: () => onPersonTap(null, isDualPane),
+          icon: Icon(Icons.stacked_bar_chart))
+    ];
   }
 
   void clearSelectedPerson() {

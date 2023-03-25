@@ -40,21 +40,20 @@ class PaymentsPage extends StatelessWidget {
                 children: [
                   InkWell(
                     onLongPress: _jumpToTop,
-                    child: 
-                    Container(
-                    padding: const EdgeInsets.all(10),
-                    child: Text(
-                      paymentsHeading(
-                        selectedAmount,
-                        streamSnapshot.data ?? [],
-                      ),
-                      textAlign: TextAlign.start,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      child: Text(
+                        paymentsHeading(
+                          selectedAmount,
+                          streamSnapshot.data ?? [],
+                        ),
+                        textAlign: TextAlign.start,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
                   ),
                   Expanded(
                     child: ListView(
