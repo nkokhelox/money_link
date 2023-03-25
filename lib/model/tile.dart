@@ -16,7 +16,9 @@ class GroupTile extends Tile {
   final String title;
   final String subtitle;
   final List<Tile> innerTiles;
-  GroupTile({required this.title, required this.subtitle, required this.innerTiles});
+
+  GroupTile(
+      {required this.title, required this.subtitle, required this.innerTiles});
 }
 
 class EntityTile<T extends BaseModel> extends Tile {
@@ -24,9 +26,12 @@ class EntityTile<T extends BaseModel> extends Tile {
 
   EntityTile({required this.object});
 
-  static EntityTile<Person> personTile(Person person) => EntityTile(object: person);
+  static EntityTile<Person> personTile(Person person) =>
+      EntityTile(object: person);
 
-  static EntityTile<Amount> amountTile(Amount amount) => EntityTile(object: amount);
+  static EntityTile<Amount> amountTile(Amount amount) =>
+      EntityTile(object: amount);
 
-  static EntityTile<Payment> paymentTile(Payment payment) => EntityTile(object: payment);
+  static EntityTile<Payment> paymentTile(Payment payment) =>
+      EntityTile(object: payment);
 }

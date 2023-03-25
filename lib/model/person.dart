@@ -50,7 +50,9 @@ class Person extends BaseModel {
   }
 
   List<String> names() => fullName.split(" ");
+
   String firstName() => names().first;
+
   String lastName() => names().last;
 
   @override

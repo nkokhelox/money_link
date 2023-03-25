@@ -10,6 +10,7 @@ import '../util.dart';
 class ValueForm extends StatefulWidget {
   final BaseModel model;
   final VoidCallback refreshFunction;
+
   const ValueForm(
       {Key? key, required this.model, required this.refreshFunction})
       : super(key: key);
