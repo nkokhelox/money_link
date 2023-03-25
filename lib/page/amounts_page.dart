@@ -36,6 +36,7 @@ class AmountsPage extends StatelessWidget {
         if (snapshot.hasData) {
           if (selectedPerson == null) {
             return Scaffold(
+              resizeToAvoidBottomInset: false,
               appBar: appBarHidden
                   ? null
                   : AppBar(

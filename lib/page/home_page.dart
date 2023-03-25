@@ -37,6 +37,7 @@ class _HomePageState extends State<HomePage> {
           builder: (BuildContext context, BoxConstraints constraints) {
             final isDualPane = constraints.maxWidth > 550;
             return Scaffold(
+              resizeToAvoidBottomInset: false,
               appBar: AppBar(
                 centerTitle: true,
                 title: InkWell(
