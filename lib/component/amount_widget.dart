@@ -11,6 +11,7 @@ class AmountWidget extends StatelessWidget {
   final double titleLeftPad;
   final VoidCallback refreshPeople;
   final VoidCallback refreshAmounts;
+
   const AmountWidget(
       {super.key,
       required this.amount,

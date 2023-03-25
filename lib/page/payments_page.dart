@@ -11,25 +11,16 @@ import 'package:money_link/extensions.dart';
 import '../component/value_form.dart';
 import '../util.dart';
 
-class PaymentsPage extends StatefulWidget {
+class PaymentsPage extends StatelessWidget {
   final Amount selectedAmount;
   final VoidCallback refreshAmounts;
+  late Stream<List<Payment>> _paymentsStream;
 
   PaymentsPage({
     super.key,
     required this.selectedAmount,
     required this.refreshAmounts,
-  });
-
-  @override
-  _PaymentsPageState createState() => _PaymentsPageState();
-}
-
-class _PaymentsPageState extends State<PaymentsPage> {
-  late Stream<List<Payment>> _paymentsStream;
-  @override
-  void initState() {
-    super.initState();
+  }) {
     _paymentsStream = _amountPaymentsQuery();
   }
 
@@ -49,7 +40,7 @@ class _PaymentsPageState extends State<PaymentsPage> {
                     padding: const EdgeInsets.all(10),
                     child: Text(
                       paymentsHeading(
-                        widget.selectedAmount,
+                        selectedAmount,
                         streamSnapshot.data ?? [],
                       ),
                       textAlign: TextAlign.start,
@@ -96,7 +87,7 @@ class _PaymentsPageState extends State<PaymentsPage> {
         Container(
           padding: const EdgeInsets.all(10),
           child: Text(
-            "${Util.moneyFormat(widget.selectedAmount.value)} has a no payments",
+            "${Util.moneyFormat(selectedAmount.value)} has a no payments",
             textAlign: TextAlign.center,
             style: const TextStyle(
                 fontWeight: FontWeight.bold, fontSize: 16, letterSpacing: 2),
@@ -122,7 +113,7 @@ class _PaymentsPageState extends State<PaymentsPage> {
     var queryBuilder = ObjectBox.store.box<Payment>().query();
     queryBuilder.link(
       Payment_.amount,
-      Amount_.id.equals(widget.selectedAmount.id),
+      Amount_.id.equals(selectedAmount.id),
     );
     return queryBuilder.watch(triggerImmediately: true).map((q) => q.find());
   }
@@ -131,17 +122,15 @@ class _PaymentsPageState extends State<PaymentsPage> {
     showDialog(
       context: context,
       builder: (context) => ValueForm(
-        model: widget.selectedAmount,
+        model: selectedAmount,
         refreshFunction: refreshPaymentStream,
       ),
     );
   }
 
   void refreshPaymentStream() {
-    setState(() {
-      _paymentsStream = _amountPaymentsQuery();
-    });
-    widget.refreshAmounts();
+    _paymentsStream = _amountPaymentsQuery();
+    refreshAmounts();
   }
 
   String paymentsHeading(Amount amount, List<Payment> payments) {

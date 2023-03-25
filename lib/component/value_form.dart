@@ -10,6 +10,7 @@ import '../util.dart';
 class ValueForm extends StatefulWidget {
   final BaseModel model;
   final VoidCallback refreshFunction;
+
   const ValueForm(
       {Key? key, required this.model, required this.refreshFunction})
       : super(key: key);
@@ -50,7 +51,6 @@ class ValueFormState extends State<ValueForm> {
                       borderSide: BorderSide.none,
                     ),
                     suffixIcon: Icon(Icons.money),
-                    hintStyle: TextStyle(color: Colors.blueGrey),
                     hintText: '0.00',
                   ),
                 ),
@@ -70,7 +70,6 @@ class ValueFormState extends State<ValueForm> {
                       borderSide: BorderSide.none,
                     ),
                     suffixIcon: Icon(Icons.note),
-                    hintStyle: TextStyle(color: Colors.blueGrey),
                     hintText: 'note',
                   ),
                 ),

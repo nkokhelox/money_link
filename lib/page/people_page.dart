@@ -89,8 +89,10 @@ class PeoplePageState extends State<PeoplePage> {
             trailing: IconButton(
                 icon: const Icon(Icons.add_circle_outline),
                 onPressed: _addPerson),
-            subtitle: const Text("Tap + to add this person",
-                style: TextStyle(color: Colors.blueGrey)),
+            subtitle: Text(
+              "Tap + to add this person",
+              style: TextStyle(color: Theme.of(context).primaryColor),
+            ),
           ),
         ),
       ];
@@ -118,7 +120,7 @@ class PeoplePageState extends State<PeoplePage> {
         0.0, (sum, pt) => sum + pt.object.grandPaidTotal());
 
     final paidUpExpansionTile = GroupTile(
-        title: "SETTLED PEOPLE",
+        title: "SETTLED PEOPLE (${paidUpPeopleTiles.length})",
         subtitle: Util.moneyFormat(paidTotal),
         innerTiles: paidUpPeopleTiles);
 
@@ -146,9 +148,13 @@ class PeoplePageState extends State<PeoplePage> {
     return Card(
       child: ExpansionTile(
         tilePadding: EdgeInsets.only(left: subTileIndentation),
-        title: Text(group.title,
-            style:
-                const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2)),
+        title: Text(
+          group.title,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            letterSpacing: 2,
+          ),
+        ),
         subtitle: Text(group.subtitle),
         children: group.innerTiles
             .map((subTile) =>
