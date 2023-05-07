@@ -50,20 +50,6 @@ class PersonWidget extends StatelessWidget {
                   ),
                 ],
               ),
-        endActionPane: ActionPane(
-          motion: const StretchMotion(),
-          dragDismissible: false,
-          children: [
-            SlidableAction(
-              onPressed: (context) => addAmount(context, person),
-              backgroundColor: Colors.teal,
-              foregroundColor: Colors.white,
-              icon: Icons.add,
-              label: 'Amount',
-              autoClose: true,
-            ),
-          ],
-        ),
         child: ListTile(
           trailing: const Icon(Icons.chevron_right),
           contentPadding: EdgeInsets.only(left: titleLeftPad),

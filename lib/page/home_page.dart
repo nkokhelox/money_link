@@ -147,8 +147,8 @@ class _HomePageState extends State<HomePage> {
           //the return value will be from "Yes" or "No" options
           context: context,
           builder: (context) => AlertDialog(
-            title: Text('Exit App'),
-            content: Text('Do you want to exit an App?'),
+            title: Text('Confirm'),
+            content: Text('You want to close the App?'),
             actions: [
               ElevatedButton(
                 onPressed: () => Navigator.of(context).pop(false),
