@@ -25,15 +25,23 @@ class Amount extends BaseModel {
   final payments = ToMany<Payment>();
 
   highlight() {
-    if (value == balance()) {
+    var balanceAmount = balance();
+    if (value == balanceAmount) {
       return "${created.niceDescription()} - $note";
     }
 
     if (paidDate == null) {
-      return "Balance: ${Util.moneyFormat(balance())} - $note";
+      return "Balance: ${Util.moneyFormat(balanceAmount)} - $note";
     }
 
-    return "Paid: ${Util.moneyFormat(paidTotal())} - $note";
+    var paymentsTotalAmount = paymentsTotal();
+    var paidAmount = paidTotal();
+    if (paymentsTotalAmount != 0 && paymentsTotalAmount != value) {
+      var paidMoney = Util.moneyFormat(paymentsTotalAmount);
+      var change = Util.moneyFormat(paymentsTotalAmount - value);
+      return "Paid: $paidMoney [change: $change] - $note";
+    }
+    return "Paid: ${Util.moneyFormat(paidAmount)} - $note";
   }
 
   details() {
@@ -44,8 +52,21 @@ Balance: ${Util.moneyFormat(balance())}
 Created: ${created.niceDescription(suffix: " ago")}
 Note: $note""";
     }
+
+    var paymentsTotalAmount = paymentsTotal();
+    var paidAmount = paidTotal();
+    if (paymentsTotalAmount != 0 && paymentsTotalAmount != value) {
+      var paidMoney = Util.moneyFormat(paymentsTotalAmount);
+      return """Value: ${Util.moneyFormat(value)}
+PaidTotal: ${Util.moneyFormat(paidAmount)}
+Change: ${Util.moneyFormat(paymentsTotalAmount - value)}
+Created: ${created.niceDescription(suffix: " ago")}
+Paid: ${paidDate?.niceDescription(suffix: " ago")}
+Note: $note""";
+    }
+
     return """Value: ${Util.moneyFormat(value)}
-PaidTotal: ${Util.moneyFormat(paidTotal())}
+PaidTotal: ${Util.moneyFormat(paidAmount)}
 Created: ${created.niceDescription(suffix: " ago")}
 Paid: ${paidDate?.niceDescription(suffix: " ago")}
 Note: $note""";
@@ -55,10 +76,7 @@ Note: $note""";
   String dialogTitle() => "Amount ${Util.moneyFormat(value)}";
 
   double balance() {
-    return paidDate != null
-        ? 0
-        : value -
-            payments.fold<double>(0.0, (sum, payment) => sum + payment.value);
+    return paidDate != null ? 0 : value - paymentsTotal();
   }
 
   double owingTotal() {
@@ -75,5 +93,9 @@ Note: $note""";
         : payments
             .where((payment) => payment.value > 0)
             .fold<double>(0.0, (sum, payment) => sum + payment.value);
+  }
+
+  double paymentsTotal() {
+    return payments.fold<double>(0.0, (sum, payment) => sum + payment.value);
   }
 }
