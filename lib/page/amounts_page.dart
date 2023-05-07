@@ -11,7 +11,7 @@ import 'package:money_link/objectbox.g.dart';
 import '../component/value_form.dart';
 import '../util.dart';
 
-class AmountsPage extends StatelessWidget {
+class AmountsPage extends StatefulWidget {
   final bool appBarHidden;
   final Person? selectedPerson;
   final VoidCallback refreshPeople;
@@ -28,16 +28,55 @@ class AmountsPage extends StatelessWidget {
   }
 
   @override
+  _AmountsPageState createState() => _AmountsPageState();
+
+  Stream<List<Amount>> _personAmountsQuery() {
+    var queryBuilder = ObjectBox.store.box<Amount>().query();
+    queryBuilder.link(
+      Amount_.person,
+      Person_.id.equals(selectedPerson?.id ?? 0),
+    );
+    return queryBuilder.watch(triggerImmediately: true).map((q) => q.find());
+  }
+
+  void refreshAmountStream() {
+    _amountStream = _personAmountsQuery();
+    refreshPeople();
+  }
+
+  void addAmount(BuildContext context) async {
+    var person = selectedPerson;
+    if (person != null) {
+      showDialog(
+        context: context,
+        builder: (context) => ValueForm(
+          model: person,
+          refreshFunction: refreshAmountStream,
+        ),
+      );
+    }
+  }
+}
+
+class _AmountsPageState extends State<AmountsPage> {
+  var sorting = 0;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<Amount>>(
       initialData: const <Amount>[],
-      stream: _amountStream,
+      stream: widget._amountStream,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          if (selectedPerson == null) {
+          if (widget.selectedPerson == null) {
             return Scaffold(
               resizeToAvoidBottomInset: false,
-              appBar: appBarHidden
+              appBar: widget.appBarHidden
                   ? null
                   : AppBar(
                       title: Text(
@@ -48,14 +87,14 @@ class AmountsPage extends StatelessWidget {
               body: _chart(),
             );
           }
-          if (appBarHidden) {
+          if (widget.appBarHidden) {
             return Scaffold(
               body: _body(context, snapshot.data ?? <Amount>[]),
             );
           }
           return Scaffold(
               body: CustomScrollView(
-                controller: _scrollController,
+                controller: widget._scrollController,
                 keyboardDismissBehavior:
                     ScrollViewKeyboardDismissBehavior.onDrag,
                 physics: const AlwaysScrollableScrollPhysics(
@@ -77,44 +116,6 @@ class AmountsPage extends StatelessWidget {
     );
   }
 
-  FloatingActionButton? _fab(BuildContext context) {
-    if (selectedPerson == null) {
-      return null;
-    }
-    return FloatingActionButton(
-      child: Icon(Icons.add),
-      onPressed: () => addAmount(context),
-    );
-  }
-
-  Widget _chart() {
-    return Padding(
-      padding: const EdgeInsets.all(5),
-      child: PeopleChart(scrollController: _scrollController),
-    );
-  }
-
-  Widget _body(BuildContext context, List<Amount> amounts) {
-    if (appBarHidden) {
-      return SlidableAutoCloseBehavior(
-        child: ListView(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          controller: _scrollController,
-          physics: const AlwaysScrollableScrollPhysics(
-            parent: const BouncingScrollPhysics(),
-          ),
-          children: _getListItems(context, amounts),
-        ),
-      );
-    }
-
-    return SlidableAutoCloseBehavior(
-      child: SliverList(
-        delegate: SliverChildListDelegate(_getListItems(context, amounts)),
-      ),
-    );
-  }
-
   Widget _sliverAppBar(BuildContext context, List<Amount> amounts) {
     Color? expandedTextColor =
         Theme.of(context).brightness == Brightness.dark ? null : Colors.white;
@@ -123,16 +124,23 @@ class AmountsPage extends StatelessWidget {
       title: InkWell(
         onLongPress: _jumpToTop,
         child: Text(
-          selectedPerson?.fullName ?? "AMOUNTS CHART",
+          widget.selectedPerson?.fullName ?? "AMOUNTS CHART",
           style: const TextStyle(letterSpacing: 4),
         ),
       ),
+      actions: [
+        IconButton(
+          onPressed: toggleSorting,
+          icon: Icon(sortingIcon()),
+          tooltip: "Sort by balance",
+        ),
+      ],
       stretch: true,
       pinned: true,
       flexibleSpace: FlexibleSpaceBar(
         background: Padding(
           padding: EdgeInsets.symmetric(vertical: 15.0),
-          child: selectedPerson == null
+          child: widget.selectedPerson == null
               ? Text("Chart")
               : Column(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -158,7 +166,7 @@ class AmountsPage extends StatelessWidget {
                     ),
                     Divider(),
                     Text(
-                      "Total Given",
+                      "Given",
                       style: TextStyle(
                         color: expandedTextColor,
                         letterSpacing: 2,
@@ -175,7 +183,7 @@ class AmountsPage extends StatelessWidget {
                     ),
                     Divider(),
                     Text(
-                      "Total Repaid",
+                      "Repaid",
                       style: TextStyle(
                         color: expandedTextColor,
                         letterSpacing: 2,
@@ -192,7 +200,7 @@ class AmountsPage extends StatelessWidget {
                     ),
                     Divider(),
                     Text(
-                      "Total Owing",
+                      "Balance",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: expandedTextColor,
@@ -214,123 +222,6 @@ class AmountsPage extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  List<Widget> _getListItems(BuildContext context, List<Amount> amounts) {
-    if (amounts.isEmpty) {
-      return [
-        Container(
-          padding: const EdgeInsets.all(10),
-          child: Text(
-            "${selectedPerson!.firstName()} has a clean slate",
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              letterSpacing: 2,
-              fontSize: 16,
-            ),
-          ),
-        ),
-      ];
-    }
-
-    final paidAmounts =
-        amounts.where((amount) => amount.paidDate != null).toList();
-
-    paidAmounts.sort((a, b) {
-      int dateA = a.paidDate?.microsecondsSinceEpoch ?? 0;
-      int dateB = b.paidDate?.microsecondsSinceEpoch ?? 0;
-      return dateB.compareTo(dateA);
-    });
-
-    final paidUpExpansionTile = GroupTile(
-      title: "PAID AMOUNTS  (${paidAmounts.length})",
-      subtitle: Util.moneyFormat(paidAmounts.fold<double>(
-          0.0, (sum, amount) => sum + amount.paidTotal())),
-      innerTiles:
-          paidAmounts.map((amount) => EntityTile.amountTile(amount)).toList(),
-    );
-
-    final List<Tile> unpaidAmounts = amounts
-        .where((amount) => amount.paidDate == null)
-        .map((amount) => EntityTile.amountTile(amount))
-        .toList();
-
-    final Iterable<Tile> groups = [paidUpExpansionTile]
-        .where((group) => group.innerTiles.isNotEmpty)
-        .toList();
-
-    List<Widget> comboList = <Widget>[];
-    comboList
-        .addAll(unpaidAmounts.map((et) => _buildTile(context, et)).toList());
-    comboList.addAll(groups.map((gt) => _buildTile(context, gt)).toList());
-
-    return comboList;
-  }
-
-  Widget _buildTile(BuildContext context, Tile tile,
-      {double subTileIndentation = 10.0}) {
-    if (tile is EntityTile<Amount>) {
-      return AmountWidget(
-        amount: tile.object,
-        refreshPeople: refreshPeople,
-        refreshAmounts: refreshAmountStream,
-        titleLeftPad: subTileIndentation,
-      );
-    }
-
-    final group = tile as GroupTile;
-    return Card(
-      child: ExpansionTile(
-        tilePadding: EdgeInsets.only(left: subTileIndentation),
-        title: Text(group.title,
-            style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(group.subtitle, maxLines: 1),
-        children: (group)
-            .innerTiles
-            .map((subTile) => _buildTile(
-                  context,
-                  subTile,
-                  subTileIndentation: 2 * subTileIndentation,
-                ))
-            .toList(),
-      ),
-    );
-  }
-
-  Stream<List<Amount>> _personAmountsQuery() {
-    var queryBuilder = ObjectBox.store.box<Amount>().query();
-    queryBuilder.link(
-      Amount_.person,
-      Person_.id.equals(selectedPerson?.id ?? 0),
-    );
-    return queryBuilder.watch(triggerImmediately: true).map((q) => q.find());
-  }
-
-  void _jumpToTop() {
-    _scrollController.animateTo(
-      0,
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.easeInOut,
-    );
-  }
-
-  void refreshAmountStream() {
-    _amountStream = _personAmountsQuery();
-    refreshPeople();
-  }
-
-  void addAmount(BuildContext context) async {
-    var person = selectedPerson;
-    if (person != null) {
-      showDialog(
-        context: context,
-        builder: (context) => ValueForm(
-          model: person,
-          refreshFunction: refreshAmountStream,
-        ),
-      );
-    }
   }
 
   String unpaidGivenTotal(List<Amount> amounts) {
@@ -374,5 +265,163 @@ class AmountsPage extends StatelessWidget {
         .where((amt) => amt.paidDate != null)
         .fold<double>(0.0, (sum, amt) => sum + amt.value);
     return Util.percentage(balance, givenTotal);
+  }
+
+  FloatingActionButton? _fab(BuildContext context) {
+    if (widget.selectedPerson == null) {
+      return null;
+    }
+    return FloatingActionButton(
+      child: Icon(Icons.add),
+      onPressed: () => widget.addAmount(context),
+    );
+  }
+
+  Widget _chart() {
+    return Padding(
+      padding: const EdgeInsets.all(5),
+      child: PeopleChart(scrollController: widget._scrollController),
+    );
+  }
+
+  Widget _body(BuildContext context, List<Amount> amounts) {
+    if (widget.appBarHidden) {
+      return SlidableAutoCloseBehavior(
+        child: ListView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          controller: widget._scrollController,
+          physics: const AlwaysScrollableScrollPhysics(
+            parent: const BouncingScrollPhysics(),
+          ),
+          children: _getListItems(context, amounts),
+        ),
+      );
+    }
+
+    return SlidableAutoCloseBehavior(
+      child: SliverList(
+        delegate: SliverChildListDelegate(_getListItems(context, amounts)),
+      ),
+    );
+  }
+
+  List<Widget> _getListItems(BuildContext context, List<Amount> amounts) {
+    if (amounts.isEmpty) {
+      return [
+        Container(
+          padding: const EdgeInsets.all(10),
+          child: Text(
+            "${widget.selectedPerson!.firstName()} has a clean slate",
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              letterSpacing: 2,
+              fontSize: 16,
+            ),
+          ),
+        ),
+      ];
+    }
+
+    final paidAmounts =
+        amounts.where((amount) => amount.paidDate != null).toList();
+
+    paidAmounts.sort((a, b) {
+      int dateA = a.paidDate?.microsecondsSinceEpoch ?? 0;
+      int dateB = b.paidDate?.microsecondsSinceEpoch ?? 0;
+      return dateB.compareTo(dateA);
+    });
+
+    final paidUpExpansionTile = GroupTile(
+      title: "PAID AMOUNTS  (${paidAmounts.length})",
+      subtitle: Util.moneyFormat(paidAmounts.fold<double>(
+          0.0, (sum, amount) => sum + amount.paidTotal())),
+      innerTiles:
+          paidAmounts.map((amount) => EntityTile.amountTile(amount)).toList(),
+    );
+
+    final unpaidAmounts =
+        amounts.where((amount) => amount.paidDate == null).toList();
+
+    if (sorting != 0) {
+      unpaidAmounts.sort((a, b) {
+        switch (sorting) {
+          case 1:
+            return (a.balance()).compareTo(b.balance());
+          case 2:
+          default:
+            return (b.balance()).compareTo(a.balance());
+        }
+      });
+    }
+
+    final List<Tile> unpaidAmountsTiles =
+        unpaidAmounts.map((amount) => EntityTile.amountTile(amount)).toList();
+
+    final Iterable<Tile> groups = [paidUpExpansionTile]
+        .where((group) => group.innerTiles.isNotEmpty)
+        .toList();
+
+    List<Widget> comboList = <Widget>[];
+    comboList.addAll(
+        unpaidAmountsTiles.map((et) => _buildTile(context, et)).toList());
+    comboList.addAll(groups.map((gt) => _buildTile(context, gt)).toList());
+
+    return comboList;
+  }
+
+  Widget _buildTile(BuildContext context, Tile tile,
+      {double subTileIndentation = 10.0}) {
+    if (tile is EntityTile<Amount>) {
+      return AmountWidget(
+        amount: tile.object,
+        refreshPeople: widget.refreshPeople,
+        refreshAmounts: widget.refreshAmountStream,
+        titleLeftPad: subTileIndentation,
+      );
+    }
+
+    final group = tile as GroupTile;
+    return Card(
+      child: ExpansionTile(
+        tilePadding: EdgeInsets.only(left: subTileIndentation),
+        title: Text(group.title,
+            style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text(group.subtitle, maxLines: 1),
+        children: (group)
+            .innerTiles
+            .map((subTile) => _buildTile(
+                  context,
+                  subTile,
+                  subTileIndentation: 2 * subTileIndentation,
+                ))
+            .toList(),
+      ),
+    );
+  }
+
+  void _jumpToTop() {
+    widget._scrollController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  toggleSorting() {
+    setState(() {
+      sorting = ++sorting % 3;
+    });
+  }
+
+  sortingIcon() {
+    switch (sorting) {
+      case 1:
+        return Icons.arrow_circle_down;
+      case 2:
+        return Icons.arrow_circle_up;
+      default:
+        return Icons.date_range;
+    }
   }
 }
