@@ -37,39 +37,15 @@ class Amount extends BaseModel {
     var paymentsTotalAmount = paymentsTotal();
     var paidAmount = paidTotal();
     if (paymentsTotalAmount != 0 && paymentsTotalAmount != value) {
-      var paidMoney = Util.moneyFormat(paymentsTotalAmount);
       var change = Util.moneyFormat(paymentsTotalAmount - value);
-      return "Paid: $paidMoney [change: $change] - $note";
+      if (paidAmount >= value) {
+        return "Change: $change - $note";
+      } else {
+        var paidMoney = Util.moneyFormat(paymentsTotalAmount);
+        return "Paid: $paidMoney [change: $change] - $note";
+      }
     }
     return "Paid: ${Util.moneyFormat(paidAmount)} - $note";
-  }
-
-  details() {
-    if (paidDate == null) {
-      return """Not paid yet
-Value: ${Util.moneyFormat(value)}
-Balance: ${Util.moneyFormat(balance())}
-Created: ${created.niceDescription(suffix: " ago")}
-Note: $note""";
-    }
-
-    var paymentsTotalAmount = paymentsTotal();
-    var paidAmount = paidTotal();
-    if (paymentsTotalAmount != 0 && paymentsTotalAmount != value) {
-      var paidMoney = Util.moneyFormat(paymentsTotalAmount);
-      return """Value: ${Util.moneyFormat(value)}
-PaidTotal: ${Util.moneyFormat(paidAmount)}
-Change: ${Util.moneyFormat(paymentsTotalAmount - value)}
-Created: ${created.niceDescription(suffix: " ago")}
-Paid: ${paidDate?.niceDescription(suffix: " ago")}
-Note: $note""";
-    }
-
-    return """Value: ${Util.moneyFormat(value)}
-PaidTotal: ${Util.moneyFormat(paidAmount)}
-Created: ${created.niceDescription(suffix: " ago")}
-Paid: ${paidDate?.niceDescription(suffix: " ago")}
-Note: $note""";
   }
 
   @override

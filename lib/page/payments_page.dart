@@ -143,12 +143,25 @@ class PaymentsPage extends StatelessWidget {
     if (amount.paidDate == null) {
       return """Not paid yet
 Value: ${Util.moneyFormat(amount.value)}
-Balance: ${Util.moneyFormat(balance(amount, payments))}
+Balance: ${Util.moneyFormat(amount.balance())}
 Created: ${amount.created.niceDescription(suffix: " ago")}
 Note: ${amount.note}""";
     }
+
+    var paymentsTotalAmount =
+    payments.fold<double>(0.0, (sum, payment) => sum + payment.value);
+    var paidAmount = paidTotal(amount, payments);
+    if (paymentsTotalAmount != 0 && paymentsTotalAmount != amount.value) {
+      return """Value: ${Util.moneyFormat(amount.value)}
+PaidTotal: ${Util.moneyFormat(paidAmount)}
+Change: ${Util.moneyFormat(paymentsTotalAmount - amount.value)}
+Created: ${amount.created.niceDescription(suffix: " ago")}
+Paid: ${amount.paidDate?.niceDescription(suffix: " ago")}
+Note: ${amount.note}""";
+    }
+
     return """Value: ${Util.moneyFormat(amount.value)}
-PaidTotal: ${Util.moneyFormat(paidTotal(amount, payments))}
+PaidTotal: ${Util.moneyFormat(paidAmount)}
 Created: ${amount.created.niceDescription(suffix: " ago")}
 Paid: ${amount.paidDate?.niceDescription(suffix: " ago")}
 Note: ${amount.note}""";
