@@ -29,11 +29,10 @@ class SearchField extends StatelessWidget {
           hintText: hint,
           border: const OutlineInputBorder(borderSide: BorderSide.none),
           suffixIcon: editTextController.text.isEmpty
-              ? Icon(Icons.search, color: Theme.of(context).primaryColor)
+              ? Icon(Icons.search)
               : IconButton(
                   onPressed: _clearSearch,
-                  icon:
-                      Icon(Icons.clear, color: Theme.of(context).primaryColor),
+                  icon: Icon(Icons.clear),
                 ),
         ),
       ),

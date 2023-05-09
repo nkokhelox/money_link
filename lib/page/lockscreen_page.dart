@@ -50,12 +50,7 @@ class _LockScreenPageState extends State<LockScreenPage> {
                     ),
                   ],
                 ),
-                Text(
-                  "UNLOCK APP",
-                  style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                  ),
-                ),
+                Text("UNLOCK APP"),
               ],
             ),
           ),

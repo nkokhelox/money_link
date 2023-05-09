@@ -26,10 +26,7 @@ class PersonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final maybeSelectionColor =
-        isSelected ? Theme.of(context).selectedRowColor : null;
     return Card(
-      color: maybeSelectionColor,
       child: Slidable(
         key: ValueKey(person.id),
         closeOnScroll: true,
@@ -51,6 +48,7 @@ class PersonWidget extends StatelessWidget {
                 ],
               ),
         child: ListTile(
+          selected: isSelected,
           trailing: const Icon(Icons.chevron_right),
           contentPadding: EdgeInsets.only(left: titleLeftPad),
           title: Text(person.fullName),

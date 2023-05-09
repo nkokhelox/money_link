@@ -145,15 +145,24 @@ class PeopleChart extends StatelessWidget {
         children: [
           Text(
             Util.moneyFormat(0.0),
-            style: TextStyle(color: Colors.blueGrey),
+            style: TextStyle(
+              color: Colors.blueGrey,
+              fontWeight: FontWeight.w500,
+            ),
           ),
           Text(
             Util.moneyFormat(peopleTotalSum / 2),
-            style: TextStyle(color: Colors.blueGrey),
+            style: TextStyle(
+              color: Colors.blueGrey,
+              fontWeight: FontWeight.w500,
+            ),
           ),
           Text(
             Util.moneyFormat(peopleTotalSum),
-            style: TextStyle(color: Colors.blueGrey),
+            style: TextStyle(
+              color: Colors.blueGrey,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ],
       ),
@@ -168,15 +177,15 @@ class PeopleChart extends StatelessWidget {
       builder: (context, constraints) => Container(
         decoration: BoxDecoration(
           border: Border(
-            left: BorderSide(width: 1.0, color: borderColor),
-            right: BorderSide(width: 1.0, color: borderColor),
-            bottom: BorderSide(width: 1.0, color: borderColor),
+            left: BorderSide(width: 1.5, color: borderColor),
+            right: BorderSide(width: 1.5, color: borderColor),
+            top: BorderSide(width: 1.5, color: borderColor),
           ),
         ),
         width: constraints.maxWidth,
         height: 10,
         alignment: Alignment.center,
-        child: Container(width: 1, height: 10, color: borderColor),
+        child: Container(width: 1.5, height: 10, color: borderColor),
       ),
     );
   }
