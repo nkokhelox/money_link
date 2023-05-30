@@ -46,7 +46,17 @@ class _HomePageState extends State<HomePage> {
                     onLongPress: jumpToTop),
                 leading: IconButton(
                   tooltip: "Lock the app",
-                  icon: Icon(Icons.lock),
+                  icon:
+                  Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Icon(Icons.shield, color: Theme.of(context).scaffoldBackgroundColor,),
+                        IconButton(
+                          tooltip: "Change app unlock pattern",
+                          onPressed: changeUnlockPattern,
+                          icon: Icon(Icons.settings, color: Theme.of(context).primaryColor, size: 15,),
+                        ),
+                      ]),
                   onPressed: lockApp,
                 ),
                 actions: chartIcon(isDualPane),
