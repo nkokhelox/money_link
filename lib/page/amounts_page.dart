@@ -144,7 +144,7 @@ class _AmountsPageState extends State<AmountsPage> {
         IconButton(
           onPressed: toggleSorting,
           icon: Icon(sortingIcon()),
-          tooltip: "Sort by balance",
+          tooltip: sortedByTooltip(),
         ),
       ],
       stretch: true,
@@ -443,6 +443,17 @@ class _AmountsPageState extends State<AmountsPage> {
         return Icons.arrow_circle_up;
       default:
         return Icons.date_range;
+    }
+  }
+
+  sortedByTooltip() {
+    switch (sorting) {
+      case 1:
+        return "Sorted by low to high balance";
+      case 2:
+        return "Sorted by high to low balance";
+      default:
+        return "Sorted by newest to oldest amount";
     }
   }
 }
