@@ -145,6 +145,7 @@ class PeoplePageState extends State<PeoplePage> {
     return Card(
       child: ExpansionTile(
         tilePadding: EdgeInsets.only(left: subTileIndentation),
+        shape: Border.all(color: Colors.transparent, width: 0),
         title: Text(
           group.title,
           style: const TextStyle(

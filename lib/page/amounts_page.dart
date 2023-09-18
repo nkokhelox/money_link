@@ -333,6 +333,7 @@ class _AmountsPageState extends State<AmountsPage> {
     return Card(
       child: ExpansionTile(
         tilePadding: EdgeInsets.only(left: subTileIndentation),
+        shape: Border.all(color: Colors.transparent, width: 0),
         title: Text(group.title,
             style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(group.subtitle, maxLines: 1),
