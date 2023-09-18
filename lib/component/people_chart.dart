@@ -72,7 +72,6 @@ class PeopleChart extends StatelessWidget {
               Expanded(
                 child: peopleChartBars(context, sortedPeople, total),
               ),
-
             ],
           );
         }
@@ -107,7 +106,8 @@ class PeopleChart extends StatelessWidget {
         // InkWell(
         Container(
           decoration: BoxDecoration(
-            border: Border.all(color: person.owingTotal() == 0 ? Colors.blueGrey : barColor),
+            border: Border.all(
+                color: person.owingTotal() == 0 ? Colors.blueGrey : barColor),
             color: person.owingTotal() == 0 ? null : barColor,
           ),
           width: person.owingTotal() == 0 ? maxBarWidth : barWidthValue,
@@ -129,9 +129,9 @@ class PeopleChart extends StatelessWidget {
             Text(
               " ${person.fullName} (${percentage(peopleTotalSum, person.owingTotal())}%)",
               style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: personColor,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: personColor,
               ),
             ),
           ],
@@ -143,13 +143,17 @@ class PeopleChart extends StatelessWidget {
 
   Widget peopleChartHeadingAmounts(
       BuildContext context, List<Person> sortedPeople, double peopleTotalSum) {
+    final amountStyle = TextStyle(
+      fontWeight: FontWeight.bold,
+    );
+
     return LayoutBuilder(
       builder: (context, constraints) => Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(Util.moneyFormat(0.0)),
-          Text(Util.moneyFormat(peopleTotalSum / 2)),
-          Text(Util.moneyFormat(peopleTotalSum)),
+          Text(Util.moneyFormat(0.0), style: amountStyle),
+          Text(Util.moneyFormat(peopleTotalSum / 2), style: amountStyle),
+          Text(Util.moneyFormat(peopleTotalSum), style: amountStyle),
         ],
       ),
     );
@@ -157,7 +161,7 @@ class PeopleChart extends StatelessWidget {
 
   Widget peopleChartHeadingLine(
       BuildContext context, List<Person> sortedPeople, double peopleTotalSum) {
-    final borderColor = Theme.of(context).textTheme.bodyMedium?.color ?? Colors.blueGrey;
+    final borderColor = Colors.blueGrey;
 
     return LayoutBuilder(
       builder: (context, constraints) => Container(
@@ -178,7 +182,6 @@ class PeopleChart extends StatelessWidget {
 
   Widget peopleChartBars(
       BuildContext context, List<Person> sortedPeople, double peopleTotalSum) {
-
     return LayoutBuilder(
       builder: (context, constraints) => ListView(
         physics: const AlwaysScrollableScrollPhysics(
@@ -189,13 +192,13 @@ class PeopleChart extends StatelessWidget {
         children: [
           Container(color: Colors.transparent, height: 10),
           ...?(sortedPeople
-            .asMap()
-            .entries
-            .map((e) => personBar(PeopleChart.getBarColors(e.key), e.value,
-                maxBarWidth: constraints.maxWidth,
-                peopleTotalSum: peopleTotalSum))
-            .toList())
-      ],
+              .asMap()
+              .entries
+              .map((e) => personBar(PeopleChart.getBarColors(e.key), e.value,
+                  maxBarWidth: constraints.maxWidth,
+                  peopleTotalSum: peopleTotalSum))
+              .toList())
+        ],
       ),
     );
   }
