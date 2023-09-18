@@ -29,6 +29,7 @@ class PaymentsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.transparent,
       body: StreamBuilder<List<Payment>>(
         initialData: const <Payment>[],
         stream: _paymentsStream,
@@ -38,23 +39,39 @@ class PaymentsPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  InkWell(
-                    onLongPress: _jumpToTop,
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      child: Text(
-                        paymentsHeading(
-                          selectedAmount,
-                          streamSnapshot.data ?? [],
-                        ),
-                        textAlign: TextAlign.start,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(top: 5),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(1000),
+                                color: Theme.of(context).dividerColor,
+                              ),
+                              width: 150,
+                              height: 8,
+                            ),
+                          ),
+                        ],
+                      ),
+                      InkWell(
+                        onLongPress: _jumpToTop,
+                        child: Container(
+                          padding: const EdgeInsets.all(10),
+                          child: Text(
+                            paymentsHeading(
+                              selectedAmount,
+                              streamSnapshot.data ?? [],
+                            ),
+                            textAlign: TextAlign.start,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
                   Expanded(
                     child: ListView(
                       controller: _scrollController,

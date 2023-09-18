@@ -47,7 +47,6 @@ class _LockScreenPageState extends State<LockScreenPage> {
                   ),
                 ],
               ),
-              Text("Locked"),
             ],
           ),
         ),
