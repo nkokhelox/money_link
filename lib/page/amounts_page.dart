@@ -159,7 +159,7 @@ class _AmountsPageState extends State<AmountsPage> {
                   ),
                   Divider(),
                   Text(
-                    "Balance",
+                    "Total Balance",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       letterSpacing: 2,
