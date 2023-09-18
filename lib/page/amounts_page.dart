@@ -117,10 +117,8 @@ class _AmountsPageState extends State<AmountsPage> {
   }
 
   Widget _sliverAppBar(BuildContext context, List<Amount> amounts) {
-    Color? expandedTextColor =
-        Theme.of(context).brightness == Brightness.dark ? null : Colors.white;
     return SliverAppBar(
-      expandedHeight: 245,
+      expandedHeight: 170,
       title: InkWell(
         onLongPress: _jumpToTop,
         child: Text(
@@ -138,88 +136,46 @@ class _AmountsPageState extends State<AmountsPage> {
       stretch: true,
       pinned: true,
       flexibleSpace: FlexibleSpaceBar(
-        background: Padding(
-          padding: EdgeInsets.symmetric(vertical: 15.0),
-          child: widget.selectedPerson == null
-              ? Text("Chart")
-              : Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Divider(),
-                    Text(
-                      "Grand Total Given: ${grandGivenTotal(amounts)}",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: expandedTextColor,
-                        letterSpacing: 2,
-                        fontSize: 10,
-                      ),
+        background: widget.selectedPerson == null
+            ? Text("Chart")
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Divider(),
+                  Text(
+                    "Grand Total Given: ${grandGivenTotal(amounts)}",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 2,
+                      fontSize: 12,
                     ),
-                    Text(
-                      "Grand Total Paid: ${grandPaidTotal(amounts)}",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: expandedTextColor,
-                        letterSpacing: 2,
-                        fontSize: 10,
-                      ),
+                  ),
+                  Text(
+                    "Grand Total Paid: ${grandPaidTotal(amounts)}",
+                    style: TextStyle(
+                      letterSpacing: 2,
+                      fontSize: 12,
                     ),
-                    Divider(),
-                    Text(
-                      "Given",
-                      style: TextStyle(
-                        color: expandedTextColor,
-                        letterSpacing: 2,
-                        fontSize: 12,
-                      ),
+                  ),
+                  Divider(),
+                  Text(
+                    "Total Balance",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 2,
+                      fontSize: 16,
                     ),
-                    Text(
-                      unpaidGivenTotal(amounts),
-                      style: TextStyle(
-                        color: expandedTextColor,
-                        letterSpacing: 2,
-                        fontSize: 12,
-                      ),
+                  ),
+                  Text(
+                    totalBalance(amounts),
+                    style: TextStyle(
+                      letterSpacing: 2,
+                      fontSize: 14,
                     ),
-                    Divider(),
-                    Text(
-                      "Repaid",
-                      style: TextStyle(
-                        color: expandedTextColor,
-                        letterSpacing: 2,
-                        fontSize: 12,
-                      ),
-                    ),
-                    Text(
-                      repaidTotal(amounts),
-                      style: TextStyle(
-                        color: expandedTextColor,
-                        letterSpacing: 2,
-                        fontSize: 12,
-                      ),
-                    ),
-                    Divider(),
-                    Text(
-                      "Balance",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: expandedTextColor,
-                        letterSpacing: 2,
-                        fontSize: 14,
-                      ),
-                    ),
-                    Text(
-                      totalBalance(amounts),
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: expandedTextColor,
-                        letterSpacing: 2,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-        ),
+                  ),
+                  Divider(),
+                ],
+              ),
       ),
     );
   }
@@ -229,14 +185,6 @@ class _AmountsPageState extends State<AmountsPage> {
       amounts
           .where((amt) => amt.paidDate == null)
           .fold<double>(0.0, (sum, amt) => sum + amt.value),
-    );
-  }
-
-  String repaidTotal(List<Amount> amounts) {
-    return Util.moneyFormat(
-      amounts
-          .where((amt) => amt.paidDate == null)
-          .fold<double>(0.0, (sum, amt) => sum + amt.paidTotal()),
     );
   }
 
@@ -385,6 +333,7 @@ class _AmountsPageState extends State<AmountsPage> {
     return Card(
       child: ExpansionTile(
         tilePadding: EdgeInsets.only(left: subTileIndentation),
+        shape: Border.all(color: Colors.transparent, width: 0),
         title: Text(group.title,
             style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(group.subtitle, maxLines: 1),

@@ -89,10 +89,7 @@ class PeoplePageState extends State<PeoplePage> {
             trailing: IconButton(
                 icon: const Icon(Icons.add_circle_outline),
                 onPressed: _addPerson),
-            subtitle: Text(
-              "Tap + to add this person",
-              style: TextStyle(color: Theme.of(context).primaryColor),
-            ),
+            subtitle: Text("Tap + to add this person"),
           ),
         ),
       ];
@@ -148,6 +145,7 @@ class PeoplePageState extends State<PeoplePage> {
     return Card(
       child: ExpansionTile(
         tilePadding: EdgeInsets.only(left: subTileIndentation),
+        shape: Border.all(color: Colors.transparent, width: 0),
         title: Text(
           group.title,
           style: const TextStyle(
