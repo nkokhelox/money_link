@@ -72,6 +72,7 @@ class PeopleChart extends StatelessWidget {
               Expanded(
                 child: peopleChartBars(context, sortedPeople, total),
               ),
+
             ],
           );
         }
@@ -98,13 +99,15 @@ class PeopleChart extends StatelessWidget {
         personTotal: person.owingTotal().abs(),
         peopleTotal: peopleTotalSum,
         maxBarWidth: maxBarWidth);
+
+    final personColor = person.owingTotal() == 0 ? Colors.blueGrey : barColor;
     return Wrap(
       direction: Axis.vertical,
       children: [
         // InkWell(
         Container(
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.black12),
+            border: Border.all(color: person.owingTotal() == 0 ? Colors.blueGrey : barColor),
             color: person.owingTotal() == 0 ? null : barColor,
           ),
           width: person.owingTotal() == 0 ? maxBarWidth : barWidthValue,
@@ -115,20 +118,21 @@ class PeopleChart extends StatelessWidget {
           children: [
             Icon(
               Icons.account_circle,
-              color: person.owingTotal() == 0 ? Colors.blueGrey : barColor,
+              color: personColor,
               size: 15,
             ),
             Icon(
               Icons.arrow_forward_sharp,
-              color: person.owingTotal() == 0 ? Colors.blueGrey : barColor,
+              color: personColor,
               size: 15,
             ),
             Text(
               " ${person.fullName} (${percentage(peopleTotalSum, person.owingTotal())}%)",
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
-                  color: Colors.blueGrey),
+                  color: personColor,
+              ),
             ),
           ],
         ),
@@ -143,18 +147,9 @@ class PeopleChart extends StatelessWidget {
       builder: (context, constraints) => Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            Util.moneyFormat(0.0),
-            style: TextStyle(color: Colors.blueGrey),
-          ),
-          Text(
-            Util.moneyFormat(peopleTotalSum / 2),
-            style: TextStyle(color: Colors.blueGrey),
-          ),
-          Text(
-            Util.moneyFormat(peopleTotalSum),
-            style: TextStyle(color: Colors.blueGrey),
-          ),
+          Text(Util.moneyFormat(0.0)),
+          Text(Util.moneyFormat(peopleTotalSum / 2)),
+          Text(Util.moneyFormat(peopleTotalSum)),
         ],
       ),
     );
@@ -162,7 +157,7 @@ class PeopleChart extends StatelessWidget {
 
   Widget peopleChartHeadingLine(
       BuildContext context, List<Person> sortedPeople, double peopleTotalSum) {
-    final borderColor = Colors.blueGrey;
+    final borderColor = Theme.of(context).textTheme.bodyMedium?.color ?? Colors.blueGrey;
 
     return LayoutBuilder(
       builder: (context, constraints) => Container(
@@ -173,8 +168,8 @@ class PeopleChart extends StatelessWidget {
             bottom: BorderSide(width: 1.0, color: borderColor),
           ),
         ),
-        width: constraints.maxWidth,
         height: 10,
+        width: constraints.maxWidth,
         alignment: Alignment.center,
         child: Container(width: 1, height: 10, color: borderColor),
       ),
@@ -183,6 +178,7 @@ class PeopleChart extends StatelessWidget {
 
   Widget peopleChartBars(
       BuildContext context, List<Person> sortedPeople, double peopleTotalSum) {
+
     return LayoutBuilder(
       builder: (context, constraints) => ListView(
         physics: const AlwaysScrollableScrollPhysics(
@@ -190,13 +186,16 @@ class PeopleChart extends StatelessWidget {
         ),
         controller: scrollController,
         shrinkWrap: true,
-        children: sortedPeople
+        children: [
+          Container(color: Colors.transparent, height: 10),
+          ...?(sortedPeople
             .asMap()
             .entries
             .map((e) => personBar(PeopleChart.getBarColors(e.key), e.value,
                 maxBarWidth: constraints.maxWidth,
                 peopleTotalSum: peopleTotalSum))
-            .toList(),
+            .toList())
+      ],
       ),
     );
   }

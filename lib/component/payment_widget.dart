@@ -34,16 +34,20 @@ class PaymentWidget extends StatelessWidget {
           ],
         ),
         child: ExpansionTile(
-          collapsedIconColor: Theme.of(context).iconTheme.color,
           expandedAlignment: Alignment.topLeft,
           title: Text(Util.moneyFormat(payment.value)),
-          subtitle: Text(payment.highlight(),
-              maxLines: 1, style: TextStyle(fontSize: 10)),
+          subtitle: Text(
+              payment.highlight(),
+              maxLines: 1,
+              style: TextStyle(fontSize: 10),
+          ),
           children: [
             Padding(
               padding: const EdgeInsets.only(left: 20),
-              child:
-                  Text(payment.details(), style: const TextStyle(fontSize: 10)),
+              child: Text(
+                      payment.details(),
+                      style: const TextStyle(fontSize: 10),
+                  ),
             ),
           ],
         ),

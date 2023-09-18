@@ -27,7 +27,7 @@ class PersonWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final maybeSelectionColor =
-        isSelected ? Theme.of(context).selectedRowColor : null;
+        isSelected ? Theme.of(context).listTileTheme.selectedTileColor : null;
     return Card(
       color: maybeSelectionColor,
       child: Slidable(
