@@ -43,7 +43,7 @@ class _LockScreenPageState extends State<LockScreenPage> {
                   Icon(
                     Icons.lock_outline,
                     size: 180,
-                    color: Theme.of(context).primaryColor,
+                    color: Theme.of(context).canvasColor,
                   ),
                 ],
               ),
