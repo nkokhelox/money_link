@@ -19,8 +19,13 @@ class PeopleChart extends StatelessWidget {
 
   late Stream<List<Person>> _peopleStream;
   final ScrollController scrollController;
+  final bool showPaidPeople;
 
-  PeopleChart({super.key, required this.scrollController}) {
+  PeopleChart({
+    super.key,
+    required this.scrollController,
+    this.showPaidPeople = false,
+  }) {
     _peopleStream =
         _peopleBox.query().watch(triggerImmediately: true).map((q) => q.find());
   }
@@ -36,7 +41,12 @@ class PeopleChart extends StatelessWidget {
       stream: _peopleStream,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          final people = snapshot.data ?? <Person>[];
+          final people = showPaidPeople
+              ? (snapshot.data ?? <Person>[])
+              : (snapshot.data ?? <Person>[])
+                  .where((p) => p.balance() != 0)
+                  .toList();
+
           final double total = people.isEmpty
               ? 0.0
               : people
@@ -68,10 +78,7 @@ class PeopleChart extends StatelessWidget {
             children: [
               peopleChartHeadingAmounts(context, sortedPeople, total),
               peopleChartHeadingLine(context, sortedPeople, total),
-              Container(height: 10),
-              Expanded(
-                child: peopleChartBars(context, sortedPeople, total),
-              ),
+              peopleChartBars(context, sortedPeople, total),
             ],
           );
         }
@@ -167,15 +174,15 @@ class PeopleChart extends StatelessWidget {
       builder: (context, constraints) => Container(
         decoration: BoxDecoration(
           border: Border(
-            left: BorderSide(width: 1.0, color: borderColor),
-            right: BorderSide(width: 1.0, color: borderColor),
-            bottom: BorderSide(width: 1.0, color: borderColor),
+            left: BorderSide(width: 2.0, color: borderColor),
+            right: BorderSide(width: 2.0, color: borderColor),
+            bottom: BorderSide(width: 2.0, color: borderColor),
           ),
         ),
         height: 10,
         width: constraints.maxWidth,
         alignment: Alignment.center,
-        child: Container(width: 1, height: 10, color: borderColor),
+        child: Container(width: 2, height: 10, color: borderColor),
       ),
     );
   }
@@ -183,21 +190,40 @@ class PeopleChart extends StatelessWidget {
   Widget peopleChartBars(
       BuildContext context, List<Person> sortedPeople, double peopleTotalSum) {
     return LayoutBuilder(
-      builder: (context, constraints) => ListView(
-        physics: const AlwaysScrollableScrollPhysics(
-          parent: const BouncingScrollPhysics(),
-        ),
-        controller: scrollController,
-        shrinkWrap: true,
+      builder: (context, constraints) => Stack(
         children: [
-          Container(color: Colors.transparent, height: 10),
-          ...?(sortedPeople
-              .asMap()
-              .entries
-              .map((e) => personBar(PeopleChart.getBarColors(e.key), e.value,
-                  maxBarWidth: constraints.maxWidth,
-                  peopleTotalSum: peopleTotalSum))
-              .toList())
+          ListView(
+            physics: const AlwaysScrollableScrollPhysics(
+              parent: const BouncingScrollPhysics(),
+            ),
+            controller: scrollController,
+            shrinkWrap: true,
+            children: [
+              Container(color: Colors.transparent, height: 10),
+              ...?(sortedPeople
+                  .asMap()
+                  .entries
+                  .map((e) => personBar(
+                      PeopleChart.getBarColors(e.key), e.value,
+                      maxBarWidth: constraints.maxWidth,
+                      peopleTotalSum: peopleTotalSum))
+                  .toList()),
+            ],
+          ),
+          Container(
+            height: 10,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                stops: [0.0, 1.0],
+                colors: [
+                  Theme.of(context).scaffoldBackgroundColor,
+                  Theme.of(context).scaffoldBackgroundColor.withOpacity(0.0),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );

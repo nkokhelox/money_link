@@ -60,6 +60,7 @@ class AmountsPage extends StatefulWidget {
 
 class _AmountsPageState extends State<AmountsPage> {
   var sorting = 0;
+  var showPaidPeople = false;
 
   @override
   void initState() {
@@ -83,6 +84,17 @@ class _AmountsPageState extends State<AmountsPage> {
                         "AMOUNTS CHART",
                         style: const TextStyle(letterSpacing: 4),
                       ),
+                      actions: [
+                        IconButton(
+                          onPressed: togglePaidPeopleRow,
+                          icon: showPaidPeople
+                              ? Icon(Icons.account_balance_wallet)
+                              : Icon(Icons.account_balance_wallet_outlined),
+                          tooltip: showPaidPeople
+                              ? "Hide people with 0.0%"
+                              : "Show people with 0.0%",
+                        ),
+                      ],
                     ),
               body: _chart(),
             );
@@ -147,7 +159,7 @@ class _AmountsPageState extends State<AmountsPage> {
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       letterSpacing: 2,
-                      fontSize: 12,
+                      fontSize: 14,
                     ),
                   ),
                   Text(
@@ -228,7 +240,10 @@ class _AmountsPageState extends State<AmountsPage> {
   Widget _chart() {
     return Padding(
       padding: const EdgeInsets.all(5),
-      child: PeopleChart(scrollController: widget._scrollController),
+      child: PeopleChart(
+        scrollController: widget._scrollController,
+        showPaidPeople: showPaidPeople,
+      ),
     );
   }
 
@@ -355,6 +370,12 @@ class _AmountsPageState extends State<AmountsPage> {
       duration: const Duration(milliseconds: 500),
       curve: Curves.easeInOut,
     );
+  }
+
+  togglePaidPeopleRow() {
+    setState(() {
+      showPaidPeople = !showPaidPeople;
+    });
   }
 
   toggleSorting() {
