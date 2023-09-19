@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: showExitPopup, //call function on back button press
+      onWillPop: onBackPress,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () => FocusScope.of(context).unfocus(),
@@ -44,7 +44,22 @@ class _HomePageState extends State<HomePage> {
                     child: Text(isDualPane ? "PEOPLE - AMOUNTS" : "PEOPLE",
                         style: TextStyle(letterSpacing: 4)),
                     onLongPress: jumpToTop),
-                leading: IconButton(icon: Icon(Icons.lock), onPressed: lockApp),
+                leading: IconButton(
+                  tooltip: "Lock the app",
+                  icon: Stack(alignment: Alignment.center, children: [
+                    Icon(Icons.shield),
+                    IconButton(
+                      tooltip: "Change app unlock pattern",
+                      onPressed: changeUnlockPattern,
+                      icon: Icon(
+                        Icons.settings,
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        size: 15,
+                      ),
+                    ),
+                  ]),
+                  onPressed: lockApp,
+                ),
                 actions: chartIcon(isDualPane),
               ),
               body: TwoPane(
@@ -60,9 +75,10 @@ class _HomePageState extends State<HomePage> {
                   selectedPerson: _selectedPerson,
                 ),
                 endPane: AmountsPage(
-                    selectedPerson: _selectedPerson,
-                    appBarHidden: true,
-                    refreshPeople: refreshPeople),
+                  selectedPerson: _selectedPerson,
+                  appBarHidden: true,
+                  refreshPeople: refreshPeople,
+                ),
               ),
             );
           },
@@ -108,19 +124,23 @@ class _HomePageState extends State<HomePage> {
 
   List<Widget> chartIcon(bool isDualPane) {
     if (isDualPane) {
-      return this._selectedPerson != null
-          ? [
+      return this._selectedPerson == null
+          ? []
+          : [
               IconButton(
-                  onPressed: clearSelectedPerson,
-                  icon: Icon(Icons.stacked_bar_chart))
-            ]
-          : [];
+                tooltip: "Balances chart",
+                onPressed: clearSelectedPerson,
+                icon: Icon(Icons.stacked_bar_chart),
+              )
+            ];
     }
 
     return [
       IconButton(
-          onPressed: () => onPersonTap(null, isDualPane),
-          icon: Icon(Icons.stacked_bar_chart))
+        tooltip: "Balances chart",
+        onPressed: () => onPersonTap(null, isDualPane),
+        icon: Icon(Icons.stacked_bar_chart),
+      )
     ];
   }
 
@@ -141,28 +161,10 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Future<bool> showExitPopup() async {
-    return await showDialog(
-          //show confirm dialogue
-          //the return value will be from "Yes" or "No" options
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('Confirm'),
-            content: Text('You want to close the App?'),
-            actions: [
-              ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                //return false when click on "NO"
-                child: Text('No'),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                //return true when click on "Yes"
-                child: Text('Yes'),
-              ),
-            ],
-          ),
-        ) ??
-        false;
+  void changeUnlockPattern() {}
+
+  Future<bool> onBackPress() async {
+    lockApp();
+    return true;
   }
 }

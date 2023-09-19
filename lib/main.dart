@@ -31,10 +31,10 @@ class _MainApplicationState extends State<MainApplication> {
     return MaterialApp(
       home: LockScreenPage(),
       theme: ThemeData.light(
-        useMaterial3: true
+        useMaterial3: true,
       ),
       darkTheme: ThemeData.dark(
-          useMaterial3: true
+          useMaterial3: true,
       ),
       themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
