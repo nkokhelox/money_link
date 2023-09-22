@@ -1,5 +1,6 @@
 /// Copyright (c) Microsoft Corporation.
 /// Licensed under the MIT License.
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:money_link/page/lockscreen_page.dart';
@@ -26,18 +27,30 @@ class _MainApplicationState extends State<MainApplication> {
     ObjectBox.store.close();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: LockScreenPage(),
-      theme: ThemeData.light(
-        useMaterial3: true,
-      ),
-      darkTheme: ThemeData.dark(
-          useMaterial3: true,
-      ),
-      themeMode: ThemeMode.system,
-      debugShowCheckedModeBanner: false,
-    );
-  }
+    static final _defaultLightColorScheme =
+    ColorScheme.fromSwatch(primarySwatch: Colors.blue);
+
+    static final _defaultDarkColorScheme = ColorScheme.fromSwatch(
+        primarySwatch: Colors.blue, brightness: Brightness.dark);
+
+    @override
+    Widget build(BuildContext context) {
+      return DynamicColorBuilder(builder: (lightColorScheme, darkColorScheme) {
+        return MaterialApp(
+          title: 'Money matters',
+          themeMode: ThemeMode.system,
+          home: const LockScreenPage(),
+            debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            colorScheme: lightColorScheme ?? _defaultLightColorScheme,
+            useMaterial3: true,
+          ),
+          darkTheme: ThemeData(
+            colorScheme: darkColorScheme ?? _defaultDarkColorScheme,
+            useMaterial3: true,
+          ),
+        );
+      });
+    }
+
 }

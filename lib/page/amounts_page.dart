@@ -130,7 +130,7 @@ class _AmountsPageState extends State<AmountsPage> {
 
   Widget _sliverAppBar(BuildContext context, List<Amount> amounts) {
     return SliverAppBar(
-      expandedHeight: 170,
+      expandedHeight: 130,
       title: InkWell(
         onLongPress: _jumpToTop,
         child: Text(
@@ -155,11 +155,18 @@ class _AmountsPageState extends State<AmountsPage> {
                 children: [
                   Divider(),
                   Text(
-                    "Grand Total Given: ${grandGivenTotal(amounts)}",
+                    "Total Balance: ${totalBalance(amounts)}",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       letterSpacing: 2,
-                      fontSize: 14,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Text(
+                    "Grand Total Given: ${grandGivenTotal(amounts)}",
+                    style: TextStyle(
+                      letterSpacing: 2,
+                      fontSize: 12,
                     ),
                   ),
                   Text(
@@ -169,23 +176,6 @@ class _AmountsPageState extends State<AmountsPage> {
                       fontSize: 12,
                     ),
                   ),
-                  Divider(),
-                  Text(
-                    "Total Balance",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 2,
-                      fontSize: 16,
-                    ),
-                  ),
-                  Text(
-                    totalBalance(amounts),
-                    style: TextStyle(
-                      letterSpacing: 2,
-                      fontSize: 14,
-                    ),
-                  ),
-                  Divider(),
                 ],
               ),
       ),

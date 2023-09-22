@@ -78,7 +78,7 @@ class PeopleChart extends StatelessWidget {
             children: [
               peopleChartHeadingAmounts(context, sortedPeople, total),
               peopleChartHeadingLine(context, sortedPeople, total),
-              peopleChartBars(context, sortedPeople, total),
+              Expanded(child: peopleChartBars(context, sortedPeople, total)),
             ],
           );
         }
