@@ -7,6 +7,7 @@ import 'package:money_link/model/person.dart';
 import 'package:money_link/page/amounts_page.dart';
 import 'package:money_link/page/lockscreen_page.dart';
 import 'package:money_link/page/people_page.dart';
+import 'package:money_link/page/set_lockpatten_page.dart';
 import 'package:page_transition/page_transition.dart';
 
 class HomePage extends StatefulWidget {
@@ -161,7 +162,14 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void changeUnlockPattern() {}
+  void changeUnlockPattern() {
+    Navigator.push(context,
+      PageTransition(
+      curve: Curves.linear,
+      type: PageTransitionType.topToBottom,
+      child: SetLockPattenPage(),
+    ),);
+  }
 
   Future<bool> onBackPress() async {
     lockApp();

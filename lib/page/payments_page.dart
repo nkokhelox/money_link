@@ -109,7 +109,7 @@ class PaymentsPage extends StatelessWidget {
       comboList.add(
         Container(
           padding: const EdgeInsets.all(10),
-          child: Text(
+          child: SelectableText(
             "${Util.moneyFormat(selectedAmount.value)} has a no payments",
             textAlign: TextAlign.center,
             style: const TextStyle(
